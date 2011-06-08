@@ -204,9 +204,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         r = zeros((len(reactions), len(self.data.t)))
         for i, react in enumerate(reactions):
             r[i, :] = dreactions[react]
-
+            
         # Find the reactions that are at some point at least a delta of the total
-        delta = 0.001
+        delta = 0.1
 
         spos = nanmax(where(r > 0, r, 0), axis=0)
         fpos = r / spos
@@ -404,20 +404,28 @@ def select_rates(f, delta, max_rates=4, min_rates=0):
     fmax = nanmax(f, axis=1)
     
     asort = argsort(-fmax)
+    n = len(asort)
 
-    try:
-        # We always select at least the highest min_rates.
-        highest = asort[:min_rates]
+    # We always select at least the highest min_rates.
+    highest = asort[:min_rates]
 
-        # From the rest, we select those larger than delta, but not more
-        # than max_rates
-        p = asort[min_rates:max_rates + 1]
+    if n < max_rates:
+        return highest
 
-        rest = p[fmax[p] > delta]
-    except IndexError:
-        return array([], 'i')
+    # From the rest, we select those larger than delta, but not more
+    # than max_rates
+    p = asort[min_rates:max_rates]
+    rest = p[fmax[p] > delta]
+
+    if n == max_rates:
+        return r_[highest, rest]
+
+    # We should never leave aside rates that at some point are very
+    # important, even if they fall outside max_rates
+    p = asort[max_rates:]
+    rest2 = p[fmax[p] > (1 - delta)]
+    return r_[highest, rest, rest2]
     
-    return r_[highest, rest]
 
     
 
