@@ -1,0 +1,50 @@
+This code depends on many libraries to work they are all open-source libraries
+that can be downloded for free.
+
+LINUX
+-----
+
+If you are using Ubuntu or Debian, you can install all the required libraries
+with
+
+sudo apt-get install python-numpy python-scipy python-h5py python-qt4 python-matplotlib
+
+
+MAC OS X
+--------
+
+The recommended way to run QtPlaskin in a Mac OS X computer is to install the
+requred libraries with Mac Ports.  You have to
+
+1. Download the version of Mac Ports for your Mac OS X version from
+   www.macports.org and install it in your computer.  Instalation takes
+   a few minutes.
+
+2. In a terminal, write
+
+  sudo port install python27 py27-matplotlib py27-scipy py27-numpy py27-pyqt4 py27-h5py
+
+  This would install Python 2.7 and all the requred libraries for QtPlaskin.
+  Since all the libraries have to be compiled in your system, it may take a
+  very long time to complete (about 6-7 hours).
+
+  After that you may want to select version 2.7 as the default python:
+  
+  sudo port select python python27
+
+
+WINDOWS
+-------
+
+QtPlaskin works also under windows but it has not been throughly tested.
+You need to install the dependencies by hand.  This sofware needs to be installed (in brackets we provide the version that has been succesfully tested; others may work too):
+
+* Python [2.7]
+* Numpy [1.5.1]
+* SciPy [0.9.0]
+* matplotlib [1.0.1]
+* PyQt4 [binary installer, 4.8.4.1-1]
+* h5py [1.3.1]
+
+
+
