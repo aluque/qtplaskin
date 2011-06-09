@@ -63,7 +63,8 @@ class ModelData(object):
                 print "Skipping repeated reaction `%s'" % reaction
 
         g.create_dataset('t', data=self.t)
-        g.create_dataset('source_matrix', data=self.source_matrix)
+        g.create_dataset('source_matrix', data=self.source_matrix,
+                         compression='gzip')
        
         
     def old_save(self, ofile, metadata={}):
