@@ -72,6 +72,10 @@ class MplWidget(QtGui.QWidget):
 
         return ax
 
+    def grid(self):
+        for ax in self.axes:
+            ax.grid(ls='-', lw=0.5, c='#cccccc', zorder=-10)
+
 
     def draw(self):
         self.canvas.draw()
@@ -80,6 +84,8 @@ class MplWidget(QtGui.QWidget):
     def clear(self):
         for ax in self.axes:
             ax.clear()
+
+        self.grid()
             
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
@@ -120,19 +126,22 @@ class MplWidget(QtGui.QWidget):
 class ConditionsPlotWidget(MplWidget):
     def init_axes(self):
         self.add_axes([0.1, 0.1, 0.85, 0.85])
-    
+        self.grid()
 
 class DensityPlotWidget(MplWidget):
     def init_axes(self):
         self.add_axes([0.1, 0.1, 0.7, 0.85])
+        self.grid()
 
 
 class SourcePlotWidget(MplWidget):
     def init_axes(self):
         self.removalAx = self.add_axes([0.1, 0.1, 0.65, 0.4])
         self.creationAx = self.add_axes([0.1, 0.58, 0.65, 0.4])
+        self.grid()
 
 class RatePlotWidget(MplWidget):
     def init_axes(self):
         self.add_axes([0.1, 0.1, 0.65, 0.85])
+        self.grid()
     

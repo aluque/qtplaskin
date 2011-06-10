@@ -1,5 +1,7 @@
+#! /usr/bin/env python 
 import sys
 import os
+from itertools import cycle
 
 # Qt4 bindings for core Qt functionalities (non-GUI)
 from PyQt4 import QtCore
@@ -15,6 +17,11 @@ from numpy import *
 from qtplaskin import Ui_MainWindow
 from modeldata import HDF5Data, RealtimeData, DirectoryData
 
+COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
+                "#ff55ff", "#008800", "#ff7f00",
+                "#8d0ade", "#777777",
+                "#444400", "#7777ff", "#77ff77"]
+LINE_WIDTH = 1.7
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -137,7 +144,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         
         y = array(self.data.condition(condition))
         flt = y > 0
-        self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=1.5,
+        self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
                                      label=ylabels.get(condition, condition))
 
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
@@ -164,13 +171,15 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
+        citer = cycle(COLOR_SERIES)
         
         for item in self.speciesList.selectedItems():
             name = str(item.text())
             dens = self.data.density(name)
             flt = dens > 0
             self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
-                                         lw=1.5, label=name)
+                                         lw=LINE_WIDTH,
+                                         c=citer.next(), label=name)
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -223,15 +232,19 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         icreation = select_rates(fpos, delta)
         idestruct = select_rates(fneg, delta)
 
+        citer = cycle(COLOR_SERIES)
         for i in icreation:
             name = reactions[i]
             self.sourceWidget.creationAx.plot(self.data.t, abs(r[i, :]),
-                                              lw=1.5, label=name)
+                                              c=citer.next(),
+                                              lw=LINE_WIDTH, label=name)
 
+        citer = cycle(COLOR_SERIES)
         for i in idestruct:
             name = reactions[i]
             self.sourceWidget.removalAx.plot(self.data.t, abs(r[i, :]),
-                                             lw=1.5, label=name)
+                                             c=citer.next(),
+                                             lw=LINE_WIDTH, label=name)
 
         self.sourceWidget.creationAx.set_ylabel(
             "Creation [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
@@ -268,13 +281,15 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
+        citer = cycle(COLOR_SERIES)
         for item in self.reactList.selectedItems():
             name = str(item.text())
             rate = array(self.data.rate(name))
             
             flt = rate > 0
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
-                                          lw=1.5, label=name)
+                                          c=citer.next(),
+                                          lw=LINE_WIDTH, label=name)
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             

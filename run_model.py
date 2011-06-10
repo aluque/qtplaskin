@@ -67,7 +67,6 @@ def receiver(conn):
                 raise EOFError
             
             i, c_density, c_rates, c_conditions = data
-            print "RECV[%d]\n" % i
 
             density[i, :] = c_density
             rates[i, :] = c_rates
