@@ -461,6 +461,7 @@ dmw = DesignerMainWindow()
 
 # show it
 dmw.show()
+dmw.raise_()
 
 # start the Qt main loop execution, exiting from this script
 # with the same return code of Qt application
