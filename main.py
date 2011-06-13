@@ -18,10 +18,14 @@ from qtplaskin import Ui_MainWindow
 from modeldata import HDF5Data, RealtimeData, DirectoryData
 
 COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
-                "#ff55ff", "#008800", "#ff7f00",
-                "#8d0ade", "#777777",
+                "#ff55ff", "#008800", "#8d0ade",
+                "#7f7f00", "#777777",
                 "#444400", "#7777ff", "#77ff77"]
 LINE_WIDTH = 1.7
+
+# We do not plot densities or rates below these thresholds
+DENS_THRESHOLD = 1e-5
+RATE_THRESHOLD = 1e-5
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -174,9 +178,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         citer = cycle(COLOR_SERIES)
         
         for item in self.speciesList.selectedItems():
-            name = str(item.text())
+            name = unicode(item.text())
             dens = self.data.density(name)
-            flt = dens > 0
+            flt = dens > DENS_THRESHOLD
             self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
                                          lw=LINE_WIDTH,
                                          c=citer.next(), label=name)
@@ -195,7 +199,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def update_source_graph(self):
         """Updates the graph with sources rates"""
         try:
-            species = str(self.speciesSourceList.currentItem().text())
+            species = unicode(self.speciesSourceList.currentItem().text())
         except AttributeError:
             return
         
@@ -235,14 +239,18 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         citer = cycle(COLOR_SERIES)
         for i in icreation:
             name = reactions[i]
-            self.sourceWidget.creationAx.plot(self.data.t, abs(r[i, :]),
+            flt = abs(r[i, :]) > RATE_THRESHOLD
+            self.sourceWidget.creationAx.plot(self.data.t[flt],
+                                              abs(r[i, flt]),
                                               c=citer.next(),
                                               lw=LINE_WIDTH, label=name)
 
         citer = cycle(COLOR_SERIES)
         for i in idestruct:
             name = reactions[i]
-            self.sourceWidget.removalAx.plot(self.data.t, abs(r[i, :]),
+            flt = abs(r[i, :]) > RATE_THRESHOLD
+            self.sourceWidget.removalAx.plot(self.data.t[flt],
+                                             abs(r[i, flt]),
                                              c=citer.next(),
                                              lw=LINE_WIDTH, label=name)
 
@@ -286,7 +294,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             name = str(item.text())
             rate = array(self.data.rate(name))
             
-            flt = rate > 0
+            flt = rate > RATE_THRESHOLD
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
                                           c=citer.next(),
                                           lw=LINE_WIDTH, label=name)
@@ -316,7 +324,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # if a file is selected
         if file:
             try:
-                self.load_h5file(str(file))
+                self.load_h5file(unicode(file))
                 self.setWindowTitle("%s - QtPlaskin" % file)
             except IOError:
                 QtGui.QErrorMessage(self).showMessage(
@@ -337,7 +345,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             ".", QtGui.QFileDialog.ShowDirsOnly)
 
         if fname:
-            self.data = DirectoryData(str(fname))
+            self.data = DirectoryData(unicode(fname))
             self.update_lists()
 
         # Update every 30 s
@@ -363,7 +371,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # if a file is selected
         if fname:
-            self.data.save(str(fname))
+            self.data.save(unicode(fname))
     
 
     def export_data(self):
@@ -378,7 +386,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # if a file is selected
         if fname:
-            fname = str(fname)
+            fname = unicode(fname)
             self.plot_widgets[self.tabWidget.currentIndex()].savedata(fname)
         
             
