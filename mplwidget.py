@@ -32,6 +32,18 @@ class MplCanvas(FigureCanvas):
         # notify the system of updated policy
         FigureCanvas.updateGeometry(self)
 
+# Thanks Laurent
+# http://groups.google.com/group/pyinstaller/browse_thread/thread/834bea87c7afcdff?pli=1
+class VMToolbar(NavigationToolbar): 
+    def __init__(self, plotCanvas, parent): 
+        NavigationToolbar.__init__(self, plotCanvas, parent) 
+
+    def _icon(self, name): 
+        # dirty hack to use exclusively .png and thus avoid .svg usage 
+        # because .exe generation is problematic with .svg 
+        name = name.replace('.svg','.png') 
+        return QIcon(os.path.join(self.basedir, name)) 
+
 
 
 class MplWidget(QtGui.QWidget):
@@ -47,9 +59,12 @@ class MplWidget(QtGui.QWidget):
         # Inherit fig and axes from the canvas to avoid indirections
         self.axes = self.canvas.axes
         self.fig = self.canvas.fig
-        
-        self.ntb = NavigationToolbar(self.canvas, self)
 
+        if not sys.platform in ["win32", "win64"]:
+            self.ntb = NavigationToolbar(self.canvas, self)
+        else:
+            self.ntb = VMToolbar(self.canvas, self)
+            
         # create a vertical box layout
         self.vbl = QtGui.QVBoxLayout()
 
@@ -122,7 +137,7 @@ class MplWidget(QtGui.QWidget):
                 
             np.savetxt(fout, d)
         
-        
+
 class ConditionsPlotWidget(MplWidget):
     def init_axes(self):
         self.add_axes([0.1, 0.1, 0.85, 0.85])
