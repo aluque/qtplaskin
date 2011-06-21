@@ -237,7 +237,7 @@ class DirectoryData(ModelData):
     out_density.txt
     out_rate.txt
     source_matrix.txt
-    out_temperatures.txt
+    out_condition.txt (out_temperatures.txt would also work).
     
     """
     
@@ -261,7 +261,10 @@ class DirectoryData(ModelData):
 
         super(DirectoryData, self).__init__()
 
+
     def update(self):
+        """ Reads or re-reads those files that may change during the execution.
+        """
         _raw_density = np.loadtxt(self._path('out_density.txt'), skiprows=1)
 
         i_dens = _raw_density.shape[0]
@@ -271,8 +274,13 @@ class DirectoryData(ModelData):
         self.source_matrix = np.loadtxt(self._path('source_matrix.txt'),
                                         dtype='d')
 
-        _raw_conditions = np.loadtxt(self._path('out_temperatures.txt'),
+        try:
+            _raw_conditions = np.loadtxt(self._path('out_condition.txt'),
                                      skiprows=1)
+        except IOError:
+            # This is a hack to maintain compatibility with older versions
+            _raw_conditions = np.loadtxt(self._path('out_temperatures.txt'),
+                                         skiprows=1)
 
         latest_i = min(d.shape[0] for d in
                        (_raw_density, _raw_rates, _raw_conditions))

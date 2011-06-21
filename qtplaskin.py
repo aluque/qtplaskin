@@ -1,236 +1,468 @@
-# -*- coding: utf-8 -*-
+#! /usr/bin/env python 
+import sys
+import os
+from itertools import cycle
 
-# Form implementation generated from reading ui file 'qtplaskin.ui'
-#
-# Created: Wed Jun  8 17:01:26 2011
-#      by: PyQt4 UI code generator 4.8.3
-#
-# WARNING! All changes made in this file will be lost!
+# Qt4 bindings for core Qt functionalities (non-GUI)
+from PyQt4 import QtCore
 
-from PyQt4 import QtCore, QtGui
+# Python Qt4 bindings for GUI objects
+from PyQt4 import QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+from PyQt4.QtCore import Qt
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1180, 659)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("qtplaskin.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("qtplaskin.svg")), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("qtplaskin.svg")), QtGui.QIcon.Disabled, QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        self.centralwidget = QtGui.QWidget(MainWindow)
-        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
-        self.tabWidget.setSizePolicy(sizePolicy)
-        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
-        self.tab_4 = QtGui.QWidget()
-        self.tab_4.setObjectName(_fromUtf8("tab_4"))
-        self.verticalLayout_5 = QtGui.QVBoxLayout(self.tab_4)
-        self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
-        self.horizontalLayout_5 = QtGui.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.verticalLayout_6 = QtGui.QVBoxLayout()
-        self.verticalLayout_6.setSpacing(40)
-        self.verticalLayout_6.setContentsMargins(5, 20, 5, 20)
-        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
-        self.condList = QtGui.QListWidget(self.tab_4)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.condList.sizePolicy().hasHeightForWidth())
-        self.condList.setSizePolicy(sizePolicy)
-        self.condList.setObjectName(_fromUtf8("condList"))
-        self.verticalLayout_6.addWidget(self.condList)
-        self.condButton = QtGui.QPushButton(self.tab_4)
-        self.condButton.setObjectName(_fromUtf8("condButton"))
-        self.verticalLayout_6.addWidget(self.condButton)
-        self.horizontalLayout_5.addLayout(self.verticalLayout_6)
-        self.condWidget = ConditionsPlotWidget(self.tab_4)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.condWidget.sizePolicy().hasHeightForWidth())
-        self.condWidget.setSizePolicy(sizePolicy)
-        self.condWidget.setObjectName(_fromUtf8("condWidget"))
-        self.horizontalLayout_5.addWidget(self.condWidget)
-        self.verticalLayout_5.addLayout(self.horizontalLayout_5)
-        self.tabWidget.addTab(self.tab_4, _fromUtf8(""))
-        self.tab = QtGui.QWidget()
-        self.tab.setObjectName(_fromUtf8("tab"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.tab)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.verticalLayout_3 = QtGui.QVBoxLayout()
-        self.verticalLayout_3.setSpacing(40)
-        self.verticalLayout_3.setContentsMargins(5, 20, 5, 20)
-        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.speciesList = QtGui.QListWidget(self.tab)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.speciesList.sizePolicy().hasHeightForWidth())
-        self.speciesList.setSizePolicy(sizePolicy)
-        self.speciesList.setObjectName(_fromUtf8("speciesList"))
-        self.verticalLayout_3.addWidget(self.speciesList)
-        self.plotButton = QtGui.QPushButton(self.tab)
-        self.plotButton.setObjectName(_fromUtf8("plotButton"))
-        self.verticalLayout_3.addWidget(self.plotButton)
-        self.horizontalLayout_2.addLayout(self.verticalLayout_3)
-        self.densWidget = DensityPlotWidget(self.tab)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.densWidget.sizePolicy().hasHeightForWidth())
-        self.densWidget.setSizePolicy(sizePolicy)
-        self.densWidget.setObjectName(_fromUtf8("densWidget"))
-        self.horizontalLayout_2.addWidget(self.densWidget)
-        self.tabWidget.addTab(self.tab, _fromUtf8(""))
-        self.tab_3 = QtGui.QWidget()
-        self.tab_3.setObjectName(_fromUtf8("tab_3"))
-        self.horizontalLayout_4 = QtGui.QHBoxLayout(self.tab_3)
-        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.verticalLayout_4 = QtGui.QVBoxLayout()
-        self.verticalLayout_4.setSpacing(40)
-        self.verticalLayout_4.setContentsMargins(5, 20, 5, 20)
-        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
-        self.reactList = QtGui.QListWidget(self.tab_3)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.reactList.sizePolicy().hasHeightForWidth())
-        self.reactList.setSizePolicy(sizePolicy)
-        self.reactList.setObjectName(_fromUtf8("reactList"))
-        self.verticalLayout_4.addWidget(self.reactList)
-        self.reactButton = QtGui.QPushButton(self.tab_3)
-        self.reactButton.setObjectName(_fromUtf8("reactButton"))
-        self.verticalLayout_4.addWidget(self.reactButton)
-        self.horizontalLayout_4.addLayout(self.verticalLayout_4)
-        self.reactWidget = RatePlotWidget(self.tab_3)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.reactWidget.sizePolicy().hasHeightForWidth())
-        self.reactWidget.setSizePolicy(sizePolicy)
-        self.reactWidget.setObjectName(_fromUtf8("reactWidget"))
-        self.horizontalLayout_4.addWidget(self.reactWidget)
-        self.tabWidget.addTab(self.tab_3, _fromUtf8(""))
-        self.tab_2 = QtGui.QWidget()
-        self.tab_2.setObjectName(_fromUtf8("tab_2"))
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.tab_2)
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setSpacing(40)
-        self.verticalLayout_2.setContentsMargins(5, 20, 5, 20)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.speciesSourceList = QtGui.QListWidget(self.tab_2)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.speciesSourceList.sizePolicy().hasHeightForWidth())
-        self.speciesSourceList.setSizePolicy(sizePolicy)
-        self.speciesSourceList.setObjectName(_fromUtf8("speciesSourceList"))
-        self.verticalLayout_2.addWidget(self.speciesSourceList)
-        self.sourceButton = QtGui.QPushButton(self.tab_2)
-        self.sourceButton.setObjectName(_fromUtf8("sourceButton"))
-        self.verticalLayout_2.addWidget(self.sourceButton)
-        self.horizontalLayout_3.addLayout(self.verticalLayout_2)
-        self.sourceWidget = SourcePlotWidget(self.tab_2)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sourceWidget.sizePolicy().hasHeightForWidth())
-        self.sourceWidget.setSizePolicy(sizePolicy)
-        self.sourceWidget.setObjectName(_fromUtf8("sourceWidget"))
-        self.horizontalLayout_3.addWidget(self.sourceWidget)
-        self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
-        self.horizontalLayout.addWidget(self.tabWidget)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1180, 22))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setObjectName(_fromUtf8("menuFile"))
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
-        self.menuOptions = QtGui.QMenu(self.menubar)
-        self.menuOptions.setObjectName(_fromUtf8("menuOptions"))
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionOpen = QtGui.QAction(MainWindow)
-        self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
-        self.actionQuit = QtGui.QAction(MainWindow)
-        self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
-        self.actionAbout = QtGui.QAction(MainWindow)
-        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
-        self.actionLog_scale_in_time = QtGui.QAction(MainWindow)
-        self.actionLog_scale_in_time.setCheckable(True)
-        self.actionLog_scale_in_time.setObjectName(_fromUtf8("actionLog_scale_in_time"))
-        self.actionExport_data = QtGui.QAction(MainWindow)
-        self.actionExport_data.setObjectName(_fromUtf8("actionExport_data"))
-        self.actionStart_a_simulation = QtGui.QAction(MainWindow)
-        self.actionStart_a_simulation.setObjectName(_fromUtf8("actionStart_a_simulation"))
-        self.actionImport_from_directory = QtGui.QAction(MainWindow)
-        self.actionImport_from_directory.setObjectName(_fromUtf8("actionImport_from_directory"))
-        self.actionSave = QtGui.QAction(MainWindow)
-        self.actionSave.setObjectName(_fromUtf8("actionSave"))
-        self.actionUpdate = QtGui.QAction(MainWindow)
-        self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
-        self.menuFile.addAction(self.actionOpen)
-        self.menuFile.addAction(self.actionImport_from_directory)
-        self.menuFile.addAction(self.actionExport_data)
-        self.menuFile.addAction(self.actionSave)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionUpdate)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionQuit)
-        self.menuHelp.addAction(self.actionAbout)
-        self.menuOptions.addAction(self.actionLog_scale_in_time)
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuOptions.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
+from numpy import *
 
-        self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+# import the MainWindow widget from the converted .ui files
+from mainwindow import Ui_MainWindow
+from modeldata import HDF5Data, RealtimeData, DirectoryData
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QtPlaskin", None, QtGui.QApplication.UnicodeUTF8))
-        self.condButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("MainWindow", "Overview", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Densities", None, QtGui.QApplication.UnicodeUTF8))
-        self.reactButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Reactions", None, QtGui.QApplication.UnicodeUTF8))
-        self.sourceButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Sensitivity analysis", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuOptions.setTitle(QtGui.QApplication.translate("MainWindow", "&Options", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "&Open...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "&Quit", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLog_scale_in_time.setText(QtGui.QApplication.translate("MainWindow", "Log scale in time", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionExport_data.setText(QtGui.QApplication.translate("MainWindow", "Export data...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionStart_a_simulation.setText(QtGui.QApplication.translate("MainWindow", "Start a simulation...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionImport_from_directory.setText(QtGui.QApplication.translate("MainWindow", "Import from directory...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionImport_from_directory.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave.setText(QtGui.QApplication.translate("MainWindow", "Save...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionUpdate.setText(QtGui.QApplication.translate("MainWindow", "Update", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionUpdate.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
+COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
+                "#ff55ff", "#008800", "#8d0ade",
+                "#7f7f00", "#777777",
+                "#444400", "#7777ff", "#77ff77"]
+LINE_WIDTH = 1.7
 
-from mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
+# We do not plot densities or rates below these thresholds
+DENS_THRESHOLD = 1e-5
+RATE_THRESHOLD = 1e-5
+
+class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
+    """Customization for Qt Designer created window"""
+    def __init__(self, parent = None):
+        # initialization of the superclass
+        super(DesignerMainWindow, self).__init__(parent)
+        # setup the GUI --> function generated by pyuic4
+        self.setupUi(self)
+
+        # In some lists we can select more than one item
+        self.speciesList.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection)
+        self.reactList.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection)
+        
+        self.plot_widgets = [self.condWidget,
+                             self.densWidget,
+                             self.reactWidget,
+                             self.sourceWidget]
+        
+        self.update_timer = QtCore.QTimer()
+
+        # connect the signals with the slots
+        QtCore.QObject.connect(self.condButton, 
+                               QtCore.SIGNAL("clicked()"),
+                               self.update_cond_graph)
+
+        QtCore.QObject.connect(self.plotButton, 
+                               QtCore.SIGNAL("clicked()"),
+                               self.update_spec_graph)
+
+        QtCore.QObject.connect(self.sourceButton, 
+                               QtCore.SIGNAL("clicked()"),
+                               self.update_source_graph)
+
+        QtCore.QObject.connect(self.reactButton, 
+                               QtCore.SIGNAL("clicked()"),
+                               self.update_react_graph)
+
+        QtCore.QObject.connect(self.actionOpen, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.select_file)
+
+        QtCore.QObject.connect(self.actionStart_a_simulation, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.start_a_simulation)
+
+        QtCore.QObject.connect(self.actionImport_from_directory, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.import_from_directory)
+
+        QtCore.QObject.connect(self.actionUpdate, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.data_update)
+
+        QtCore.QObject.connect(self.actionExport_data, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.export_data)
+
+        QtCore.QObject.connect(self.actionSave, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.save_to_file)
+
+        QtCore.QObject.connect(self.actionLog_scale_in_time, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.action_set_logtime)
+
+        QtCore.QObject.connect(self.actionQuit, 
+                               QtCore.SIGNAL('triggered()'), 
+                               QtGui.qApp, QtCore.SLOT("quit()"))
+    
+        QtCore.QObject.connect(self.update_timer,
+                               QtCore.SIGNAL("timeout()"),
+                               self.data_update)
+
+    @property
+    def xscale(self):
+        if self.actionLog_scale_in_time.isChecked():
+            return 'log'
+        else:
+            return 'linear'
+        
+    def update_cond_graph(self):
+        """Updates the graph with densities"""
+
+        ylabels = {
+            'gas_temperature':
+            "Gas temperature [K]",
+            'reduced_frequency':
+            "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
+            'reduced_field':
+            "Reduced field E/N [Td]",
+            'elec_temperature':
+            "Electron temperature [K]",
+            'elec_drift_velocity':
+            "Electron drift velocity [cm/s]",
+            'elec_diff_coeff':
+            "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
+            'elec_frequency_n':
+            "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_n':
+            "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_elastic_n':
+            "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_inelastic_n':
+            "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
+
+        try:
+            condition = str(self.condList.currentItem().text())
+        except AttributeError:
+            return
+
+        # clear the Axes
+        if not self.condWidget.axes:
+            self.condWidget.init_axes()
+        else:
+            self.condWidget.clear()
+
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+        
+        y = array(self.data.condition(condition))
+        flt = y > 0
+        self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
+                                     label=ylabels.get(condition, condition))
+
+        self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
+        self.condWidget.axes[0].set_xlabel("t [s]")
+        self.condWidget.axes[0].set_ylabel(ylabels.get(condition, condition))
+
+        # force an image redraw
+        self.condWidget.draw()
+        
+        QtGui.QApplication.restoreOverrideCursor()
+
+
+    def update_spec_graph(self):
+        """Updates the graph with densities"""
+        # clear the Axes
+        if not self.speciesList.selectedItems():
+            return
+
+        if not self.densWidget.axes:
+            self.densWidget.init_axes()
+        else:
+            self.densWidget.clear()
+
+        
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+        self.data.flush()
+        citer = cycle(COLOR_SERIES)
+        
+        for item in self.speciesList.selectedItems():
+            name = unicode(item.text())
+            dens = self.data.density(name)
+            flt = dens > DENS_THRESHOLD
+            self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
+                                         lw=LINE_WIDTH,
+                                         c=citer.next(), label=name)
+
+        self.densWidget.set_scales(yscale='log', xscale=self.xscale)
+        self.densWidget.axes[0].set_xlabel("t [s]")
+        self.densWidget.axes[0].set_ylabel("Density [cm$^\mathdefault{-3}$]")
+        self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
+
+        # force an image redraw
+        self.densWidget.draw()
+
+        QtGui.QApplication.restoreOverrideCursor()
+
+
+    def update_source_graph(self):
+        """Updates the graph with sources rates"""
+        try:
+            species = unicode(self.speciesSourceList.currentItem().text())
+        except AttributeError:
+            return
+        
+        # clear the Axes
+        if not self.sourceWidget.axes:
+            self.sourceWidget.init_axes()
+        else:
+            self.sourceWidget.clear()
+
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+        
+        dreactions = self.data.sources(species)
+        reactions = dreactions.keys()
+        
+        r = zeros((len(reactions), len(self.data.t)))
+        for i, react in enumerate(reactions):
+            r[i, :] = dreactions[react]
+            
+        # Find the reactions that are at some point at least a delta of the total
+        delta = 0.1
+
+        spos = nanmax(where(r > 0, r, 0), axis=0)
+        fpos = r / spos
+
+        # This is b.c. numpy does not provide a nanargsort
+        fpos = where(isfinite(fpos), fpos, 0)
+        
+        sneg = nanmin(where(r < 0, r, 0), axis=0)
+        fneg = r / sneg
+        
+        # This is b.c. numpy does not provide a nanargsort
+        fneg = where(isfinite(fneg), fneg, 0)
+
+        icreation = select_rates(fpos, delta)
+        idestruct = select_rates(fneg, delta)
+
+        citer = cycle(COLOR_SERIES)
+        for i in icreation:
+            name = reactions[i]
+            flt = abs(r[i, :]) > RATE_THRESHOLD
+            self.sourceWidget.creationAx.plot(self.data.t[flt],
+                                              abs(r[i, flt]),
+                                              c=citer.next(),
+                                              lw=LINE_WIDTH, label=name)
+
+        citer = cycle(COLOR_SERIES)
+        for i in idestruct:
+            name = reactions[i]
+            flt = abs(r[i, :]) > RATE_THRESHOLD
+            self.sourceWidget.removalAx.plot(self.data.t[flt],
+                                             abs(r[i, flt]),
+                                             c=citer.next(),
+                                             lw=LINE_WIDTH, label=name)
+
+        self.sourceWidget.creationAx.set_ylabel(
+            "Creation [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+        self.sourceWidget.creationAx.legend(loc=(1.05, 0.0),
+                                            prop=dict(size=9))
+
+
+        self.sourceWidget.removalAx.set_ylabel(
+            "Removal [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+        self.sourceWidget.removalAx.set_xlabel("t [s]")
+
+        self.sourceWidget.removalAx.legend(loc=(1.05, 0.0),
+                                           prop=dict(size=9))
+
+        
+        self.sourceWidget.set_scales(yscale='log', xscale=self.xscale)
+
+        # force an image redraw
+        self.sourceWidget.draw()
+
+        QtGui.QApplication.restoreOverrideCursor()
+
+
+    def update_react_graph(self):
+        """Updates the graph with reaction rates"""
+        if not self.reactList.selectedItems():
+            return
+        
+        # clear the Axes
+        if not self.reactWidget.axes:
+            self.reactWidget.init_axes()
+        else:
+            self.reactWidget.clear()
+
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+
+        citer = cycle(COLOR_SERIES)
+        for item in self.reactList.selectedItems():
+            name = str(item.text())
+            rate = array(self.data.rate(name))
+            
+            flt = rate > RATE_THRESHOLD
+            self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
+                                          c=citer.next(),
+                                          lw=LINE_WIDTH, label=name)
+
+        self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
+            
+        self.reactWidget.axes[0].set_xlabel("t [s]")
+        self.reactWidget.axes[0].set_ylabel(
+            "Rate [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+        self.reactWidget.axes[0].legend(loc=(1.025, 0.0),
+                                        prop=dict(size=8))
+
+        # force an image redraw
+        self.reactWidget.draw()
+
+        QtGui.QApplication.restoreOverrideCursor()
+
+
+
+    def select_file(self):
+        """opens a file select dialog"""
+        # open the dialog and get the selected file
+        file = QtGui.QFileDialog.getOpenFileName(self, "Open data file",
+                                                 ".",
+                                                 "HDF5 files (*.h5 *.hdf5);;"
+                                                 "All files (*)")
+        # if a file is selected
+        if file:
+            try:
+                self.load_h5file(unicode(file))
+                self.setWindowTitle("%s - QtPlaskin" % file)
+            except IOError:
+                QtGui.QErrorMessage(self).showMessage(
+                    "Failed to open file.  Incorrect format?")
+                
+
+    def start_a_simulation(self):
+        self.data = RealtimeData('fpr_1', 'init_species.dat',
+                                 'field_constant.tsv',
+                                 max_dt=10e-3)
+        self.update_lists()
+
+
+    def import_from_directory(self):
+        
+        fname = QtGui.QFileDialog.getExistingDirectory(
+            self, "Import data from directory",
+            ".", QtGui.QFileDialog.ShowDirsOnly)
+
+        if fname:
+            self.data = DirectoryData(unicode(fname))
+            self.update_lists()
+
+        # Update every 30 s
+        # self.update_timer.start(10000)
+
+
+    def data_update(self):
+        self.data.update()
+        
+        self.update_cond_graph()
+        self.update_spec_graph()
+        self.update_source_graph()
+        self.update_react_graph()
+        
+    
+    def save_to_file(self):
+        """opens a file select dialog"""
+        # open the dialog and get the selected file
+        fname = QtGui.QFileDialog.getSaveFileName(self, "Save to file",
+                                                  ".",
+                                                  "HDF5 files (*.h5 *.hdf5);;"
+                                                  "All files (*)")
+
+        # if a file is selected
+        if fname:
+            self.data.save(unicode(fname))
+    
+
+    def export_data(self):
+        """opens a file select dialog"""
+        # open the dialog and get the selected file
+        fname = QtGui.QFileDialog.getSaveFileName(self, "Export data to file",
+                                                  ".",
+                                                  "TSV files (*.tsv);;"
+                                                  "TXT files (*.txt);;"
+                                                  "DAT files (*.dat);;"
+                                                  "All files (*)")
+
+        # if a file is selected
+        if fname:
+            fname = unicode(fname)
+            self.plot_widgets[self.tabWidget.currentIndex()].savedata(fname)
+        
+            
+    def action_set_logtime(self):
+        for w in self.plot_widgets:
+            w.set_scales(xscale=self.xscale, redraw=True)
+        
+
+    def load_h5file(self, file):
+        self.data = HDF5Data(file)
+        self.update_lists()
+        
+
+    def update_lists(self):
+        self.species = sorted(self.data.species)
+        self.reactions = sorted(self.data.reactions)
+        self.conditions = sorted(self.data.conditions)
+
+        self.speciesList.clear()
+        self.speciesList.addItems(self.species)
+
+        self.speciesSourceList.clear()
+        self.speciesSourceList.addItems(self.species)
+
+        self.reactList.clear()
+        self.reactList.addItems(self.reactions)
+
+        self.condList.clear()
+        self.condList.addItems(self.conditions)
+        
+        
+
+    def parse_file(self, filename):
+        pass
+
+
+def select_rates(f, delta, max_rates=4, min_rates=0):
+    fmax = nanmax(f, axis=1)
+    
+    asort = argsort(-fmax)
+    n = len(asort)
+
+    # We always select at least the highest min_rates.
+    highest = asort[:min_rates]
+
+    if n < max_rates:
+        return highest
+
+    # From the rest, we select those larger than delta, but not more
+    # than max_rates
+    p = asort[min_rates:max_rates]
+    rest = p[fmax[p] > delta]
+
+    if n == max_rates:
+        return r_[highest, rest]
+
+    # We should never leave aside rates that at some point are very
+    # important, even if they fall outside max_rates
+    p = asort[max_rates:]
+    rest2 = p[fmax[p] > (1 - delta)]
+    return r_[highest, rest, rest2]
+    
+
+    
+
+
+# create the GUI application
+app = QtGui.QApplication(sys.argv)
+
+# instantiate the main window
+dmw = DesignerMainWindow()
+
+# show it
+dmw.show()
+dmw.raise_()
+
+# start the Qt main loop execution, exiting from this script
+# with the same return code of Qt application
+sys.exit(app.exec_())

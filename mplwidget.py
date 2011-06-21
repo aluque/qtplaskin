@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 # Python Qt4 bindings for GUI objects
