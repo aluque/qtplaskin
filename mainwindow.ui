@@ -15,9 +15,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>qtplaskin.svg</normaloff>
-    <normalon>qtplaskin.svg</normalon>
-    <disabledoff>qtplaskin.svg</disabledoff>qtplaskin.svg</iconset>
+    <normaloff>qtplaskin2.png</normaloff>
+    <normalon>qtplaskin2.png</normalon>
+    <disabledoff>qtplaskin2.png</disabledoff>qtplaskin2.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">

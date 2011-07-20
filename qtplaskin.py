@@ -19,13 +19,13 @@ from modeldata import HDF5Data, RealtimeData, DirectoryData
 
 COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
                 "#ff55ff", "#008800", "#8d0ade",
-                "#7f7f00", "#777777",
-                "#444400", "#7777ff", "#77ff77"]
+                "#33bbcc", "#000000", "#444400",
+                "#7777ff", "#77ff77"]
 LINE_WIDTH = 1.7
 
 # We do not plot densities or rates below these thresholds
-DENS_THRESHOLD = 1e-5
-RATE_THRESHOLD = 1e-5
+DENS_THRESHOLD = 1e-10
+RATE_THRESHOLD = 1e-20
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -149,7 +149,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         y = array(self.data.condition(condition))
         flt = y > 0
         self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                     label=ylabels.get(condition, condition))
+                                     label=ylabels.get(condition, condition),
+                                     zorder=10)
 
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
         self.condWidget.axes[0].set_xlabel("t [s]")
@@ -183,7 +184,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             flt = dens > DENS_THRESHOLD
             self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
                                          lw=LINE_WIDTH,
-                                         c=citer.next(), label=name)
+                                         c=citer.next(), label=name,
+                                         zorder=10)
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -243,7 +245,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.sourceWidget.creationAx.plot(self.data.t[flt],
                                               abs(r[i, flt]),
                                               c=citer.next(),
-                                              lw=LINE_WIDTH, label=name)
+                                              lw=LINE_WIDTH, label=name,
+                                              zorder=10)
 
         citer = cycle(COLOR_SERIES)
         for i in idestruct:
@@ -252,16 +255,17 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.sourceWidget.removalAx.plot(self.data.t[flt],
                                              abs(r[i, flt]),
                                              c=citer.next(),
-                                             lw=LINE_WIDTH, label=name)
+                                             lw=LINE_WIDTH, label=name,
+                                             zorder=10)
 
         self.sourceWidget.creationAx.set_ylabel(
-            "Creation [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+            "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
         self.sourceWidget.creationAx.legend(loc=(1.05, 0.0),
                                             prop=dict(size=9))
 
 
         self.sourceWidget.removalAx.set_ylabel(
-            "Removal [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+            "Losses [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
         self.sourceWidget.removalAx.set_xlabel("t [s]")
 
         self.sourceWidget.removalAx.legend(loc=(1.05, 0.0),
@@ -297,7 +301,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             flt = rate > RATE_THRESHOLD
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
                                           c=citer.next(),
-                                          lw=LINE_WIDTH, label=name)
+                                          lw=LINE_WIDTH, label=name,
+                                          zorder=10)
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             
@@ -347,7 +352,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if fname:
             self.data = DirectoryData(unicode(fname))
             self.update_lists()
-
+            self.clear()
+            
         # Update every 30 s
         # self.update_timer.start(10000)
 
@@ -398,6 +404,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def load_h5file(self, file):
         self.data = HDF5Data(file)
         self.update_lists()
+        self.clear()
         
 
     def update_lists(self):
@@ -418,7 +425,11 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.condList.addItems(self.conditions)
         
         
-
+    def clear(self):
+        for w in self.plot_widgets:
+            w.clear()
+        
+        
     def parse_file(self, filename):
         pass
 
@@ -432,14 +443,14 @@ def select_rates(f, delta, max_rates=4, min_rates=0):
     # We always select at least the highest min_rates.
     highest = asort[:min_rates]
 
-    if n < max_rates:
-        return highest
+    # if n < max_rates:
+    #    return highest
 
     # From the rest, we select those larger than delta, but not more
     # than max_rates
     p = asort[min_rates:max_rates]
     rest = p[fmax[p] > delta]
-
+    
     if n == max_rates:
         return r_[highest, rest]
 

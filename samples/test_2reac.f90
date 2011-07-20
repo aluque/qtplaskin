@@ -21,8 +21,10 @@ program test_2reac
                                  density_ini_ar   = 2.5d19,  & ! initial Ar density, cm-3
                                  density_ini_elec = 1.0d0      ! initial electron density, cm-3
   double precision            :: time  = 0.0d0, time_end = 3.0d-7, dtime = 1.0d-8 ! times, s
+  double precision            :: elec_temperature
   integer                     :: i
-  double precision, allocatable :: reaction_rates(:), source_terms_matrix(species_max,reactions_max)
+
+  double precision, allocatable :: reaction_rates(:), source_matrix(:, :)
 
 !
 ! print
@@ -87,7 +89,7 @@ program test_2reac
 !
 ! For the sensitivity analysis we must know how reaction i affects species j.
 ! We could save that information for each reaction, each species and each
-! time but that would be extremely wasteful.  Instead, we save from at the 
+! time but that would be extremely wasteful.  Instead, we save at the 
 ! beginning a matrix with the stechiometric coefficient of each reaction and
 ! species.  This is accomplished by artificially giving each reaction rate
 ! a value of one and calling ZDPlasKin_reac_source_matrix.
@@ -107,7 +109,7 @@ program test_2reac
 !-------------------------------------------------------
 !
 ! Print file headers 
-! Note that the first line is simply ignored by qtplaskin, so this is only
+! Note that the first line is simply ignored by qtplaskin, so it serves only
 ! to help humans inspect the files.
 
   open(1,file='out_density.txt')
@@ -138,11 +140,13 @@ program test_2reac
     where (density < 1.0d-40) density = 0.0d0
     
     write(1,'(99(1pe12.4))') time, density(:)
-    write(2,'(4(1pe12.4))') time, EN, gas_temperature, tempelec
+    call ZDPlaskin_get_conditions(elec_temperature=elec_temperature)
+    write(2,'(4(1pe12.4))') time, reduced_field, gas_temperature, elec_temperature
     call ZDPlasKin_get_rates(reaction_rates=reaction_rates)
     write(3,'(999(1pe12.4))') time, reaction_rates(:)
     
-    ! These flushes here are needed to keep all files in sync.
+    ! These flushes here are needed to keep all files in sync, allowing
+    ! runtime readings by qtplaskin
     flush(1)
     flush(2)
     flush(3)

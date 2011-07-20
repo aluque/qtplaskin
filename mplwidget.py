@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 
 # Python Qt4 bindings for GUI objects
@@ -43,7 +44,7 @@ class VMToolbar(NavigationToolbar):
         # dirty hack to use exclusively .png and thus avoid .svg usage 
         # because .exe generation is problematic with .svg 
         name = name.replace('.svg','.png') 
-        return QIcon(os.path.join(self.basedir, name)) 
+        return QtGui.QIcon(os.path.join(self.basedir, name)) 
 
 
 

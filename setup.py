@@ -1,5 +1,5 @@
-#from distutils.core import setup
-from setuptools import setup
+from distutils.core import setup
+#from setuptools import setup
 
 import matplotlib
 try:
@@ -19,7 +19,7 @@ PY2APP_OPTIONS = {
     #              'PyQt4.QtOpenGL', 'PyQt4.QtScript', 'PyQt4.QtSql',
     #              'PyQt4.QtTest', 'PyQt4.QtWebKit', 'PyQt4.QtXml',
     #              'PyQt4.phonon'],
-    'resources': ['qtplaskin.svg', '/opt/local/lib/Resources/qt_menu.nib',
+    'resources': ['qtplaskin2.png', '/opt/local/lib/Resources/qt_menu.nib',
                   'modeldata.py', 'mainwindow.py', 'zdplaskin.py',
                   'runner.py', 'mplwidget.py'],
     }
