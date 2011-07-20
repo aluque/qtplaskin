@@ -7,6 +7,11 @@ with
 
 > sudo apt-get install python-numpy python-scipy python-h5py python-qt4 python-matplotlib
 
+After that you can uncompress the source distribution, move to the
+directory qtplaskin-(version) and run qtplaskin with
+
+> python qtplaskin
+
 
 MAC OS X
 --------
@@ -29,6 +34,21 @@ required libraries with Mac Ports.  You have to
   After that you may want to select version 2.7 as the default python:
   
   sudo port select python python27
+
+Once all the libraries are correctly installed you have two ways to
+run qtplaskin:
+
+1. Use the source distribution and use the command line (see above, in
+   the LINUX section).
+
+or
+
+2. Run the bundled application QtPlaskin.app.  Note that this is still
+   requires that you have installed all libraries.  In the future we
+   expect to bundle the required libraries inside QtPlaskin.app, but
+   this is not working yet.
+
+
 
 
 WINDOWS
