@@ -10,7 +10,7 @@ with
 After that you can uncompress the source distribution, move to the
 directory qtplaskin-(version) and run qtplaskin with
 
-> python qtplaskin
+> python qtplaskin.py
 
 
 MAC OS X
@@ -53,15 +53,26 @@ or
 
 WINDOWS
 -------
+You have two options to run this software under Windows:
 
-QtPlaskin works also under windows but it has not been throughly tested.
-You need to install the dependencies by hand.  This sofware needs to be installed (in brackets we provide the version that has been succesfully tested; others may work too):
+1. [RECOMMENDED] Use the provided qtplaskin-win.zip.
+   You only have to uncompress the file and run the qtplaskin.exe file
+   inside.
+ 
+or
 
-* Python [2.7] (http://www.python.org/download/releases/2.7.1/)
-* Numpy [1.5.1] (http://sourceforge.net/projects/numpy/files/NumPy/)
-* SciPy [0.9.0] (http://sourceforge.net/projects/scipy/files/scipy/)
-* PyQt4 [binary installer, 4.8.4.1-1] (http://www.riverbankcomputing.co.uk/software/pyqt/download)
-* h5py [1.3.1] (http://code.google.com/p/h5py/downloads/list)
-* matplotlib [1.0.1] (http://sourceforge.net/projects/matplotlib/files/matplotlib/matplotlib-1.0.1/)
+2. Install the dependencies by hand.  This sofware needs to be
+   installed (in brackets we provide the version that has been
+   succesfully tested; others may work too):
 
+   * Python [2.7] (http://www.python.org/download/releases/2.7.1/)
+   * Numpy [1.5.1] (http://sourceforge.net/projects/numpy/files/NumPy/)
+   * SciPy [0.9.0] (http://sourceforge.net/projects/scipy/files/scipy/)
+   * PyQt4 [binary installer, 4.8.4.1-1] (http://www.riverbankcomputing.co.uk/software/pyqt/download)
+   * h5py [1.3.1] (http://code.google.com/p/h5py/downloads/list)
+   * matplotlib [1.0.1] (http://sourceforge.net/projects/matplotlib/files/matplotlib/matplotlib-1.0.1/)
 
+   After these dependencies have been installed, you can use the
+   source distribution to run qtplaskin as explained in the LINUX section.
+
+  
