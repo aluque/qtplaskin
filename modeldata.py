@@ -240,20 +240,14 @@ class DirectoryData(ModelData):
     out_condition.txt (out_temperatures.txt would also work).
     
     """
-    
+
     def __init__(self, dirname):
         self.dirname = dirname
 
-        with open(self._path('species_list.txt')) as fp:
-            self.species = [s.strip() for s in fp.read().strip().split('\n')]
+        self.species = self._read_list('qt_species_list.txt')
+        self.reactions = self._read_list('qt_reactions_list.txt')
+        self.conditions = self._read_list('qt_conditions_list.txt')
 
-        with open(self._path('reactions_list.txt')) as fp:
-            self.reactions = [s.strip() for s in fp.read().strip().split('\n')]
-
-        with open(self._path('conditions_list.txt')) as fp:
-            self.conditions = [s.strip() for s in fp.read().strip().split('\n')]
-
-        
         self.n_species = len(self.species)
         self.n_reactions = len(self.reactions)
 
@@ -261,26 +255,29 @@ class DirectoryData(ModelData):
 
         super(DirectoryData, self).__init__()
 
+    def _read_list(self, fname, ignore_enum=True):
+        with open(self._path(fname)) as fp:
+            r = [s.strip() for s in fp.read().strip().split('\n')]
+
+        if ignore_enum:
+            r = [' '.join(s.split()[1:]) for s in r]
+
+        return r
 
     def update(self):
         """ Reads or re-reads those files that may change during the execution.
         """
-        _raw_density = np.loadtxt(self._path('out_density.txt'), skiprows=1)
+        _raw_density = np.loadtxt(self._path('qt_densities.txt'), skiprows=1)
 
         i_dens = _raw_density.shape[0]
 
-        _raw_rates = np.loadtxt(self._path('out_rate.txt'), skiprows=1)
+        _raw_rates = np.loadtxt(self._path('qt_rates.txt'), skiprows=1)
 
-        self.source_matrix = np.loadtxt(self._path('source_matrix.txt'),
+        self.source_matrix = np.loadtxt(self._path('qt_matrix.txt'),
                                         dtype='d')
 
-        try:
-            _raw_conditions = np.loadtxt(self._path('out_condition.txt'),
+        _raw_conditions = np.loadtxt(self._path('qt_conditions.txt'),
                                      skiprows=1)
-        except IOError:
-            # This is a hack to maintain compatibility with older versions
-            _raw_conditions = np.loadtxt(self._path('out_temperatures.txt'),
-                                         skiprows=1)
 
         latest_i = min(d.shape[0] for d in
                        (_raw_density, _raw_rates, _raw_conditions))
