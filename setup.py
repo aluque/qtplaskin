@@ -54,7 +54,7 @@ elif sys.argv[1] == 'py2app':
     from setuptools import setup
     setup(
         name="QtPlaskin",
-        version="0.4",
+        version="0.2",
         app=APP,
         options={'py2app': PY2APP_OPTIONS,
                  'py2exe': PY2EXE_OPTIONS},
