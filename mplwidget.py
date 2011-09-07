@@ -62,7 +62,11 @@ class MplWidget(QtGui.QWidget):
         self.axes = self.canvas.axes
         self.fig = self.canvas.fig
 
-        if not sys.platform in ["win32", "win64"]:
+        # When we pack the application with py2exe or py2app .svg graphics
+        # do not work because the require qt4 plugins that are not properly
+        # packaged.  So we use this woraround, effective at all times in windows
+        # and macosx.  
+        if not sys.platform in ["win32", "win64", "darwin"]:
             self.ntb = NavigationToolbar(self.canvas, self)
         else:
             self.ntb = VMToolbar(self.canvas, self)
@@ -103,7 +107,8 @@ class MplWidget(QtGui.QWidget):
             ax.clear()
 
         self.grid()
-            
+        self.draw()
+        
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
             if xscale is not None:

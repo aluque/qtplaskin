@@ -15,7 +15,7 @@ from numpy import *
 
 # import the MainWindow widget from the converted .ui files
 from mainwindow import Ui_MainWindow
-from modeldata import HDF5Data, RealtimeData, DirectoryData
+from modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
 
 COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
                 "#ff55ff", "#008800", "#8d0ade",
@@ -331,9 +331,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 self.load_h5file(unicode(file))
                 self.setWindowTitle("%s - QtPlaskin" % file)
-            except IOError:
+
+                self.update_lists()
+                self.clear()
+
+            except IOError as e:
                 QtGui.QErrorMessage(self).showMessage(
-                    "Failed to open file.  Incorrect format?")
+                    "Failed to open file.  Incorrect format? <%s>" % e)
                 
 
     def start_a_simulation(self):
@@ -350,10 +354,19 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             ".", QtGui.QFileDialog.ShowDirsOnly)
 
         if fname:
-            self.data = DirectoryData(unicode(fname))
-            self.update_lists()
-            self.clear()
-            
+            try:
+                try:
+                    self.data = DirectoryData(unicode(fname))
+                except IOError:
+                    self.data = OldDirectoryData(unicode(fname))
+
+                self.setWindowTitle("%s - QtPlaskin" % fname)
+                self.update_lists()
+                self.clear()
+            except IOError as e:
+                QtGui.QErrorMessage(self).showMessage(
+                    "Failed to open directory (%s).\n" % str(e))
+                
         # Update every 30 s
         # self.update_timer.start(10000)
 
