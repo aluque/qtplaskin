@@ -357,14 +357,25 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 try:
                     self.data = DirectoryData(unicode(fname))
-                except IOError:
+                except IOError as e:
+                    em = QtGui.QErrorMessage(self)
+                    em.setModal(True)
+                    em.showMessage(
+                        ("Failed to open directory (%s).\n" % str(e))
+                        + "I will try now to import files in deprecated format.")
+                    # If we do not call exec_ here, two dialogs may appear at
+                    # the same time, confusing the user.
+                    em.exec_()
                     self.data = OldDirectoryData(unicode(fname))
 
                 self.setWindowTitle("%s - QtPlaskin" % fname)
                 self.update_lists()
                 self.clear()
             except IOError as e:
-                QtGui.QErrorMessage(self).showMessage(
+                em = QtGui.QErrorMessage(self)
+                em.setModal(True)
+                em.exec_()
+                em.showMessage(
                     "Failed to open directory (%s).\n" % str(e))
                 
         # Update every 30 s

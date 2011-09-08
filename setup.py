@@ -40,6 +40,8 @@ PY2EXE_OPTIONS = {
     "dll_excludes": ["MSVCP90.dll"],
     "includes": ["sip", "h5py.*"]}
 
+shutil.rmtree('dist')
+
 if sys.argv[1] == 'py2exe':
     from distutils.core import setup
     setup(

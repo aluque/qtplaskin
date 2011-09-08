@@ -35,19 +35,11 @@ required libraries with Mac Ports.  You have to
   
   sudo port select python python27
 
-Once all the libraries are correctly installed you have two ways to
-run qtplaskin:
+Once all the libraries are correctly installed you should download the 
+source distribution and use the command line (see above, in the LINUX section).
 
-1. Use the source distribution and use the command line (see above, in
-   the LINUX section).
-
-or
-
-2. Run the bundled application QtPlaskin.app.  Note that this is still
-   requires that you have installed all libraries.  In the future we
-   expect to bundle the required libraries inside QtPlaskin.app, but
-   this is not working yet.
-
+Alternatively, you can use the bundled app in the QtPlaskin.dmg file
+(this is being tested right now, it may not work).
 
 
 
