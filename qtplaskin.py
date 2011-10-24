@@ -25,7 +25,7 @@ LINE_WIDTH = 1.7
 
 # We do not plot densities or rates below these thresholds
 DENS_THRESHOLD = 1e-10
-RATE_THRESHOLD = 1e-20
+QRATE_THRESHOLD = 1e-20
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -40,7 +40,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QAbstractItemView.ExtendedSelection)
         self.reactList.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
-        
+        self.reactList.horizontalHeader().setVisible(True)
+
         self.plot_widgets = [self.condWidget,
                              self.densWidget,
                              self.reactWidget,
@@ -442,8 +443,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.speciesSourceList.clear()
         self.speciesSourceList.addItems(self.species)
 
-        self.reactList.clear()
-        self.reactList.addItems(self.reactions)
+        #self.reactList.clear()
+        for i, reaction in enumerate(self.reactions):
+            self.reactList.insertRow(0)
+            self.reactList.setItem(0, 0, QtGui.QTableWidgetItem(str(i)))
+            self.reactList.setItem(0, 1, QtGui.QTableWidgetItem(reaction))
+            
+        #self.reactList.addItems(self.reactions)
 
         self.condList.clear()
         self.condList.addItems(self.conditions)
