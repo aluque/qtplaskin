@@ -255,22 +255,26 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         citer = cycle(COLOR_SERIES)
         for i in icreation:
-            name = self.reactions[reactions[i] - 1]
+            name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
             self.sourceWidget.creationAx.plot(self.data.t[flt],
                                               abs(r[i, flt]),
                                               c=citer.next(),
-                                              lw=LINE_WIDTH, label=name,
+                                              lw=LINE_WIDTH,
+                                              label="[%d] %s" % (reactions[i] + 1,
+                                                               name),
                                               zorder=10)
 
         citer = cycle(COLOR_SERIES)
         for i in idestruct:
-            name = self.reactions[reactions[i] - 1]
+            name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
             self.sourceWidget.removalAx.plot(self.data.t[flt],
                                              abs(r[i, flt]),
                                              c=citer.next(),
-                                             lw=LINE_WIDTH, label=name,
+                                             lw=LINE_WIDTH,
+                                             label="[%d] %s" % (reactions[i] + 1,
+                                                              name),
                                              zorder=10)
 
         self.sourceWidget.creationAx.set_ylabel(
@@ -316,7 +320,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             flt = rate > RATE_THRESHOLD
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
                                           c=citer.next(),
-                                          lw=LINE_WIDTH, label=name,
+                                          lw=LINE_WIDTH,
+                                          label="[%d] %s" % (item[0],
+                                                           name),
                                           zorder=10)
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
@@ -448,9 +454,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def update_lists(self):
 
-        self.species = sorted(self.data.species)
-        self.reactions = sorted(self.data.reactions)
-        self.conditions = sorted(self.data.conditions)
+        #self.species = sorted(self.data.species)
+        #self.reactions = sorted(self.data.reactions)
+        #self.conditions = sorted(self.data.conditions)
 
         def _populate(qtable, list, pretty_names={}):
             for i in xrange(qtable.rowCount()):
