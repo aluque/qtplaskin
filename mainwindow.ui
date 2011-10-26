@@ -13,12 +13,6 @@
   <property name="windowTitle">
    <string>QtPlaskin</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>qtplaskin2.png</normaloff>
-    <normalon>qtplaskin2.png</normalon>
-    <disabledoff>qtplaskin2.png</disabledoff>qtplaskin2.png</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -32,7 +26,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
@@ -59,13 +53,65 @@
                <number>20</number>
               </property>
               <item>
-               <widget class="QListWidget" name="condList">
+               <widget class="QTableWidget" name="condList">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>40</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>20</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>10</number>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>#</string>
+                 </property>
+                 <property name="foreground">
+                  <brush brushstyle="NoBrush">
+                   <color alpha="255">
+                    <red>109</red>
+                    <green>109</green>
+                    <blue>109</blue>
+                   </color>
+                  </brush>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Condition</string>
+                 </property>
+                </column>
                </widget>
               </item>
               <item>
@@ -114,13 +160,53 @@
              <number>20</number>
             </property>
             <item>
-             <widget class="QListWidget" name="speciesList">
+             <widget class="QTableWidget" name="speciesList">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="showGrid">
+               <bool>false</bool>
+              </property>
+              <property name="sortingEnabled">
+               <bool>true</bool>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>40</number>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>10</number>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>#</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Species</string>
+               </property>
+              </column>
              </widget>
             </item>
             <item>
@@ -174,6 +260,49 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="showGrid">
+               <bool>false</bool>
+              </property>
+              <property name="sortingEnabled">
+               <bool>true</bool>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>40</number>
+              </attribute>
+              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>10</number>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>#</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Signature</string>
+               </property>
+              </column>
              </widget>
             </item>
             <item>
@@ -220,13 +349,56 @@
              <number>20</number>
             </property>
             <item>
-             <widget class="QListWidget" name="speciesSourceList">
+             <widget class="QTableWidget" name="speciesSourceList">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="showGrid">
+               <bool>false</bool>
+              </property>
+              <property name="sortingEnabled">
+               <bool>true</bool>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>40</number>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>10</number>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>#</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Species</string>
+               </property>
+              </column>
              </widget>
             </item>
             <item>
@@ -262,7 +434,7 @@
      <x>0</x>
      <y>0</y>
      <width>1180</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

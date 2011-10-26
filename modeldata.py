@@ -38,29 +38,30 @@ class ModelData(object):
         g.attrs['timestamp'] = time.ctime()
 
         cond = g.create_group('condition')
-        for k in self.conditions:
-            cond.create_dataset(k, data=self.condition(k), compression='gzip')
-
+        for i, condition in enumerate(self.conditions):
+            ds = cond.create_dataset('%.4d' % (i + 1),
+                                data=self.condition(i + 1), compression='gzip')
+            ds.attrs['name'] = condition
+            
         dens = g.create_group('density')
 
         for i, species in enumerate(self.species):
             print "Writing density of species `%s'" % species
-            ds = dens.create_dataset(species, data=self.density(species),
+            ds = dens.create_dataset('%.4d' % (i + 1), data=self.density(i + 1),
                                      compression='gzip')
-            ds.attrs['index'] = [i,]
+            ds.attrs['name'] = species
             
         dens = g.create_group('rate')
 
         for i, reaction in enumerate(self.reactions):
             try:
-                ds = dens.create_dataset(reaction, data=self.rate(reaction),
+                ds = dens.create_dataset('%.4d' % (i + 1),
+                                         data=self.rate(i + 1),
                                          compression='gzip')
-                ds.attrs['index'] = [i,]
+                ds.attrs['name'] = reaction
                 print "Writing reaction `%s'" % reaction
             except (RuntimeError, ValueError):
-                ds = dens[reaction]
-                ds.attrs['index'] += [i,]                
-                print "Skipping repeated reaction `%s'" % reaction
+                print "Error in reaction %d `%s'" % (i + 1, reaction)
 
         g.create_dataset('t', data=self.t)
         g.create_dataset('source_matrix', data=self.source_matrix,
@@ -132,55 +133,46 @@ class HDF5Data(ModelData):
         self.h5_rate = self.h5['main/rate'] 
         self.h5_condition = self.h5['main/condition'] 
 
-        self.species = list(self.h5_density)
-        self.reactions = list(self.h5_rate)
-        self.conditions = list(self.h5_condition)
+        self.species = self._read_datasets(self.h5_density)
+        self.reactions = self._read_datasets(self.h5_rate)
+        self.conditions = self._read_datasets(self.h5_condition)
 
         self.t = np.array(self.h5['main']['t'])
         self.source_matrix = np.array(self.h5['main']['source_matrix'])
 
-        # We need those indices that tell us the order of the original lists
-        # Note that the lookup order is inverted.
-
-        # For the species we get a local index and we want an original index.
-        # This works because there are no repeated species
-        self.species_index = [None for _ in self.species]
-        for i, species in enumerate(self.species):
-            indices = self.h5_density[species].attrs['index']
-            self.species_index[i] = indices[0]
-         
-        # For the reactions we need the inverse lookup.  And not that here
-        # there may be repeated reactions
-        self.reaction_index = {}
-        for i, reaction in enumerate(self.reactions):
-            indices = self.h5_rate[reaction].attrs['index']
-            for j in indices:
-                self.reaction_index[j] = i
-
-        
         super(HDF5Data, self).__init__()
 
 
+    def _read_datasets(self, group):
+        sindices = list(group)
+        sindices.sort()
+        
+        r = [group[s].attrs['name'] for s in sindices]
+
+        return r
+        
+    @staticmethod
+    def _index_key(i):
+        return '%.4d' % i
+        
     def density(self, key):
-        return np.array(self.h5_density[key])
+        return np.array(self.h5_density[self._index_key(key)])
 
 
     def rate(self, key):
-        return np.array(self.h5_rate[key])
+        return np.array(self.h5_rate[self._index_key(key)])
 
 
     def condition(self, key):
-        return np.array(self.h5_condition[key])
+        return np.array(self.h5_condition[self._index_key(key)])
     
         
     def sources(self, key):
-        si = self.species_index[self.d_species[key]]
-        c = self.source_matrix[si, :]
+        c = self.source_matrix[key - 1, :]
         d = {}
         for ri in np.nonzero(c)[0]:
-            local_ri = self.reaction_index[ri]
-            reaction = self.reactions[local_ri]
-            d[reaction] = self.rate(reaction) * c[ri]
+            reaction = self.reactions[ri]
+            d[ri] = self.rate(ri + 1) * c[ri]
 
         return d
 
@@ -273,6 +265,7 @@ class DirectoryData(ModelData):
         if self.NUMBERED_LISTS:
             r = [' '.join(s.split()[1:]) for s in r]
 
+        # We use a dictionary here to allow arbitrary IDs.
         return r
 
     def update(self):
@@ -306,25 +299,27 @@ class DirectoryData(ModelData):
 
 
     def density(self, key):
-        return self.raw_density[:, self.d_species[key]]
+        return self.raw_density[:, key - 1]
 
 
     def rate(self, key):
-        return self.raw_rates[:, self.d_reactions[key]]
+        return self.raw_rates[:, key - 1]
 
 
     def condition(self, key):
-        return self.raw_conditions[:, self.d_conditions[key]]
+        return self.raw_conditions[:, key - 1]
 
 
     def sources(self, key):
-        si = self.d_species[key]
-        c = self.source_matrix[si, :]
+        # The +/-1 in this function are to move to the FORTRAN/ZdPlaskin
+        # array numbering convention.
+        c = self.source_matrix[key - 1, :]
         d = {}
         for ri in np.nonzero(c)[0]:
-            d[self.reactions[ri]] = self.raw_rates[:, ri] * c[ri]
+            d[ri] = self.raw_rates[:, ri] * c[ri]
 
         return d
+
     
 class OldDirectoryData(DirectoryData):
     """ A backwards-compatible version of DirectoryData (deprecated).
@@ -427,4 +422,4 @@ class RealtimeData(ModelData):
 
         
     def density(self, key):
-        return self.raw_density[:self.i, self.d_species[key]]
+        return self.raw_density[:self.i, key]

@@ -1,7 +1,7 @@
 #! /usr/bin/env python 
 import sys
 import os
-from itertools import cycle
+from itertools import cycle, izip
 
 # Qt4 bindings for core Qt functionalities (non-GUI)
 from PyQt4 import QtCore
@@ -25,7 +25,36 @@ LINE_WIDTH = 1.7
 
 # We do not plot densities or rates below these thresholds
 DENS_THRESHOLD = 1e-10
-QRATE_THRESHOLD = 1e-20
+RATE_THRESHOLD = 1e-20
+
+CONDITIONS_PRETTY_NAMES = {
+            'gas_temperature':
+            "Gas temperature [K]",
+            'Tgas_K':
+            "Gas temperature [K]",
+            'reduced_frequency':
+            "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
+            'reduced_field':
+            "Reduced field E/N [Td]",
+            'E/N_Td':
+            "Reduced field E/N [Td]",
+            'elec_temperature':
+            "Electron temperature [K]",
+            'Telec_K':
+            "Electron temperature [K]",
+            'elec_drift_velocity':
+            "Electron drift velocity [cm/s]",
+            'elec_diff_coeff':
+            "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
+            'elec_frequency_n':
+            "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_n':
+            "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_elastic_n':
+            "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+            'elec_power_inelastic_n':
+            "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
+
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -40,7 +69,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QAbstractItemView.ExtendedSelection)
         self.reactList.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
-        self.reactList.horizontalHeader().setVisible(True)
+
+        for w in [self.reactList, self.speciesList, self.speciesSourceList,
+                  self.condList]:
+            w.horizontalHeader().setVisible(True)
 
         self.plot_widgets = [self.condWidget,
                              self.densWidget,
@@ -112,30 +144,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def update_cond_graph(self):
         """Updates the graph with densities"""
 
-        ylabels = {
-            'gas_temperature':
-            "Gas temperature [K]",
-            'reduced_frequency':
-            "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
-            'reduced_field':
-            "Reduced field E/N [Td]",
-            'elec_temperature':
-            "Electron temperature [K]",
-            'elec_drift_velocity':
-            "Electron drift velocity [cm/s]",
-            'elec_diff_coeff':
-            "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
-            'elec_frequency_n':
-            "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-            'elec_power_n':
-            "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-            'elec_power_elastic_n':
-            "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-            'elec_power_inelastic_n':
-            "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
 
         try:
-            condition = str(self.condList.currentItem().text())
+            condition = list(iter_2_selected(self.condList))[0][0]
         except AttributeError:
             return
 
@@ -148,14 +159,17 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
         y = array(self.data.condition(condition))
+        condition_name = self.data.conditions[condition - 1]
+        
         flt = y > 0
+        label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
         self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                     label=ylabels.get(condition, condition),
+                                     label=label,
                                      zorder=10)
 
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
         self.condWidget.axes[0].set_xlabel("t [s]")
-        self.condWidget.axes[0].set_ylabel(ylabels.get(condition, condition))
+        self.condWidget.axes[0].set_ylabel(label)
 
         # force an image redraw
         self.condWidget.draw()
@@ -179,9 +193,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.data.flush()
         citer = cycle(COLOR_SERIES)
         
-        for item in self.speciesList.selectedItems():
-            name = unicode(item.text())
-            dens = self.data.density(name)
+        for item in iter_2_selected(self.speciesList):
+            name = item[1]
+            dens = self.data.density(item[0])
             flt = dens > DENS_THRESHOLD
             self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
                                          lw=LINE_WIDTH,
@@ -202,7 +216,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def update_source_graph(self):
         """Updates the graph with sources rates"""
         try:
-            species = unicode(self.speciesSourceList.currentItem().text())
+            species = list(iter_2_selected(self.speciesSourceList))[0]
         except AttributeError:
             return
         
@@ -214,7 +228,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
-        dreactions = self.data.sources(species)
+        dreactions = self.data.sources(species[0])
         reactions = dreactions.keys()
         
         r = zeros((len(reactions), len(self.data.t)))
@@ -241,7 +255,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         citer = cycle(COLOR_SERIES)
         for i in icreation:
-            name = reactions[i]
+            name = self.reactions[reactions[i] - 1]
             flt = abs(r[i, :]) > RATE_THRESHOLD
             self.sourceWidget.creationAx.plot(self.data.t[flt],
                                               abs(r[i, flt]),
@@ -251,7 +265,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         citer = cycle(COLOR_SERIES)
         for i in idestruct:
-            name = reactions[i]
+            name = self.reactions[reactions[i] - 1]
             flt = abs(r[i, :]) > RATE_THRESHOLD
             self.sourceWidget.removalAx.plot(self.data.t[flt],
                                              abs(r[i, flt]),
@@ -285,7 +299,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """Updates the graph with reaction rates"""
         if not self.reactList.selectedItems():
             return
-        
+
         # clear the Axes
         if not self.reactWidget.axes:
             self.reactWidget.init_axes()
@@ -295,9 +309,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
         citer = cycle(COLOR_SERIES)
-        for item in self.reactList.selectedItems():
-            name = str(item.text())
-            rate = array(self.data.rate(name))
+        for item in iter_2_selected(self.reactList):
+            name = item[1]
+            rate = array(self.data.rate(item[0]))
             
             flt = rate > RATE_THRESHOLD
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
@@ -433,27 +447,35 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         
 
     def update_lists(self):
+
         self.species = sorted(self.data.species)
         self.reactions = sorted(self.data.reactions)
         self.conditions = sorted(self.data.conditions)
 
-        self.speciesList.clear()
-        self.speciesList.addItems(self.species)
+        def _populate(qtable, list, pretty_names={}):
+            for i in xrange(qtable.rowCount()):
+                qtable.removeRow(0)
+                
+            for n, item in enumerate(list):
+                row = qtable.rowCount()
+                qtable.insertRow(row)
+                # The + 1 is to move to the FORTRAN/ZdPlaskin convention
+                nitem = QtGui.QTableWidgetItem(u'%4d' % (n + 1))
+                nitem.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                nitem.setTextColor(QtGui.QColor(160, 160, 160))
+                qtable.setItem(row, 0, nitem)
+                
+                showed_item = pretty_names.get(item, item)
+                sitem = QtGui.QTableWidgetItem(showed_item)
+                sitem.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+                qtable.setItem(row, 1, sitem)
 
-        self.speciesSourceList.clear()
-        self.speciesSourceList.addItems(self.species)
+        _populate(self.speciesList, self.data.species)
+        _populate(self.speciesSourceList, self.data.species)
+        _populate(self.reactList, self.data.reactions)
+        _populate(self.condList, self.data.conditions,
+                  pretty_names=CONDITIONS_PRETTY_NAMES)
 
-        #self.reactList.clear()
-        for i, reaction in enumerate(self.reactions):
-            self.reactList.insertRow(0)
-            self.reactList.setItem(0, 0, QtGui.QTableWidgetItem(str(i)))
-            self.reactList.setItem(0, 1, QtGui.QTableWidgetItem(reaction))
-            
-        #self.reactList.addItems(self.reactions)
-
-        self.condList.clear()
-        self.condList.addItems(self.conditions)
-        
         
     def clear(self):
         for w in self.plot_widgets:
@@ -491,7 +513,13 @@ def select_rates(f, delta, max_rates=4, min_rates=0):
     return r_[highest, rest, rest2]
     
 
-    
+def iter_2_selected(qtablewidget):
+    selected = qtablewidget.selectedItems()
+    n = len(selected)
+    selected = izip((int(item.text()) for item in selected[0:n / 2]),
+                    (str(item.text()) for item in selected[n / 2:]))
+
+    return selected
 
 
 # create the GUI application
