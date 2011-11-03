@@ -12,7 +12,7 @@ except ImportError:
 
 APP = ['qtplaskin.py']
 PY2APP_OPTIONS = {
-    'iconfile': 'qtplaskin2.icns',
+    'iconfile': 'qtplaskin3.icns',
     'argv_emulation': False,
     'semi_standalone': False,
     # 'strip': False,
@@ -29,7 +29,7 @@ PY2APP_OPTIONS = {
     #              'PyQt4.QtOpenGL', 'PyQt4.QtScript', 'PyQt4.QtSql',
     #              'PyQt4.QtTest', 'PyQt4.QtWebKit', 'PyQt4.QtXml',
     #              'PyQt4.phonon'],
-    'resources': ['qtplaskin2.png',
+    'resources': ['qtplaskin3.png',
                   '/opt/local/lib/Resources/qt_menu.nib',
                   'modeldata.py', 'mainwindow.py', 'zdplaskin.py',
                   'runner.py', 'mplwidget.py'],

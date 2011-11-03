@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Tue Oct 25 16:13:03 2011
+# Created: Thu Nov  3 17:09:56 2011
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -215,6 +215,14 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.horizontalLayout.addWidget(self.tabWidget)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.label = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout.addWidget(self.label)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1180, 22))
@@ -280,7 +288,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Densities", None, QtGui.QApplication.UnicodeUTF8))
         self.reactList.setSortingEnabled(True)
         self.reactList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
-        self.reactList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Signature", None, QtGui.QApplication.UnicodeUTF8))
+        self.reactList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Reaction", None, QtGui.QApplication.UnicodeUTF8))
         self.reactButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Reactions", None, QtGui.QApplication.UnicodeUTF8))
         self.speciesSourceList.setSortingEnabled(True)
@@ -288,6 +296,7 @@ class Ui_MainWindow(object):
         self.speciesSourceList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Species", None, QtGui.QApplication.UnicodeUTF8))
         self.sourceButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Sensitivity analysis", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MainWindow", "QtPlaskin - (c) Alejandro Luque, Instituto de Astrofísica de Andalucía (IAA), CSIC, 2011", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuOptions.setTitle(QtGui.QApplication.translate("MainWindow", "&Options", None, QtGui.QApplication.UnicodeUTF8))
