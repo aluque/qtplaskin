@@ -520,13 +520,18 @@ def select_rates(f, delta, max_rates=4, min_rates=0):
     
 
 def iter_2_selected(qtablewidget):
-    selected = qtablewidget.selectedItems()
-    n = len(selected)
-    selected = izip((int(item.text()) for item in selected[0:n / 2]),
-                    (str(item.text()) for item in selected[n / 2:]))
+    selectedRanges = qtablewidget.selectedRanges()
+
+    selected = []
+    for r in selectedRanges:
+        bottom, top = r.bottomRow(), r.topRow()
+        for i in xrange(top, bottom + 1):
+            itemId = qtablewidget.item(i, 0)
+            itemStr = qtablewidget.item(i, 1)
+            selected.append((int(itemId.text()), str(itemStr.text())))
 
     return selected
-
+        
 
 # create the GUI application
 app = QtGui.QApplication(sys.argv)
