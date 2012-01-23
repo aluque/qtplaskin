@@ -7,6 +7,13 @@ Currently, QtPlaskin runs in Linux, Mac OS X and Windows but see the
 file INSTALL.txt for information on the libraries that must be
 installed in your system and how to obtain them.
 
+With the latest version of ZDPlaskin you can use 
+
+  call ZDPlaskin_set_config(QTPLASKIN_SAVE=.true.)
+
+Then you can import the data of your simulation into QtPlaskin by using
+File -> Import from directory... in the program menu.
+
 ---
 (1)  ZdPlaskin is a computer code developed by S. Pancheshnyi, B. Eismann, 
      G.J.M. Hagelaar and L.C. Pitchford, 
