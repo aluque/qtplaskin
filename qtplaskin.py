@@ -236,7 +236,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             r[i, :] = dreactions[react]
             
         # Find the reactions that are at some point at least a delta of the total
-        delta = 0.1
+        filters = {0: (0.1, -1),
+                   1: (0.01, -1),
+                   2: (0.001, -1),
+                   3: (1e-4, -1),
+                   4: (0.0, -1)}
+        
+        delta, max_rates = filters[self.Combo_filter.currentIndex()]
 
         spos = nanmax(where(r > 0, r, 0), axis=0)
         fpos = r / spos
@@ -250,8 +256,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # This is b.c. numpy does not provide a nanargsort
         fneg = where(isfinite(fneg), fneg, 0)
 
-        icreation = select_rates(fpos, delta)
-        idestruct = select_rates(fneg, delta)
+        icreation = select_rates(fpos, delta, max_rates=max_rates)
+        idestruct = select_rates(fneg, delta, max_rates=max_rates)
 
         citer = cycle(COLOR_SERIES)
         for i in icreation:
@@ -444,7 +450,6 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def action_set_logtime(self):
         for w in self.plot_widgets:
             w.set_scales(xscale=self.xscale, redraw=True)
-        
 
     def load_h5file(self, file):
         self.data = HDF5Data(file)

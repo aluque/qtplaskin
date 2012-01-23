@@ -38,7 +38,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <property name="spacing">
-               <number>40</number>
+               <number>25</number>
               </property>
               <property name="leftMargin">
                <number>5</number>
@@ -145,7 +145,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="spacing">
-             <number>40</number>
+             <number>25</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -238,7 +238,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <property name="spacing">
-             <number>40</number>
+             <number>25</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -334,7 +334,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
-             <number>40</number>
+             <number>15</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -399,6 +399,41 @@
                 <string>Species</string>
                </property>
               </column>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="Combo_filter">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <item>
+               <property name="text">
+                <string>Filter at 10%</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Filter at 1%</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Filter at 0.1%</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Filter at 0.01%</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Show all</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>
@@ -532,6 +567,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionFilter_small_rates">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Filter small rates</string>
+   </property>
+   <property name="toolTip">
+    <string>When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering</string>
    </property>
   </action>
  </widget>

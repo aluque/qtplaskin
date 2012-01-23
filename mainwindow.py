@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Thu Nov  3 17:09:56 2011
+# Created: Mon Jan 23 12:28:33 2012
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.verticalLayout_6 = QtGui.QVBoxLayout()
-        self.verticalLayout_6.setSpacing(40)
+        self.verticalLayout_6.setSpacing(25)
         self.verticalLayout_6.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.condList = QtGui.QTableWidget(self.tab_4)
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.tab)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.verticalLayout_3 = QtGui.QVBoxLayout()
-        self.verticalLayout_3.setSpacing(40)
+        self.verticalLayout_3.setSpacing(25)
         self.verticalLayout_3.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.speciesList = QtGui.QTableWidget(self.tab)
@@ -128,7 +128,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4 = QtGui.QHBoxLayout(self.tab_3)
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.verticalLayout_4 = QtGui.QVBoxLayout()
-        self.verticalLayout_4.setSpacing(40)
+        self.verticalLayout_4.setSpacing(25)
         self.verticalLayout_4.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.reactList = QtGui.QTableWidget(self.tab_3)
@@ -173,7 +173,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.tab_2)
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setSpacing(40)
+        self.verticalLayout_2.setSpacing(15)
         self.verticalLayout_2.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.speciesSourceList = QtGui.QTableWidget(self.tab_2)
@@ -200,6 +200,19 @@ class Ui_MainWindow(object):
         self.speciesSourceList.verticalHeader().setDefaultSectionSize(20)
         self.speciesSourceList.verticalHeader().setMinimumSectionSize(10)
         self.verticalLayout_2.addWidget(self.speciesSourceList)
+        self.Combo_filter = QtGui.QComboBox(self.tab_2)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Combo_filter.sizePolicy().hasHeightForWidth())
+        self.Combo_filter.setSizePolicy(sizePolicy)
+        self.Combo_filter.setObjectName(_fromUtf8("Combo_filter"))
+        self.Combo_filter.addItem(_fromUtf8(""))
+        self.Combo_filter.addItem(_fromUtf8(""))
+        self.Combo_filter.addItem(_fromUtf8(""))
+        self.Combo_filter.addItem(_fromUtf8(""))
+        self.Combo_filter.addItem(_fromUtf8(""))
+        self.verticalLayout_2.addWidget(self.Combo_filter)
         self.sourceButton = QtGui.QPushButton(self.tab_2)
         self.sourceButton.setObjectName(_fromUtf8("sourceButton"))
         self.verticalLayout_2.addWidget(self.sourceButton)
@@ -256,6 +269,10 @@ class Ui_MainWindow(object):
         self.actionSave.setObjectName(_fromUtf8("actionSave"))
         self.actionUpdate = QtGui.QAction(MainWindow)
         self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
+        self.actionFilter_small_rates = QtGui.QAction(MainWindow)
+        self.actionFilter_small_rates.setCheckable(True)
+        self.actionFilter_small_rates.setChecked(True)
+        self.actionFilter_small_rates.setObjectName(_fromUtf8("actionFilter_small_rates"))
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionImport_from_directory)
         self.menuFile.addAction(self.actionExport_data)
@@ -294,6 +311,11 @@ class Ui_MainWindow(object):
         self.speciesSourceList.setSortingEnabled(True)
         self.speciesSourceList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
         self.speciesSourceList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Species", None, QtGui.QApplication.UnicodeUTF8))
+        self.Combo_filter.setItemText(0, QtGui.QApplication.translate("MainWindow", "Filter at 10%", None, QtGui.QApplication.UnicodeUTF8))
+        self.Combo_filter.setItemText(1, QtGui.QApplication.translate("MainWindow", "Filter at 1%", None, QtGui.QApplication.UnicodeUTF8))
+        self.Combo_filter.setItemText(2, QtGui.QApplication.translate("MainWindow", "Filter at 0.1%", None, QtGui.QApplication.UnicodeUTF8))
+        self.Combo_filter.setItemText(3, QtGui.QApplication.translate("MainWindow", "Filter at 0.01%", None, QtGui.QApplication.UnicodeUTF8))
+        self.Combo_filter.setItemText(4, QtGui.QApplication.translate("MainWindow", "Show all", None, QtGui.QApplication.UnicodeUTF8))
         self.sourceButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Sensitivity analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "QtPlaskin - (c) Alejandro Luque, Instituto de Astrofísica de Andalucía (IAA), CSIC, 2011", None, QtGui.QApplication.UnicodeUTF8))
@@ -311,5 +333,7 @@ class Ui_MainWindow(object):
         self.actionSave.setText(QtGui.QApplication.translate("MainWindow", "Save...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUpdate.setText(QtGui.QApplication.translate("MainWindow", "Update", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUpdate.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFilter_small_rates.setText(QtGui.QApplication.translate("MainWindow", "Filter small rates", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFilter_small_rates.setToolTip(QtGui.QApplication.translate("MainWindow", "When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
