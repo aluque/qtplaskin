@@ -152,18 +152,18 @@ class ConditionsPlotWidget(MplWidget):
 
 class DensityPlotWidget(MplWidget):
     def init_axes(self):
-        self.add_axes([0.1, 0.1, 0.7, 0.85])
+        self.add_axes([0.085, 0.1, 0.7, 0.85])
         self.grid()
 
 
 class SourcePlotWidget(MplWidget):
     def init_axes(self):
-        self.removalAx = self.add_axes([0.1, 0.1, 0.65, 0.4])
-        self.creationAx = self.add_axes([0.1, 0.58, 0.65, 0.4])
+        self.removalAx = self.add_axes([0.085, 0.1, 0.65, 0.4])
+        self.creationAx = self.add_axes([0.085, 0.58, 0.65, 0.4])
         self.grid()
 
 class RatePlotWidget(MplWidget):
     def init_axes(self):
-        self.add_axes([0.1, 0.1, 0.65, 0.85])
+        self.add_axes([0.085, 0.1, 0.65, 0.85])
         self.grid()
     
