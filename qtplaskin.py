@@ -2,6 +2,7 @@
 import sys
 import os
 from itertools import cycle, izip
+import traceback
 
 # Qt4 bindings for core Qt functionalities (non-GUI)
 from PyQt4 import QtCore
@@ -538,6 +539,7 @@ def iter_2_selected(qtablewidget):
     return selected
         
 
+
 # create the GUI application
 app = QtGui.QApplication(sys.argv)
 
@@ -547,6 +549,17 @@ dmw = DesignerMainWindow()
 # show it
 dmw.show()
 dmw.raise_()
+
+def new_excepthook(type, value, tb):
+    em = QtGui.QErrorMessage(dmw)
+    em.setModal(True)
+    msg = "An unhandled exception was raised:\n"
+    em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))
+    # If we do not call exec_ here, two dialogs may appear at
+    # the same time, confusing the user.
+    em.exec_()
+
+sys.excepthook = new_excepthook
 
 # start the Qt main loop execution, exiting from this script
 # with the same return code of Qt application
