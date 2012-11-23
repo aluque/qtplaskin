@@ -40,7 +40,7 @@ PY2EXE_OPTIONS = {
     "dll_excludes": ["MSVCP90.dll"],
     "includes": ["sip", "h5py.*"]}
 
-shutil.rmtree('dist')
+shutil.rmtree('dist', ignore_errors=True)
 
 if sys.argv[1] == 'py2exe':
     from distutils.core import setup
@@ -51,6 +51,10 @@ if sys.argv[1] == 'py2exe':
         windows=['qtplaskin.py'],
         setup_requires=['py2app'],
         data_files=matplotlib.get_py2exe_datafiles())
+    shutil.move('dist', 'qtplaskin-win')
+    call("zip qtplaskin-win.zip qtplaskin-win/*", shell=True)
+    
+
 
 elif sys.argv[1] == 'py2app':
     from setuptools import setup
