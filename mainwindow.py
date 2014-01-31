@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Mon Jan 23 12:39:31 2012
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Fri Jan 31 20:15:52 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,12 +12,22 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1276, 746)
+        MainWindow.setAcceptDrops(True)
         self.centralwidget = QtGui.QWidget(MainWindow)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -61,6 +71,9 @@ class Ui_MainWindow(object):
         self.condList.setColumnCount(2)
         self.condList.setRowCount(0)
         item = QtGui.QTableWidgetItem()
+        brush = QtGui.QBrush(QtGui.QColor(109, 109, 109))
+        brush.setStyle(QtCore.Qt.NoBrush)
+        item.setForeground(brush)
         self.condList.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.condList.setHorizontalHeaderItem(1, item)
@@ -297,48 +310,56 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QtPlaskin", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setWindowTitle(_translate("MainWindow", "QtPlaskin", None))
         self.condList.setSortingEnabled(True)
-        self.condList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
-        self.condList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Condition", None, QtGui.QApplication.UnicodeUTF8))
-        self.condButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("MainWindow", "Overview", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.condList.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "#", None))
+        item = self.condList.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Condition", None))
+        self.condButton.setText(_translate("MainWindow", "Plot", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Overview", None))
         self.speciesList.setSortingEnabled(True)
-        self.speciesList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
-        self.speciesList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Species", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Densities", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.speciesList.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "#", None))
+        item = self.speciesList.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Species", None))
+        self.plotButton.setText(_translate("MainWindow", "Plot", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Densities", None))
         self.reactList.setSortingEnabled(True)
-        self.reactList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
-        self.reactList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Reaction", None, QtGui.QApplication.UnicodeUTF8))
-        self.reactButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Reactions", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.reactList.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "#", None))
+        item = self.reactList.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Reaction", None))
+        self.reactButton.setText(_translate("MainWindow", "Plot", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Reactions", None))
         self.speciesSourceList.setSortingEnabled(True)
-        self.speciesSourceList.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "#", None, QtGui.QApplication.UnicodeUTF8))
-        self.speciesSourceList.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Species", None, QtGui.QApplication.UnicodeUTF8))
-        self.Combo_filter.setItemText(0, QtGui.QApplication.translate("MainWindow", "Filter at 10%", None, QtGui.QApplication.UnicodeUTF8))
-        self.Combo_filter.setItemText(1, QtGui.QApplication.translate("MainWindow", "Filter at 1%", None, QtGui.QApplication.UnicodeUTF8))
-        self.Combo_filter.setItemText(2, QtGui.QApplication.translate("MainWindow", "Filter at 0.1%", None, QtGui.QApplication.UnicodeUTF8))
-        self.Combo_filter.setItemText(3, QtGui.QApplication.translate("MainWindow", "Filter at 0.01%", None, QtGui.QApplication.UnicodeUTF8))
-        self.Combo_filter.setItemText(4, QtGui.QApplication.translate("MainWindow", "Show all", None, QtGui.QApplication.UnicodeUTF8))
-        self.sourceButton.setText(QtGui.QApplication.translate("MainWindow", "Plot", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Sensitivity analysis", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("MainWindow", "QtPlaskin - (c) Alejandro Luque, Instituto de Astrofísica de Andalucía (IAA), CSIC, 2011", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuOptions.setTitle(QtGui.QApplication.translate("MainWindow", "&Options", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "&Open...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "&Quit", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLog_scale_in_time.setText(QtGui.QApplication.translate("MainWindow", "Log scale in time", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionExport_data.setText(QtGui.QApplication.translate("MainWindow", "Export data...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionStart_a_simulation.setText(QtGui.QApplication.translate("MainWindow", "Start a simulation...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionImport_from_directory.setText(QtGui.QApplication.translate("MainWindow", "Import from directory...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionImport_from_directory.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave.setText(QtGui.QApplication.translate("MainWindow", "Save...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionUpdate.setText(QtGui.QApplication.translate("MainWindow", "Update", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionUpdate.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionFilter_small_rates.setText(QtGui.QApplication.translate("MainWindow", "Filter small rates", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionFilter_small_rates.setToolTip(QtGui.QApplication.translate("MainWindow", "When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.speciesSourceList.horizontalHeaderItem(0)
+        item.setText(_translate("MainWindow", "#", None))
+        item = self.speciesSourceList.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Species", None))
+        self.Combo_filter.setItemText(0, _translate("MainWindow", "Filter at 10%", None))
+        self.Combo_filter.setItemText(1, _translate("MainWindow", "Filter at 1%", None))
+        self.Combo_filter.setItemText(2, _translate("MainWindow", "Filter at 0.1%", None))
+        self.Combo_filter.setItemText(3, _translate("MainWindow", "Filter at 0.01%", None))
+        self.Combo_filter.setItemText(4, _translate("MainWindow", "Show all", None))
+        self.sourceButton.setText(_translate("MainWindow", "Plot", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Sensitivity analysis", None))
+        self.label.setText(_translate("MainWindow", "QtPlaskin - (c) Alejandro Luque, Instituto de Astrofísica de Andalucía (IAA), CSIC, 2011", None))
+        self.menuFile.setTitle(_translate("MainWindow", "&File", None))
+        self.menuHelp.setTitle(_translate("MainWindow", "&Help", None))
+        self.menuOptions.setTitle(_translate("MainWindow", "&Options", None))
+        self.actionOpen.setText(_translate("MainWindow", "&Open...", None))
+        self.actionQuit.setText(_translate("MainWindow", "&Quit", None))
+        self.actionAbout.setText(_translate("MainWindow", "About", None))
+        self.actionLog_scale_in_time.setText(_translate("MainWindow", "Log scale in time", None))
+        self.actionExport_data.setText(_translate("MainWindow", "Export data...", None))
+        self.actionStart_a_simulation.setText(_translate("MainWindow", "Start a simulation...", None))
+        self.actionImport_from_directory.setText(_translate("MainWindow", "Import from directory...", None))
+        self.actionImport_from_directory.setShortcut(_translate("MainWindow", "Ctrl+I", None))
+        self.actionSave.setText(_translate("MainWindow", "Save...", None))
+        self.actionUpdate.setText(_translate("MainWindow", "Update", None))
+        self.actionUpdate.setShortcut(_translate("MainWindow", "Ctrl+R", None))
+        self.actionFilter_small_rates.setText(_translate("MainWindow", "Filter small rates", None))
+        self.actionFilter_small_rates.setToolTip(_translate("MainWindow", "When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering", None))
 
 from mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget

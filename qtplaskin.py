@@ -81,6 +81,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                              self.sourceWidget]
         
         self.update_timer = QtCore.QTimer()
+        self.latest_dir = "."
 
         # connect the signals with the slots
         QtCore.QObject.connect(self.condButton, 
@@ -134,6 +135,33 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtCore.QObject.connect(self.update_timer,
                                QtCore.SIGNAL("timeout()"),
                                self.data_update)
+
+    # Drag'n'Drop.  Implemented by Marc Foletto.
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    # Drag'n'Drop.
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            for url in event.mimeData().urls():
+                fname = unicode(url.path())
+                self.import_file_or_dir(fname)
+
+            event.acceptProposedAction()
+                            
+
+    #Chose if drop is a file or a directory
+    def import_file_or_dir(self, path):
+        if os.path.exists(path):
+            if os.path.isdir(path):
+                self._import_from_directory(path)
+            else:
+                # Let us allow the user to import files with any extension:
+                # if they are not in hdf5 format and exception will be raised
+                # anyhow.
+                self.load_h5file(path)
+
 
     @property
     def xscale(self):
@@ -376,39 +404,38 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     def import_from_directory(self):
-        
         fname = QtGui.QFileDialog.getExistingDirectory(
             self, "Import data from directory",
-            ".", QtGui.QFileDialog.ShowDirsOnly)
+            self.latest_dir, QtGui.QFileDialog.ShowDirsOnly)
+        
+        self._import_from_directory(fname)
+        self.latest_dir = fname
 
-        if fname:
+    def _import_from_directory(self, fname):
+        try:
             try:
-                try:
-                    self.data = DirectoryData(unicode(fname))
-                except IOError as e:
-                    em = QtGui.QErrorMessage(self)
-                    em.setModal(True)
-                    em.showMessage(
-                        ("Failed to open directory (%s).\n" % str(e))
-                        + "I will try now to import files in deprecated format.")
-                    # If we do not call exec_ here, two dialogs may appear at
-                    # the same time, confusing the user.
-                    em.exec_()
-                    self.data = OldDirectoryData(unicode(fname))
-
-                self.setWindowTitle("%s - QtPlaskin" % fname)
-                self.update_lists()
-                self.clear()
+                self.data = DirectoryData(unicode(fname))
             except IOError as e:
                 em = QtGui.QErrorMessage(self)
                 em.setModal(True)
-                em.exec_()
                 em.showMessage(
-                    "Failed to open directory (%s).\n" % str(e))
-                
-        # Update every 30 s
-        # self.update_timer.start(10000)
+                    ("Failed to open directory (%s).\n" % str(e))
+                    + "I will try now to import files in deprecated format.")
+                # If we do not call exec_ here, two dialogs may appear at
+                # the same time, confusing the user.
+                em.exec_()
+                self.data = OldDirectoryData(unicode(fname))
 
+            self.setWindowTitle("%s - QtPlaskin" % fname)
+            self.update_lists()
+            self.clear()
+        except IOError as e:
+            em = QtGui.QErrorMessage(self)
+            em.setModal(True)
+            em.exec_()
+            em.showMessage(
+                "Failed to open directory (%s).\n" % str(e))
+                
 
     def data_update(self):
         self.data.update()
@@ -545,6 +572,11 @@ app = QtGui.QApplication(sys.argv)
 
 # instantiate the main window
 dmw = DesignerMainWindow()
+
+# Load file if present in sys.argv
+if(len(sys.argv) >1):
+    fname=sys.argv[1]
+    dmw.import_file_or_dir(fname)
 
 # show it
 dmw.show()
