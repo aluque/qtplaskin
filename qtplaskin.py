@@ -163,6 +163,11 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.load_h5file(path)
 
 
+    def set_location(self, location):
+        """ Sets the opened location. """
+        self.setWindowTitle("%s - QtPlaskin" % location)
+        self.location = location
+
     @property
     def xscale(self):
         if self.actionLog_scale_in_time.isChecked():
@@ -203,6 +208,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # force an image redraw
         self.condWidget.draw()
         
+        self.condWidget.add_data(self.data.t, y, label)
         QtGui.QApplication.restoreOverrideCursor()
 
 
@@ -230,6 +236,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          lw=LINE_WIDTH,
                                          c=citer.next(), label=name,
                                          zorder=10)
+            self.densWidget.add_data(self.data.t, dens, name)
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -292,25 +299,31 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for i in icreation:
             name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
+            label = "[%d] %s" % (reactions[i] + 1, name)
+
             self.sourceWidget.creationAx.plot(self.data.t[flt],
                                               abs(r[i, flt]),
                                               c=citer.next(),
                                               lw=LINE_WIDTH,
-                                              label="[%d] %s" % (reactions[i] + 1,
-                                                               name),
+                                              label=label,
                                               zorder=10)
+
+            self.sourceWidget.add_data(self.data.t, r[i, :], label)
 
         citer = cycle(COLOR_SERIES)
         for i in idestruct:
             name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
+            label = "[%d] %s" % (reactions[i] + 1, name)
+
             self.sourceWidget.removalAx.plot(self.data.t[flt],
                                              abs(r[i, flt]),
                                              c=citer.next(),
                                              lw=LINE_WIDTH,
-                                             label="[%d] %s" % (reactions[i] + 1,
-                                                              name),
+                                             label=label,
                                              zorder=10)
+
+            self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)
 
         self.sourceWidget.creationAx.set_ylabel(
             "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
@@ -353,12 +366,14 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             rate = array(self.data.rate(item[0]))
             
             flt = rate > RATE_THRESHOLD
+            label = "[%d] %s" % (item[0], name)
+
             self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
                                           c=citer.next(),
                                           lw=LINE_WIDTH,
-                                          label="[%d] %s" % (item[0],
-                                                           name),
+                                          label=label,
                                           zorder=10)
+            self.reactWidget.add_data(self.data.t, rate, label)
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             
@@ -386,7 +401,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if file:
             try:
                 self.load_h5file(unicode(file))
-                self.setWindowTitle("%s - QtPlaskin" % file)
+                self.set_location(file)
 
                 self.update_lists()
                 self.clear()
@@ -426,7 +441,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 em.exec_()
                 self.data = OldDirectoryData(unicode(fname))
 
-            self.setWindowTitle("%s - QtPlaskin" % fname)
+            self.set_location(fname)
             self.update_lists()
             self.clear()
         except IOError as e:
@@ -472,7 +487,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # if a file is selected
         if fname:
             fname = unicode(fname)
-            self.plot_widgets[self.tabWidget.currentIndex()].savedata(fname)
+            self.plot_widgets[self.tabWidget.currentIndex()]\
+                .savedata(fname, self.location)
         
             
     def action_set_logtime(self):

@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import numpy as np
 
 # Python Qt4 bindings for GUI objects
@@ -85,6 +86,13 @@ class MplWidget(QtGui.QWidget):
         # set the layout to th vertical box
         self.setLayout(self.vbl)
 
+        self.clear_data()
+
+    def clear_data(self):
+        # This is for the correct export of data.
+        self.xdata = None
+        self.ydata = []
+        self.labels = []
 
     def add_axes(self, *args, **kwargs):
         """ Adds axes to this widget.  """
@@ -108,6 +116,7 @@ class MplWidget(QtGui.QWidget):
 
         self.grid()
         self.draw()
+        self.clear_data()
         
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
@@ -120,27 +129,23 @@ class MplWidget(QtGui.QWidget):
         if redraw:
             self.draw()
             
-    def savedata(self, fname):
-        xdata = None
-        ydata = []
-        labels = ['Time']
+    def add_data(self, x, y, label):
+        if self.xdata is None:
+            self.xdata = x
+            self.labels.append('Time')
 
-        for ax in self.axes:
-            for line in ax.get_lines():
-                # We have to assume that all x data is the same.  Else,
-                # everything gets much more complicated
-                if xdata is None:
-                    xdata = np.array(line.get_xdata())[:, np.newaxis]
-        
-                ydata.append(np.array(line.get_ydata())[:, np.newaxis])
-                labels.append(line.get_label())
+        self.ydata.append(y)
+        self.labels.append(label)
 
-        d = np.concatenate(tuple([xdata,] + ydata), axis=1)
+    def savedata(self, fname, location):
+        d = np.c_[tuple([self.xdata,] + self.ydata)]
         
         with open(fname, "w") as fout:
+            fout.write("# Input: %s\n" % location)
+            fout.write("# Date: %s\n" % time.ctime())
             fout.write("# Columns:\n")
-            for c, label in enumerate(labels):
-                fout.write("# %-.3d:  %s\n" % (c, label))
+            for c, label in enumerate(self.labels):
+                fout.write("#    %-.3d:  %s\n" % (c, label))
                 
             np.savetxt(fout, d)
         
