@@ -145,7 +145,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
             for url in event.mimeData().urls():
-                fname = unicode(url.path())
+                fname = url.toLocalFile()
                 self.import_file_or_dir(fname)
 
             event.acceptProposedAction()
