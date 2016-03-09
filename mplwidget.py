@@ -164,7 +164,7 @@ class DensityPlotWidget(MplWidget):
 class SourcePlotWidget(MplWidget):
     def init_axes(self):
         self.removalAx = self.add_axes([0.085, 0.1, 0.65, 0.4])
-        self.creationAx = self.add_axes([0.085, 0.58, 0.65, 0.4])
+        self.creationAx = self.add_axes([0.085, 0.58, 0.65, 0.4],sharex=self.removalAx)
         self.grid()
 
 class RatePlotWidget(MplWidget):
