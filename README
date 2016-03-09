@@ -19,3 +19,22 @@ File -> Import from directory... in the program menu.
      G.J.M. Hagelaar and L.C. Pitchford, 
      http://www.zdplaskin.laplace.univ-tlse.fr (University of Toulouse, 
      LAPLACE, CNRS-UPS-INP, Toulouse, France, 2008).
+
+
+---
+2016 Erwan Pannier: improve QtPlaskin with tiny features
+
+TODO:
+- fix QtPlaskin for Python 3.x
+- Dynamic tooltips on plots
+- twinx on losses+production plots
+
+
+
+
+
+
+
+
+
+
