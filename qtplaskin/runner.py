@@ -1,6 +1,6 @@
 from numpy import inf, loadtxt, where
 
-from zdplaskin import Kinetics
+from qtplaskin.zdplaskin import Kinetics
 
 
 def run(conn, model, init_file, field_file, max_dt=inf):

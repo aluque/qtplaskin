@@ -107,7 +107,7 @@ def f2py(module, pyf_file, fortran_file, bolsig=None):
               os.path.join(config.ZDPLASKIN_EXEC_PATH, 'dvode_f90_m.F90'),
               bolsig)).split()
 
-    print args
+    print(args)
     
     sys.argv = args
     f2py_main()
@@ -127,7 +127,7 @@ def cleanup():
     """
     remove_files = ['zdplaskin.mod']
     for f in remove_files:
-        print "Removing %s" % f
+        print("Removing %s" % f)
         try:
             os.remove(f)
         except OSError:

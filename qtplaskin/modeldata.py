@@ -6,7 +6,7 @@ from multiprocessing import Process, Pipe
 import numpy as np
 import h5py
 
-from runner import run
+from qtplaskin.runner import run
 
 class ModelData(object):
     """ This class abstracts the reading of model data and its output

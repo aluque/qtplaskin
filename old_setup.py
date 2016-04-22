@@ -1,3 +1,5 @@
+# Alejandro's version of setup.py
+
 import sys
 from distutils.core import setup
 #from setuptools import setup

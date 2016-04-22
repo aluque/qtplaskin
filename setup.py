@@ -12,6 +12,12 @@ Written by Alejandro Luque
 
 Updated by Erwan Pannier, 2016 to turn it into an app
 
+Note: you still have to install PyQt4 manually as it cannot be installed
+from pip. Read Alejandro's INSTALL.txt file to see how to install PyQt4. 
+Note that although PyQt cannot be installed through pip, you can install
+if with "conda install pyqt" if you're using the Anaconda distribution of 
+Python
+
 
 """
 
@@ -23,7 +29,7 @@ long_description = 'A graphical tool to explore ZdPlaskin Results'
 if os.path.exists('README.md'):
     long_description = codecs.open('README.md', encoding="utf-8").read()
         
-setup(name='publib',
+setup(name='qtplaskin',
       version='1.0.1',
       description='A graphical tool to explore ZdPlaskin Results',
     	long_description=long_description,
@@ -32,13 +38,13 @@ setup(name='publib',
       author_email='erwan.pannier@gmail.com',
       packages=['qtplaskin'],
       install_requires=[
-          'builtins',
+          'future',  # for builtins
           'numpy',
           'scipy',
           'matplotlib',
-          'pyqt4',
           'h5py',
-          'mpldatacursor'
+          'mpldatacursor',
+          # 'pyqt'      # cannot be installed through pip. Install PyQt4 manually
 		  ],
       classifiers=[
         'Development Status :: 4 - Beta',
@@ -50,5 +56,7 @@ setup(name='publib',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         "Operating System :: OS Independent"],
+      scripts=[
+          'scripts/qtplaskin'],
 	  include_package_data=True,
       zip_safe=False)

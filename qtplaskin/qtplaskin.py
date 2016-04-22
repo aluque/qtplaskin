@@ -19,8 +19,8 @@ from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
                    argsort, r_)
 
 # import the MainWindow widget from the converted .ui files
-from mainwindow import Ui_MainWindow
-from modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+from qtplaskin.mainwindow import Ui_MainWindow
+from qtplaskin.modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
 
 #import publib
 

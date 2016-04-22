@@ -362,4 +362,4 @@ class Ui_MainWindow(object):
         self.actionFilter_small_rates.setText(_translate("MainWindow", "Filter small rates", None))
         self.actionFilter_small_rates.setToolTip(_translate("MainWindow", "When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering", None))
 
-from mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
+from qtplaskin.mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
