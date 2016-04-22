@@ -1,3 +1,5 @@
+# QtPlaskin
+
 QtPlaskin is a graphical interface to analyze results from a plasma 
 kinetic code such as ZdPlasKin (1).  It supports both a specific data
 format based on HDF5 and importing directories with certain filesets
@@ -8,9 +10,9 @@ file INSTALL.txt for information on the libraries that must be
 installed in your system and how to obtain them.
 
 With the latest version of ZDPlaskin you can use 
-
+```
   call ZDPlaskin_set_config(QTPLASKIN_SAVE=.true.)
-
+```
 Then you can import the data of your simulation into QtPlaskin by using
 File -> Import from directory... in the program menu.
 
@@ -22,11 +24,17 @@ File -> Import from directory... in the program menu.
 
 
 ---
-2016 Erwan Pannier: improve QtPlaskin with tiny features
+
+### 2016 Erwan Pannier: 
+
+improve QtPlaskin with tiny features
 
 TODO:
+
 - fix QtPlaskin for Python 3.x
+
 - Dynamic tooltips on plots
+
 - twinx on losses+production plots
 
 
