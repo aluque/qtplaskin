@@ -1,7 +1,11 @@
 #! /usr/bin/env python 
+
+from __future__ import print_function, division, unicode_literals
+from builtins import range
+
 import sys
 import os
-from itertools import cycle, izip
+from itertools import cycle
 import traceback
 
 # Qt4 bindings for core Qt functionalities (non-GUI)
@@ -9,15 +13,23 @@ from PyQt4 import QtCore
 
 # Python Qt4 bindings for GUI objects
 from PyQt4 import QtGui
-
 from PyQt4.QtCore import Qt
 
-from numpy import *
+from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
+                   argsort, r_)
 
 # import the MainWindow widget from the converted .ui files
 from mainwindow import Ui_MainWindow
 from modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
 
+#import publib
+
+try:
+    from mpldatacursor import datacursor
+    CURSOR = True
+except:
+    CURSOR = False
+    
 COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
                 "#ff55ff", "#008800", "#8d0ade",
                 "#33bbcc", "#000000", "#444400",
@@ -55,7 +67,6 @@ CONDITIONS_PRETTY_NAMES = {
             "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
             'elec_power_inelastic_n':
             "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
-
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -136,6 +147,14 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                QtCore.SIGNAL("timeout()"),
                                self.data_update)
 
+    def datacursor(self,line):
+        ''' Return datacursor'''
+        if CURSOR:
+            return datacursor(line,hover=True,size=14,color='k', 
+                                    bbox=dict(fc='white',alpha=0.9)) 
+        else:
+            return None
+
     # Drag'n'Drop.  Implemented by Marc Foletto.
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -176,8 +195,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             return 'linear'
         
     def update_cond_graph(self):
-        """Updates the graph with densities"""
-
+        """Updates the graph with conditions"""
 
         try:
             condition = list(iter_2_selected(self.condList))[0][0]
@@ -194,7 +212,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         
         y = array(self.data.condition(condition))
         condition_name = self.data.conditions[condition - 1]
-        
+
         flt = y > 0
         label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
         self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
@@ -228,15 +246,17 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.data.flush()
         citer = cycle(COLOR_SERIES)
         
+        lines = []
         for item in iter_2_selected(self.speciesList):
             name = item[1]
             dens = self.data.density(item[0])
             flt = dens > DENS_THRESHOLD
-            self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
+            lines.append(self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
                                          lw=LINE_WIDTH,
-                                         c=citer.next(), label=name,
-                                         zorder=10)
+                                         c=next(citer), label=name,
+                                         zorder=10)[0])
             self.densWidget.add_data(self.data.t, dens, name)
+        self.datacursor(lines) 
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -265,7 +285,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
         dreactions = self.data.sources(species[0])
-        reactions = dreactions.keys()
+        reactions = list(dreactions.keys())
         
         r = zeros((len(reactions), len(self.data.t)))
         for i, react in enumerate(reactions):
@@ -281,13 +301,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         delta, max_rates = filters[self.Combo_filter.currentIndex()]
 
         spos = nanmax(where(r > 0, r, 0), axis=0)
-        fpos = r / spos
+        fpos = r // spos
 
         # This is b.c. numpy does not provide a nanargsort
         fpos = where(isfinite(fpos), fpos, 0)
         
         sneg = nanmin(where(r < 0, r, 0), axis=0)
-        fneg = r / sneg
+        fneg = r // sneg
         
         # This is b.c. numpy does not provide a nanargsort
         fneg = where(isfinite(fneg), fneg, 0)
@@ -296,17 +316,18 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         idestruct = select_rates(fneg, delta, max_rates=max_rates)
 
         citer = cycle(COLOR_SERIES)
+        lines = []
         for i in icreation:
             name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
             label = "[%d] %s" % (reactions[i] + 1, name)
 
-            self.sourceWidget.creationAx.plot(self.data.t[flt],
+            lines.append(self.sourceWidget.creationAx.plot(self.data.t[flt],
                                               abs(r[i, flt]),
-                                              c=citer.next(),
+                                              c=next(citer),
                                               lw=LINE_WIDTH,
                                               label=label,
-                                              zorder=10)
+                                              zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, r[i, :], label)
 
@@ -316,14 +337,16 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             flt = abs(r[i, :]) > RATE_THRESHOLD
             label = "[%d] %s" % (reactions[i] + 1, name)
 
-            self.sourceWidget.removalAx.plot(self.data.t[flt],
+            lines.append(self.sourceWidget.removalAx.plot(self.data.t[flt],
                                              abs(r[i, flt]),
-                                             c=citer.next(),
+                                             c=next(citer),
                                              lw=LINE_WIDTH,
                                              label=label,
-                                             zorder=10)
+                                             zorder=10))
 
             self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)
+
+#        self.datacursor(lines)
 
         self.sourceWidget.creationAx.set_ylabel(
             "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
@@ -361,6 +384,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
         citer = cycle(COLOR_SERIES)
+        lines = []
         for item in iter_2_selected(self.reactList):
             name = item[1]
             rate = array(self.data.rate(item[0]))
@@ -368,12 +392,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             flt = rate > RATE_THRESHOLD
             label = "[%d] %s" % (item[0], name)
 
-            self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
-                                          c=citer.next(),
+            lines.append(self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
+                                          c=next(citer),
                                           lw=LINE_WIDTH,
                                           label=label,
-                                          zorder=10)
+                                          zorder=10)[0])
             self.reactWidget.add_data(self.data.t, rate, label)
+        self.datacursor(lines) 
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             
@@ -400,7 +425,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # if a file is selected
         if file:
             try:
-                self.load_h5file(unicode(file))
+                self.load_h5file(file)
                 self.set_location(file)
 
                 self.update_lists()
@@ -429,7 +454,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _import_from_directory(self, fname):
         try:
             try:
-                self.data = DirectoryData(unicode(fname))
+                self.data = DirectoryData(fname)
             except IOError as e:
                 em = QtGui.QErrorMessage(self)
                 em.setModal(True)
@@ -439,7 +464,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # If we do not call exec_ here, two dialogs may appear at
                 # the same time, confusing the user.
                 em.exec_()
-                self.data = OldDirectoryData(unicode(fname))
+                self.data = OldDirectoryData(fname)
 
             self.set_location(fname)
             self.update_lists()
@@ -471,7 +496,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # if a file is selected
         if fname:
-            self.data.save(unicode(fname))
+            self.data.save(fname)
     
 
     def export_data(self):
@@ -486,7 +511,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # if a file is selected
         if fname:
-            fname = unicode(fname)
+            fname = fname
             self.plot_widgets[self.tabWidget.currentIndex()]\
                 .savedata(fname, self.location)
         
@@ -508,7 +533,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         #self.conditions = sorted(self.data.conditions)
 
         def _populate(qtable, list, pretty_names={}):
-            for i in xrange(qtable.rowCount()):
+            for i in range(qtable.rowCount()):
                 qtable.removeRow(0)
                 
             for n, item in enumerate(list):
@@ -574,7 +599,7 @@ def iter_2_selected(qtablewidget):
     selected = []
     for r in selectedRanges:
         bottom, top = r.bottomRow(), r.topRow()
-        for i in xrange(top, bottom + 1):
+        for i in range(top, bottom + 1):
             itemId = qtablewidget.item(i, 0)
             itemStr = qtablewidget.item(i, 1)
             selected.append((int(itemId.text()), str(itemStr.text())))

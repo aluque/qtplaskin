@@ -46,7 +46,7 @@ class ModelData(object):
         dens = g.create_group('density')
 
         for i, species in enumerate(self.species):
-            print "Writing density of species `%s'" % species
+            print("Writing density of species `%s'" % species)
             ds = dens.create_dataset('%.4d' % (i + 1), data=self.density(i + 1),
                                      compression='gzip')
             ds.attrs['name'] = species
@@ -59,9 +59,9 @@ class ModelData(object):
                                          data=self.rate(i + 1),
                                          compression='gzip')
                 ds.attrs['name'] = reaction
-                print "Writing reaction `%s'" % reaction
+                print("Writing reaction `%s'" % reaction)
             except (RuntimeError, ValueError):
-                print "Error in reaction %d `%s'" % (i + 1, reaction)
+                print("Error in reaction %d `%s'" % (i + 1, reaction))
 
         g.create_dataset('t', data=self.t)
         g.create_dataset('source_matrix', data=self.source_matrix,
@@ -91,7 +91,7 @@ class ModelData(object):
         dens = g.create_group('density')
 
         for species in self.species:
-            print "Writing density of species `%s'" % species
+            print("Writing density of species `%s'" % species)
             dens.create_dataset(species, data=self.density(species),
                                 compression='gzip')
             
@@ -102,20 +102,20 @@ class ModelData(object):
             try:
                 dens.create_dataset(reaction, data=self.rate(reaction),
                                     compression='gzip')
-                print "Writing reaction `%s'" % reaction
+                print("Writing reaction `%s'" % reaction)
             except (RuntimeError, ValueError):
-                print "Skipping repeated reaction `%s'" % reaction
+                print("Skipping repeated reaction `%s'" % reaction)
 
 
         gsources = g.create_group('source')
 
         for species in self.species:
-            print "Writing sources for species `%s'" % species
+            print("Writing sources for species `%s'" % species)
             s_group = gsources.create_group(species)
 
             react_dict = self.sources(species)
             for reaction, rate in react_dict.iteritems():
-                print "   Writing reaction `%s'" % reaction
+                print("   Writing reaction `%s'" % reaction)
                 try:
                     s_group.create_dataset(reaction.replace('.', '_'),
                                            data=rate, compression='gzip')
@@ -187,7 +187,7 @@ class ResultsData(ModelData):
         self.species = res.species
         self.reactions = res.reactions
         self.source_matrix = res.source_matrix
-        self.conditions = res.conditions.keys()
+        self.conditions = list(res.conditions.keys())
         self.conditions_dict = res.conditions
         self.t = res.t
         
@@ -366,7 +366,7 @@ class RealtimeData(ModelData):
         self.raw_rates = np.zeros((self.t_.shape[0], n_reactions))
         self.conditions_dict = dict((cond, np.zeros(self.t_.shape))
                                     for cond in self.tracked_conditions)
-        self.conditions = self.conditions_dict.keys()
+        self.conditions = list(self.conditions_dict.keys())
         
 
         # We will store sources in a list of dictionaries

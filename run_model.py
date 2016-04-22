@@ -6,7 +6,7 @@ import time
 from multiprocessing import Process, Pipe
 from collections import namedtuple
 
-from numpy import *
+from numpy import inf
 import scipy.constants as co
 
 import config
@@ -122,7 +122,7 @@ def main():
         field_file = args[0]
         species = args[1:]
     except IndexError:
-        print ', '.join("'%s'" % s for s in modelspecies())
+        print(', '.join("'%s'" % s for s in modelspecies()))
         sys.exit(0)
 
     conn_recv, conn_send = Pipe(False)

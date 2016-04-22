@@ -1,9 +1,14 @@
 """ Wrapper module for zdplaskin. 
     (c) Alejandro Luque Estepa 2010
 """
+
+from __future__ import print_function, division
+from builtins import range
+
 from warnings import warn
 
-from numpy import *
+from numpy import ones
+import sys
 
 class Kinetics(object):
     DEFAULT_FIXED_DENS = {'N2': True,
@@ -44,13 +49,13 @@ class Kinetics(object):
     def species(self):
         """ Returns a list of all species in the kinetic module. """
         return [''.join(self.mod.species_name[:, i]).strip() 
-                for i in xrange(self.mod.species_max)]
+                for i in range(self.mod.species_max)]
 
 
     def reactions(self):
         """ Returns a list of all reactions in the module. """
         return [''.join(self.mod.reaction_sign[:, i]).strip() 
-                for i in xrange(self.mod.reactions_max)]
+                for i in range(self.mod.reactions_max)]
 
 
 
@@ -155,7 +160,7 @@ class Kinetics(object):
     def print_densities(self):
         """ Outputs all the densities. """
         for s in self.species():
-            print "%20s = %g cm^-3" % ('[%s]' % s, self.get_density(s))
+            print("%20s = %g cm^-3" % ('[%s]' % s, self.get_density(s)))
 
 
     def save_densities(self, fname):
@@ -179,7 +184,7 @@ class Kinetics(object):
             self.set_density(s,
                              init_dens.get(s, 0.0),
                              fixed_dens.get(s, False))
-            print "%20s = %g cm^-3" % ('[%s]' % s, self.get_density(s))
+            print("%20s = %g cm^-3" % ('[%s]' % s, self.get_density(s)))
 
 
     def controlled_timestep(self, t, attempt_dt, max_dt):
@@ -193,7 +198,7 @@ class Kinetics(object):
             nsteps = int(attempt_dt / max_dt) + 1
             realized_dt = max_dt / nsteps
 
-            for i in xrange(nsteps):
+            for i in range(nsteps):
                 self.timestep(t, realized_dt)
 
 

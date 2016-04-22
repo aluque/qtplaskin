@@ -1,4 +1,4 @@
-from numpy import *
+from numpy import inf, loadtxt, where
 
 from zdplaskin import Kinetics
 
@@ -37,7 +37,7 @@ def run(conn, model, init_file, field_file, max_dt=inf):
     # This is the main loop:
     for i, (it, idt, iEN) \
             in enumerate(zip(t[:-1], dt, EN)):
-        print "t = %g, E/N = %g Td" % (it, iEN)
+        print("t = %g, E/N = %g Td" % (it, iEN))
 
         # model.set_conditions(reduced_field=iEN)
         model.set_conditions(gas_temperature=200,

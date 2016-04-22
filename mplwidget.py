@@ -3,6 +3,7 @@ import os
 import time
 import numpy as np
 
+
 # Python Qt4 bindings for GUI objects
 from PyQt4 import QtGui
 
@@ -128,7 +129,7 @@ class MplWidget(QtGui.QWidget):
 
         if redraw:
             self.draw()
-            
+
     def add_data(self, x, y, label):
         if self.xdata is None:
             self.xdata = x
@@ -162,6 +163,8 @@ class DensityPlotWidget(MplWidget):
 
 
 class SourcePlotWidget(MplWidget):
+    ''' sensitivity analysis '''
+    
     def init_axes(self):
         self.removalAx = self.add_axes([0.085, 0.1, 0.65, 0.4])
         self.creationAx = self.add_axes([0.085, 0.58, 0.65, 0.4],sharex=self.removalAx)
