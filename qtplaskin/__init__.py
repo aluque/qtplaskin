@@ -5,7 +5,7 @@
 
 from __future__ import absolute_import
 
-from . import qtplaskin
+from . import main
 from . import mainwindow
 from . import modeldata
 from . import mplwidget

@@ -21,6 +21,8 @@ Python
 
 """
 
+from __future__ import absolute_import
+
 import os
 from setuptools import setup
 import codecs
@@ -33,10 +35,9 @@ setup(name='qtplaskin',
       version='1.0.1',
       description='A graphical tool to explore ZdPlaskin Results',
     	long_description=long_description,
-      url='https://github.com/erwanp/publib',
+      url='https://github.com/erwanp/qtplaskin',
       author='Alejandro Luque. Updated by Erwan Pannier',
       author_email='erwan.pannier@gmail.com',
-      packages=['qtplaskin'],
       install_requires=[
           'future',  # for builtins
           'numpy',
@@ -50,12 +51,12 @@ setup(name='qtplaskin',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
-        'Topic :: Text Processing',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         "Operating System :: OS Independent"],
+      packages=['qtplaskin'],
       scripts=[
           'scripts/qtplaskin'],
 	  include_package_data=True,

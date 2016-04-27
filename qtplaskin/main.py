@@ -615,35 +615,3 @@ def iter_2_selected(qtablewidget):
             selected.append((int(itemId.text()), str(itemStr.text())))
 
     return selected
-        
-def main():
-    
-    # create the GUI application
-    app = QtGui.QApplication(sys.argv)
-    
-    # instantiate the main window
-    dmw = DesignerMainWindow()
-    
-    # Load file if present in sys.argv
-    if(len(sys.argv) >1):
-        fname=sys.argv[1]
-        dmw.import_file_or_dir(fname)
-    
-    # show it
-    dmw.show()
-    dmw.raise_()
-    
-    def new_excepthook(type, value, tb):
-        em = QtGui.QErrorMessage(dmw)
-        em.setModal(True)
-        msg = "An unhandled exception was raised:\n"
-        em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))
-        # If we do not call exec_ here, two dialogs may appear at
-        # the same time, confusing the user.
-        em.exec_()
-    
-    sys.excepthook = new_excepthook
-    
-    # start the Qt main loop execution, exiting from this script
-    # with the same return code of Qt application
-    sys.exit(app.exec_())
