@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 from subprocess import call, Popen, PIPE
 from string import Template
 import os
@@ -11,7 +11,7 @@ import shutil
 import re
 
 # Read global config
-import config
+from qtplaskin import config
 
 def preprocessor(infile, outfile='.'):
     p = Popen(os.path.join(config.ZDPLASKIN_EXEC_PATH, 'preprocessor'),
@@ -134,7 +134,7 @@ def cleanup():
             pass
         
 def main():
-    parser = OptionParser()
+    parser = ArgumentParser()
     (opts, args) = parser.parse_args()
 
     for inp in args:

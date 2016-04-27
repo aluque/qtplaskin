@@ -1,6 +1,13 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Script to start a QtPlaskin session
+
+
+
+"""
+
 from qtplaskin.qtplaskin import main
 
 main()

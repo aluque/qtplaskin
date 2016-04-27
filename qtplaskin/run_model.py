@@ -1,3 +1,9 @@
+'''
+Script to initialize a ZdPlaskin session, run it and collect the results 
+
+'''
+
+
 import sys
 import os
 from optparse import OptionParser
@@ -9,9 +15,9 @@ from collections import namedtuple
 from numpy import inf
 import scipy.constants as co
 
-import config
-from modeldata import ResultsData
-from runner import run
+from qtplaskin import config
+from qtplaskin.modeldata import ResultsData
+from qtplaskin.runner import run
 
 # Default name of the file to read densities from
 DEF_INIT_DENS_FILE = 'init_species.dat'

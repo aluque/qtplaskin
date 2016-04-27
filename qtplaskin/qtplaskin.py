@@ -1,6 +1,16 @@
 #! /usr/bin/env python 
 
-from __future__ import print_function, division, unicode_literals
+"""
+Main module
+
+Use
+------
+    run it from the qtplaskin script under script/
+
+"""
+
+
+from __future__ import print_function, division, unicode_literals, absolute_import
 from builtins import range
 
 import sys
@@ -19,8 +29,8 @@ from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
                    argsort, r_)
 
 # import the MainWindow widget from the converted .ui files
-from qtplaskin.mainwindow import Ui_MainWindow
-from qtplaskin.modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+from .mainwindow import Ui_MainWindow
+from .modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
 
 #import publib
 
@@ -606,34 +616,34 @@ def iter_2_selected(qtablewidget):
 
     return selected
         
-
-
-# create the GUI application
-app = QtGui.QApplication(sys.argv)
-
-# instantiate the main window
-dmw = DesignerMainWindow()
-
-# Load file if present in sys.argv
-if(len(sys.argv) >1):
-    fname=sys.argv[1]
-    dmw.import_file_or_dir(fname)
-
-# show it
-dmw.show()
-dmw.raise_()
-
-def new_excepthook(type, value, tb):
-    em = QtGui.QErrorMessage(dmw)
-    em.setModal(True)
-    msg = "An unhandled exception was raised:\n"
-    em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))
-    # If we do not call exec_ here, two dialogs may appear at
-    # the same time, confusing the user.
-    em.exec_()
-
-sys.excepthook = new_excepthook
-
-# start the Qt main loop execution, exiting from this script
-# with the same return code of Qt application
-sys.exit(app.exec_())
+def main():
+    
+    # create the GUI application
+    app = QtGui.QApplication(sys.argv)
+    
+    # instantiate the main window
+    dmw = DesignerMainWindow()
+    
+    # Load file if present in sys.argv
+    if(len(sys.argv) >1):
+        fname=sys.argv[1]
+        dmw.import_file_or_dir(fname)
+    
+    # show it
+    dmw.show()
+    dmw.raise_()
+    
+    def new_excepthook(type, value, tb):
+        em = QtGui.QErrorMessage(dmw)
+        em.setModal(True)
+        msg = "An unhandled exception was raised:\n"
+        em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))
+        # If we do not call exec_ here, two dialogs may appear at
+        # the same time, confusing the user.
+        em.exec_()
+    
+    sys.excepthook = new_excepthook
+    
+    # start the Qt main loop execution, exiting from this script
+    # with the same return code of Qt application
+    sys.exit(app.exec_())
