@@ -27,8 +27,8 @@ class TimeFormatter(ScalarFormatter):
     def pprint_val(self, x):
     
         xp = (x - self.offset) #/ (10. ** self.orderOfMagnitude)
-        if np.absolute(xp) < 1e-8:
-            xp = 0
+        #if np.absolute(xp) < 1e-8:
+        #    xp = 0
             
         xp = self.tformat(xp)            
             

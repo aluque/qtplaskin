@@ -29,10 +29,14 @@ from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
                    argsort, r_)
 
 # import the MainWindow widget from the converted .ui files
-from .mainwindow import Ui_MainWindow
-from .modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
-
-from qtplaskin.timeformatter import TimeFormatter
+try:
+    from .mainwindow import Ui_MainWindow
+    from .modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+    from .timeformatter import TimeFormatter
+except:
+    from qtplaskin.mainwindow import Ui_MainWindow
+    from qtplaskin.modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+    from qtplaskin.timeformatter import TimeFormatter
 
 #import publib
 
@@ -235,7 +239,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.condWidget.axes[0].set_xlabel("t [s]")
         self.condWidget.axes[0].set_ylabel(label)
         
-        self.condWidget.axes[0].set_major_formatter(TimeFormatter())
+        self.condWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.condWidget.draw()
@@ -278,7 +282,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
         
         
-        self.densWidget.axes[0].set_major_formatter(TimeFormatter())
+        self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.densWidget.draw()
@@ -382,8 +386,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.sourceWidget.set_scales(yscale='log', xscale=self.xscale)
         
         
-        self.sourceWidget.creationAx.set_major_formatter(TimeFormatter())
-        self.sourceWidget.removalAx.set_major_formatter(TimeFormatter())
+        self.sourceWidget.creationAx.xaxis.set_major_formatter(TimeFormatter())
+        self.sourceWidget.removalAx.xaxis.set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.sourceWidget.draw()
@@ -429,7 +433,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.reactWidget.axes[0].legend(loc=(1.025, 0.0),
                                         prop=dict(size=8))
 
-        self.reactWidget.axes[0].set_major_formatter(TimeFormatter())
+        self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
         
         # force an image redraw
         self.reactWidget.draw()
@@ -628,3 +632,40 @@ def iter_2_selected(qtablewidget):
             selected.append((int(itemId.text()), str(itemStr.text())))
 
     return selected
+
+
+
+
+# %% Run from here
+
+if __name__ == '__main__':
+        
+    # create the GUI application
+    app = QtGui.QApplication(sys.argv)
+    
+    # instantiate the main window
+    dmw = DesignerMainWindow()
+    
+    # Load file if present in sys.argv
+    if(len(sys.argv) >1):
+        fname=sys.argv[1]
+        dmw.import_file_or_dir(fname)
+    
+    # show it
+    dmw.show()
+    dmw.raise_()
+    
+    def new_excepthook(type, value, tb):
+        em = QtGui.QErrorMessage(dmw)
+        em.setModal(True)
+        msg = "An unhandled exception was raised:\n"
+        em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))
+        # If we do not call exec_ here, two dialogs may appear at
+        # the same time, confusing the user.
+        em.exec_()
+    
+    sys.excepthook = new_excepthook
+    
+    # start the Qt main loop execution, exiting from this script
+    # with the same return code of Qt application
+    sys.exit(app.exec_())
