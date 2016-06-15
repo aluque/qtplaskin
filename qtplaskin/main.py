@@ -32,6 +32,8 @@ from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
 from .mainwindow import Ui_MainWindow
 from .modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
 
+from qtplaskin.timeformatter import TimeFormatter
+
 #import publib
 
 try:
@@ -232,6 +234,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
         self.condWidget.axes[0].set_xlabel("t [s]")
         self.condWidget.axes[0].set_ylabel(label)
+        
+        self.condWidget.axes[0].set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.condWidget.draw()
@@ -272,6 +276,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.densWidget.axes[0].set_xlabel("t [s]")
         self.densWidget.axes[0].set_ylabel("Density [cm$^\mathdefault{-3}$]")
         self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
+        
+        
+        self.densWidget.axes[0].set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.densWidget.draw()
@@ -373,6 +380,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         
         self.sourceWidget.set_scales(yscale='log', xscale=self.xscale)
+        
+        
+        self.sourceWidget.creationAx.set_major_formatter(TimeFormatter())
+        self.sourceWidget.removalAx.set_major_formatter(TimeFormatter())
 
         # force an image redraw
         self.sourceWidget.draw()
@@ -418,6 +429,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.reactWidget.axes[0].legend(loc=(1.025, 0.0),
                                         prop=dict(size=8))
 
+        self.reactWidget.axes[0].set_major_formatter(TimeFormatter())
+        
         # force an image redraw
         self.reactWidget.draw()
 

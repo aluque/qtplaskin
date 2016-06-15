@@ -11,4 +11,5 @@ from . import modeldata
 from . import mplwidget
 from . import runner
 from . import zdplaskin
+from . import timeformatter
 
