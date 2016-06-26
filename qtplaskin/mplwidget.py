@@ -88,6 +88,8 @@ class MplWidget(QtGui.QWidget):
         self.setLayout(self.vbl)
 
         self.clear_data()
+        
+        self.cursorlines = None  # use to store lines to display cursors
 
     def clear_data(self):
         # This is for the correct export of data.

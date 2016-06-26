@@ -42,9 +42,9 @@ except:
 
 try:
     from mpldatacursor import datacursor
-    CURSOR = True
+    CURSOR_AVAIL = True
 except:
-    CURSOR = False
+    CURSOR_AVAIL = False
     
 COLOR_SERIES = ["#5555ff", "#ff5555", "#909090",
                 "#ff55ff", "#008800", "#8d0ade",
@@ -106,6 +106,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                              self.densWidget,
                              self.reactWidget,
                              self.sourceWidget]
+        self.cursors = []
         
         self.update_timer = QtCore.QTimer()
         self.latest_dir = "."
@@ -155,6 +156,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                QtCore.SIGNAL('triggered()'),
                                self.action_set_logtime)
 
+        QtCore.QObject.connect(self.actionDatacursor, 
+                               QtCore.SIGNAL('triggered()'),
+                               self.action_set_datacursor)
+
         QtCore.QObject.connect(self.actionQuit, 
                                QtCore.SIGNAL('triggered()'), 
                                QtGui.qApp, QtCore.SLOT("quit()"))
@@ -163,11 +168,17 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                QtCore.SIGNAL("timeout()"),
                                self.data_update)
 
-    def datacursor(self,line):
-        ''' Return datacursor'''
-        if CURSOR:
-            return datacursor(line,hover=True,size=14,color='k', 
-                                    bbox=dict(fc='white',alpha=0.9)) 
+    def datacursor(self,widget):
+        ''' Plot datacursors'''
+
+        # Clean previous cursors  (prevent overlaps with remaining cursors)   
+        while len(self.cursors) > 0:
+            dc = self.cursors.pop()
+            dc.hide().disable()
+
+        if self.actionDatacursor.isChecked() and CURSOR_AVAIL:
+            return self.cursors.append(datacursor(widget.cursorlines,hover=True,size=14,color='k', 
+                                    bbox=dict(fc='white',alpha=0.9)))
         else:
             return None
 
@@ -274,7 +285,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          c=next(citer), label=name,
                                          zorder=10)[0])
             self.densWidget.add_data(self.data.t, dens, name)
-        self.datacursor(lines) 
+        self.densWidget.cursorlines = lines
+        self.datacursor(self.densWidget)
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -423,7 +435,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                           label=label,
                                           zorder=10)[0])
             self.reactWidget.add_data(self.data.t, rate, label)
-        self.datacursor(lines) 
+            
+            
+        self.reactWidget.cursorlines = lines
+        self.datacursor(self.reactWidget)
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             
@@ -547,6 +562,19 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         for w in self.plot_widgets:
             w.set_scales(xscale=self.xscale, redraw=True)
 
+    def action_set_datacursor(self):
+        """ 
+        if cancel: delete all current datacursors.
+        if added: show datacursor """
+        if self.actionDatacursor.isChecked():
+            for w in self.plot_widgets:
+                if not w.cursorlines is None:
+                    self.datacursor(w)
+        else:
+            while len(self.cursors) > 0:
+                dc = self.cursors.pop()
+                dc.hide().disable()
+
     def load_h5file(self, file):
         self.data = HDF5Data(file)
         self.update_lists()
@@ -641,7 +669,11 @@ def iter_2_selected(qtablewidget):
 if __name__ == '__main__':
         
     # create the GUI application
-    app = QtGui.QApplication(sys.argv)
+    app=QtGui.QApplication.instance() # checks if QApplication already exists 
+    if not app: # create QApplication if it doesnt exist 
+        app = QtGui.QApplication(sys.argv)
+        # This check is useful not to crash when testing successive times from 
+        # IPython
     
     # instantiate the main window
     dmw = DesignerMainWindow()
