@@ -245,7 +245,7 @@ class DirectoryData(ModelData):
     NUMBERED_LISTS = True
     
     def __init__(self, dirname):
-        self.dirname = dirname
+        self.dirname = os.path.expanduser(dirname)
 
         self.species = self._read_list(self.F_SPECIES_LIST)
         self.reactions = self._read_list(self.F_REACTIONS_LIST)
