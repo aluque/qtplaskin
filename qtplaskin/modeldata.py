@@ -4,9 +4,11 @@ import time
 from multiprocessing import Process, Pipe
 
 import numpy as np
+import pandas as pd
 import h5py
 
 from qtplaskin.runner import run
+
 
 class ModelData(object):
     """ This class abstracts the reading of model data and its output
@@ -320,7 +322,50 @@ class DirectoryData(ModelData):
 
         return d
 
+class FastDirData(DirectoryData):
+    """ An faster, updated version of DirectoryData using Pandas to read the 
+    input files 
     
+    Up to 5x faster on a ~1 Gb case (1.15 min -> 15 s) but not fully tested and 
+    some features such as real time tracking may be broken.
+    
+    Problem with large sizes (>800 Mb) solved with chunking. 
+    
+    @erwanp 26/06/16"""
+
+    def update(self):
+        """ Reads or re-reads those files that may change during the execution.
+        """
+        _raw_density = pd.read_csv(self._path(self.F_DENSITIES), delim_whitespace=True,
+                                   iterator=True, chunksize=50000)
+        _raw_density = pd.concat(_raw_density, ignore_index=True) 
+        _raw_density = np.array(_raw_density)
+
+        i_dens = _raw_density.shape[0]
+
+        _raw_rates = pd.read_csv(self._path(self.F_RATES), delim_whitespace=True, 
+                                 iterator=True, chunksize=50000)
+        _raw_rates = pd.concat(_raw_rates, ignore_index=True) 
+        _raw_rates = np.array(_raw_rates)
+
+        _source_matrix = pd.read_csv(self._path(self.F_MATRIX), delim_whitespace=True,
+                                        dtype='d', header=None)
+        self.source_matrix = np.array(_source_matrix)
+
+        _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True,
+                                     )
+        _raw_conditions = np.array(_raw_conditions)
+
+        latest_i = min(d.shape[0] for d in
+                       (_raw_density, _raw_rates, _raw_conditions))
+
+        self.raw_conditions = _raw_conditions[:latest_i, 1:]
+        self.raw_rates = _raw_rates[:latest_i, 1:]
+        self.raw_density = _raw_density[:latest_i, 1:]
+        self.t = _raw_density[:latest_i, 0]
+        
+
+
 class OldDirectoryData(DirectoryData):
     """ A backwards-compatible version of DirectoryData (deprecated).
     """

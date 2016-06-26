@@ -31,11 +31,11 @@ from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
 # import the MainWindow widget from the converted .ui files
 try:
     from .mainwindow import Ui_MainWindow
-    from .modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+    from .modeldata import HDF5Data, RealtimeData, DirectoryData, FastDirData, OldDirectoryData
     from .timeformatter import TimeFormatter
 except:
     from qtplaskin.mainwindow import Ui_MainWindow
-    from qtplaskin.modeldata import HDF5Data, RealtimeData, DirectoryData, OldDirectoryData
+    from qtplaskin.modeldata import HDF5Data, RealtimeData, DirectoryData, FastDirData, OldDirectoryData
     from qtplaskin.timeformatter import TimeFormatter
 
 #import publib
@@ -496,7 +496,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _import_from_directory(self, fname):
         try:
             try:
-                self.data = DirectoryData(fname)
+#                self.data = DirectoryData(fname)
+                self.data = FastDirData(fname)
             except IOError as e:
                 em = QtGui.QErrorMessage(self)
                 em.setModal(True)
