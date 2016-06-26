@@ -364,6 +364,53 @@ class FastDirData(DirectoryData):
         self.raw_density = _raw_density[:latest_i, 1:]
         self.t = _raw_density[:latest_i, 0]
         
+    # %% Plus add some convenient functions to work with data
+        
+        
+    def get(self,species):
+        ''' Get a given set species
+        
+        Input:
+        -------
+        
+        species: list'''
+        
+        def _index(s):
+            try:
+                i = self.species.index(s)
+            except ValueError:
+                raise ValueError("%s not in species list: %s"%(s,self.species))
+            return i
+        
+        if not type(species)==list:
+            return self.raw_density[_index(species)]
+            
+        else:
+            return [self.raw_density[_index(s)] for s in species]
+        
+    def get_cond(self,conditions):
+        ''' Get a given set conditions
+        
+        Input:
+        -------
+        
+        species: list'''
+        
+        def _index(c):
+            try:
+                i = self.conditions.index(c)
+            except ValueError:
+                raise ValueError("%s not in conditions: %s"%(c,self.conditions))
+            return i
+        
+        
+        if not type(conditions)==list:
+            return self.raw_conditions[_index(conditions)]
+            
+        else:
+            return [self.raw_conditions[_index(c)] for c in conditions]
+     
+
 
 
 class OldDirectoryData(DirectoryData):
