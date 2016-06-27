@@ -175,12 +175,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         while len(self.cursors) > 0:
             dc = self.cursors.pop()
             dc.hide().disable()
-
+            
         if self.actionDatacursor.isChecked() and CURSOR_AVAIL:
-            return self.cursors.append(datacursor(widget.cursorlines,hover=True,size=14,color='k', 
-                                    bbox=dict(fc='white',alpha=0.9)))
-        else:
-            return None
+            for ax in widget.axes:
+                if not ax.cursorlines is None:
+                    self.cursors.append(datacursor(ax.cursorlines,hover=True,size=14,color='k', 
+                                            bbox=dict(fc='white',alpha=0.9)))
+        return None
 
     # Drag'n'Drop.  Implemented by Marc Foletto.
     def dragEnterEvent(self, event):
@@ -242,9 +243,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         flt = y > 0
         label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
-        self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
+        lines = []
+        lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
                                      label=label,
-                                     zorder=10)
+                                     zorder=10)[0])
+                                     
+        self.condWidget.condAx.cursorlines = lines
+        self.datacursor(self.condWidget)
 
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
         self.condWidget.axes[0].set_xlabel("t [s]")
@@ -285,7 +290,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          c=next(citer), label=name,
                                          zorder=10)[0])
             self.densWidget.add_data(self.data.t, dens, name)
-        self.densWidget.cursorlines = lines
+            
+        self.densWidget.densAx.cursorlines = lines
         self.datacursor(self.densWidget)
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
@@ -363,8 +369,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                               zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, r[i, :], label)
+        self.sourceWidget.creationAx.cursorlines = lines
 
         citer = cycle(COLOR_SERIES)
+        lines = []
         for i in idestruct:
             name = self.data.reactions[reactions[i]]
             flt = abs(r[i, :]) > RATE_THRESHOLD
@@ -375,11 +383,12 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                              c=next(citer),
                                              lw=LINE_WIDTH,
                                              label=label,
-                                             zorder=10))
+                                             zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)
-
-#        self.datacursor(lines)
+        self.sourceWidget.removalAx.cursorlines = lines
+        
+        self.datacursor(self.sourceWidget)
 
         self.sourceWidget.creationAx.set_ylabel(
             "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
@@ -569,8 +578,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if added: show datacursor """
         if self.actionDatacursor.isChecked():
             for w in self.plot_widgets:
-                if not w.cursorlines is None:
-                    self.datacursor(w)
+                self.datacursor(w)
         else:
             while len(self.cursors) > 0:
                 dc = self.cursors.pop()

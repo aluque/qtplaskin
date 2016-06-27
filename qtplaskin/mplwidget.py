@@ -89,7 +89,6 @@ class MplWidget(QtGui.QWidget):
 
         self.clear_data()
         
-        self.cursorlines = None  # use to store lines to display cursors
 
     def clear_data(self):
         # This is for the correct export of data.
@@ -100,6 +99,7 @@ class MplWidget(QtGui.QWidget):
     def add_axes(self, *args, **kwargs):
         """ Adds axes to this widget.  """
         ax = self.fig.add_axes(*args, **kwargs)
+        ax.cursorlines = None    # used to store lines to display cursors
         self.axes.append(ax)
 
         return ax
@@ -155,12 +155,12 @@ class MplWidget(QtGui.QWidget):
 
 class ConditionsPlotWidget(MplWidget):
     def init_axes(self):
-        self.add_axes([0.1, 0.1, 0.85, 0.85])
+        self.condAx=self.add_axes([0.1, 0.1, 0.85, 0.85])
         self.grid()
 
 class DensityPlotWidget(MplWidget):
     def init_axes(self):
-        self.add_axes([0.085, 0.1, 0.7, 0.85])
+        self.densAx=self.add_axes([0.085, 0.1, 0.7, 0.85])
         self.grid()
 
 
