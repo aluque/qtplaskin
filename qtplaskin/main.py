@@ -222,7 +222,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             return 'linear'
         
-    def update_cond_graph(self):
+    def update_cond_graph(self,autoscale=None):
         """Updates the graph with conditions"""
 
         try:
@@ -230,12 +230,19 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except AttributeError:
             return
 
+        # Don't change time if there was data already
+        if autoscale is None:
+            autoscale = self.firstAx is None
+            
         # clear the Axes
         if not self.condWidget.axes:
             self.condWidget.init_axes()
         else:
             self.condWidget.clear()
-
+            
+        if not autoscale:
+            self.condWidget.axes[0].autoscale(False,axis='x')
+            
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
         y = array(self.data.condition(condition))
@@ -247,7 +254,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
                                      label=label,
                                      zorder=10)[0])
-                                     
+         
         self.condWidget.condAx.cursorlines = lines
         self.datacursor(self.condWidget)
 
@@ -264,18 +271,24 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.restoreOverrideCursor()
 
 
-    def update_spec_graph(self):
+    def update_spec_graph(self,autoscale=None):
         """Updates the graph with densities"""
         # clear the Axes
         if not self.speciesList.selectedItems():
             return
 
+        # Don't change time if there was data already
+        if autoscale is None:
+            autoscale = self.firstAx is None
+            
         if not self.densWidget.axes:
             self.densWidget.init_axes()
         else:
             self.densWidget.clear()
 
-        
+        if not autoscale:
+            self.densWidget.axes[0].autoscale(False,axis='x')
+            
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
         citer = cycle(COLOR_SERIES)
@@ -308,18 +321,26 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.restoreOverrideCursor()
 
 
-    def update_source_graph(self):
+    def update_source_graph(self,autoscale=None):
         """Updates the graph with sources rates"""
         try:
             species = list(iter_2_selected(self.speciesSourceList))[0]
         except AttributeError:
             return
         
+        # Don't change time if there was data already
+        if autoscale is None:
+            autoscale = self.firstAx is None
+            
         # clear the Axes
         if not self.sourceWidget.axes:
             self.sourceWidget.init_axes()
         else:
             self.sourceWidget.clear()
+            
+        if not autoscale:
+            self.sourceWidget.creationAx.autoscale(False,axis='x') 
+            self.sourceWidget.removalAx.autoscale(False,axis='x')
 
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
@@ -416,17 +437,24 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QApplication.restoreOverrideCursor()
 
 
-    def update_react_graph(self):
+    def update_react_graph(self,autoscale=None):
         """Updates the graph with reaction rates"""
         if not self.reactList.selectedItems():
             return
 
+        # Don't change time if there was data already
+        if autoscale is None:
+            autoscale = self.firstAx is None
+            
         # clear the Axes
         if not self.reactWidget.axes:
             self.reactWidget.init_axes()
         else:
             self.reactWidget.clear()
 
+        if not autoscale:
+            self.reactWidget.axes[0].autoscale(False,axis='x')
+            
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
         citer = cycle(COLOR_SERIES)
@@ -437,7 +465,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             
             flt = rate > RATE_THRESHOLD
             label = "[%d] %s" % (item[0], name)
-
+            
             lines.append(self.reactWidget.axes[0].plot(self.data.t[flt], rate[flt],
                                           c=next(citer),
                                           lw=LINE_WIDTH,
@@ -505,8 +533,26 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def _import_from_directory(self, fname):
         try:
             try:
-#                self.data = DirectoryData(fname)
                 self.data = FastDirData(fname)
+            except MemoryError as e:
+                em = QtGui.QErrorMessage(self)
+                em.setModal(True)
+                em.showMessage(
+                    ("Memory error: Failed to open directory (%s).\n" % str(e))
+                    + "Now trying the old (slower) way.")
+                em.exec_()
+                try:
+                    self.data = DirectoryData(fname)
+                except IOError as e:
+                    em = QtGui.QErrorMessage(self)
+                    em.setModal(True)
+                    em.showMessage(
+                        ("Failed to open directory (%s).\n" % str(e))
+                        + "I will try now to import files in deprecated format.")
+                    # If we do not call exec_ here, two dialogs may appear at
+                    # the same time, confusing the user.
+                    em.exec_()
+                    self.data = OldDirectoryData(fname)
             except IOError as e:
                 em = QtGui.QErrorMessage(self)
                 em.setModal(True)
@@ -517,7 +563,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 # the same time, confusing the user.
                 em.exec_()
                 self.data = OldDirectoryData(fname)
-
+                
             self.set_location(fname)
             self.update_lists()
             self.clear()

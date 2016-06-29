@@ -41,13 +41,21 @@ class MplCanvas(FigureCanvas):
 class VMToolbar(NavigationToolbar): 
     def __init__(self, plotCanvas, parent): 
         NavigationToolbar.__init__(self, plotCanvas, parent) 
+        self.home = self.new_home
 
     def _icon(self, name): 
         # dirty hack to use exclusively .png and thus avoid .svg usage 
         # because .exe generation is problematic with .svg 
         name = name.replace('.svg','.png') 
         return QtGui.QIcon(os.path.join(self.basedir, name)) 
-
+    
+    def new_home(self, *args, **kwargs):
+        ''' New navigation home button with forced reset 
+        http://stackoverflow.com/questions/14896580/matplotlib-hooking-in-to-home-back-forward-button-events'''
+        widget = self.parent
+        print('home!')
+        widget.update(rescale=True)
+#        home(self, *args, **kwargs)
 
 
 class MplWidget(QtGui.QWidget):
@@ -155,12 +163,30 @@ class MplWidget(QtGui.QWidget):
 
 class ConditionsPlotWidget(MplWidget):
     def init_axes(self):
-        self.condAx=self.add_axes([0.1, 0.1, 0.85, 0.85])
+        sharex = None
+        gui = self.parent().parent().parent().parent().parent()
+        if gui.firstAx is not None:
+            sharex = gui.firstAx
+            
+        self.condAx=self.add_axes([0.1, 0.1, 0.85, 0.85],sharex=sharex)
+        
+        if gui.firstAx is None:
+            gui.firstAx = self.condAx
+            
         self.grid()
 
 class DensityPlotWidget(MplWidget):
     def init_axes(self):
-        self.densAx=self.add_axes([0.085, 0.1, 0.7, 0.85])
+        sharex = None
+        gui = self.parent().parent().parent().parent().parent()
+        if gui.firstAx is not None:
+            sharex = gui.firstAx
+            
+        self.densAx=self.add_axes([0.085, 0.1, 0.7, 0.85],sharex=sharex)
+        
+        if gui.firstAx is None:
+            gui.firstAx = self.densAx
+            
         self.grid()
 
 
@@ -168,12 +194,30 @@ class SourcePlotWidget(MplWidget):
     ''' sensitivity analysis '''
     
     def init_axes(self):
-        self.removalAx = self.add_axes([0.085, 0.1, 0.65, 0.4])
+        sharex = None
+        gui = self.parent().parent().parent().parent().parent()
+        if gui.firstAx is not None:
+            sharex = gui.firstAx
+            
+        self.removalAx = self.add_axes([0.085, 0.1, 0.65, 0.4],sharex=sharex)
         self.creationAx = self.add_axes([0.085, 0.58, 0.65, 0.4],sharex=self.removalAx)
+        
+        if gui.firstAx is None:
+            gui.firstAx = self.removalAx
+            
         self.grid()
 
 class RatePlotWidget(MplWidget):
     def init_axes(self):
-        self.add_axes([0.085, 0.1, 0.65, 0.85])
+        sharex = None
+        gui = self.parent().parent().parent().parent().parent()
+        if gui.firstAx is not None:
+            sharex = gui.firstAx
+            
+        self.rateAx = self.add_axes([0.085, 0.1, 0.65, 0.85],sharex=sharex)
+        
+        if gui.firstAx is None:
+            gui.firstAx = self.rateAx
+            
         self.grid()
     

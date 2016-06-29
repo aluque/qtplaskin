@@ -353,7 +353,8 @@ class FastDirData(DirectoryData):
         self.source_matrix = np.array(_source_matrix)
 
         _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True,
-                                     )
+                                 iterator=True, chunksize=50000)
+        _raw_conditions = pd.concat(_raw_conditions, ignore_index=True) 
         _raw_conditions = np.array(_raw_conditions)
 
         latest_i = min(d.shape[0] for d in

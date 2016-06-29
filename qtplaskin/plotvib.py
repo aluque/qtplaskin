@@ -5,6 +5,8 @@ Created on Sun Mar 13 07:49:41 2016
 @author: erwan
 
 Import qtplaskin results in a Python environnement
+
+TODO: timer between numpy reading speed from Qtplaskin and pandas performances
 """
 
 
@@ -127,73 +129,74 @@ class QtParser():
         ax.set_ylabel(s)
         ax.legend()
         
-        
-
-f0 = '/home/cedric/Modelisation_ZDPlasKin/CO2/reduced_model_2/Param/ResultsParam/'
-
-T = ((300,100),
-     (300,110),
-     (300,120),
-     (300,130),
-     (300,140),
-     (300,150),
-     (300,160),
-     (300,170),
-     (400,100),
-     (400,110),
-     (400,120),
-     (400,130),
-     (400,140),
-     (400,150),
-     (500,100),
-     (500,110),
-     (500,120),
-     (500,130),
-     (500,140),
-     (500,150),
-     (500,160),
-     (500,170),
-     (600,140),
-     (600,150),
-     (600,160),
-     (600,170),
-     (700,140),
-     (700,150),
-     (700,160),
-     (700,170),
-     (800,140),
-     (800,150),
-     (800,160),
-     (800,170),
-     (900,140),
-     (900,150),
-     (900,160)
-     )
-     
-
-out = {}
-
-for Ti, Tdi in T:
-
-    folder = f0 + 'T=%sK_EN=0%sTd/'%(Ti,Tdi)
-    Q = QtParser(folder)
-    indEndOfPulse = np.argmax(Q.t>1e-3)
-    a = Q.getcond('Energy') #energy efficiency
-    b = Q.getcond('SEI')
-    c = Q.getcond('Dissociation') #dissociation rate
-    d = Q.get('E')
-    #Q.plotc('average')
-    e = Q.getcond('Reduced')
-    neMax = max(d)
-    EN = max(e)
-    out[(Ti,Tdi)] = list((EN,a[indEndOfPulse],b[indEndOfPulse],c[indEndOfPulse],neMax))
-    print(Ti,Tdi)
-    #efficiency = a[np.argmax(Q.t>1e-3)]
-
-k = 0
-for Ti, Tdi in T:
-    out[(Ti,Tdi)].insert(0,Ti)
-    print(out[(Ti,Tdi)])
-#print(Q.species
-
-#df = pd.read_csv(os.path.join(['Results',folder,foutn]))
+      
+if __name__ == '__main__':
+    
+    f0 = '/home/cedric/Modelisation_ZDPlasKin/CO2/reduced_model_2/Param/ResultsParam/'
+    
+    T = ((300,100),
+         (300,110),
+         (300,120),
+         (300,130),
+         (300,140),
+         (300,150),
+         (300,160),
+         (300,170),
+         (400,100),
+         (400,110),
+         (400,120),
+         (400,130),
+         (400,140),
+         (400,150),
+         (500,100),
+         (500,110),
+         (500,120),
+         (500,130),
+         (500,140),
+         (500,150),
+         (500,160),
+         (500,170),
+         (600,140),
+         (600,150),
+         (600,160),
+         (600,170),
+         (700,140),
+         (700,150),
+         (700,160),
+         (700,170),
+         (800,140),
+         (800,150),
+         (800,160),
+         (800,170),
+         (900,140),
+         (900,150),
+         (900,160)
+         )
+         
+    
+    out = {}
+    
+    for Ti, Tdi in T:
+    
+        folder = f0 + 'T=%sK_EN=0%sTd/'%(Ti,Tdi)
+        Q = QtParser(folder)
+        indEndOfPulse = np.argmax(Q.t>1e-3)
+        a = Q.getcond('Energy') #energy efficiency
+        b = Q.getcond('SEI')
+        c = Q.getcond('Dissociation') #dissociation rate
+        d = Q.get('E')
+        #Q.plotc('average')
+        e = Q.getcond('Reduced')
+        neMax = max(d)
+        EN = max(e)
+        out[(Ti,Tdi)] = list((EN,a[indEndOfPulse],b[indEndOfPulse],c[indEndOfPulse],neMax))
+        print(Ti,Tdi)
+        #efficiency = a[np.argmax(Q.t>1e-3)]
+    
+    k = 0
+    for Ti, Tdi in T:
+        out[(Ti,Tdi)].insert(0,Ti)
+        print(out[(Ti,Tdi)])
+    #print(Q.species
+    
+    #df = pd.read_csv(os.path.join(['Results',folder,foutn]))

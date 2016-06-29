@@ -87,6 +87,7 @@ class Ui_MainWindow(object):
         self.condButton.setObjectName(_fromUtf8("condButton"))
         self.verticalLayout_6.addWidget(self.condButton)
         self.horizontalLayout_5.addLayout(self.verticalLayout_6)
+        self.firstAx = None 
         self.condWidget = ConditionsPlotWidget(self.tab_4)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
