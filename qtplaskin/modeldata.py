@@ -384,7 +384,7 @@ class FastDirData(DirectoryData):
             return i
         
         latest_i = min(d.shape[0] for d in
-                       (self._raw_density, self._raw_rates, self._raw_conditions))
+                       (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if not type(species)==list:
             return self.raw_density[:latest_i,_index(species)]
@@ -408,7 +408,7 @@ class FastDirData(DirectoryData):
             return i
         
         latest_i = min(d.shape[0] for d in
-                       (self._raw_density, self._raw_rates, self._raw_conditions))
+                       (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if not type(conditions)==list:
             return self.raw_conditions[:latest_i,_index(conditions)]
