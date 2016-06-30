@@ -383,11 +383,14 @@ class FastDirData(DirectoryData):
                 raise ValueError("%s not in species list: %s"%(s,self.species))
             return i
         
+        latest_i = min(d.shape[0] for d in
+                       (self._raw_density, self._raw_rates, self._raw_conditions))
+
         if not type(species)==list:
-            return self.raw_density[_index(species)]
+            return self.raw_density[:latest_i,_index(species)]
             
         else:
-            return [self.raw_density[_index(s)] for s in species]
+            return [self.raw_density[:latest_i,_index(s)] for s in species]
         
     def get_cond(self,conditions):
         ''' Get a given set conditions
@@ -404,13 +407,22 @@ class FastDirData(DirectoryData):
                 raise ValueError("%s not in conditions: %s"%(c,self.conditions))
             return i
         
-        
+        latest_i = min(d.shape[0] for d in
+                       (self._raw_density, self._raw_rates, self._raw_conditions))
+
         if not type(conditions)==list:
-            return self.raw_conditions[_index(conditions)]
+            return self.raw_conditions[:latest_i,_index(conditions)]
             
         else:
-            return [self.raw_conditions[_index(c)] for c in conditions]
+            return [self.raw_conditions[:latest_i,_index(c)] for c in conditions]
      
+
+    def plot(self,species):
+        ''' Quickly plot a species directly from FastDirData. To be moved later
+        in a separate batch interface module '''
+        
+        import matplotlib.pyplot as plt
+        plt.plot(self.t,self.get(species))
 
 
 
