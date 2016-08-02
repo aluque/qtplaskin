@@ -380,7 +380,14 @@ class FastDirData(DirectoryData):
             try:
                 i = self.species.index(s)
             except ValueError:
-                raise ValueError("%s not in species list: %s"%(s,self.species))
+                try: # try if there is only one element, starting with the same name
+                    l = [x for x in self.species if (x.lower()).startswith(s.lower())]
+                    if len(l) == 1:
+                        i = self.species.index(l[0])
+                    else:
+                        raise ValueError
+                except ValueError:
+                    raise ValueError("%s not in species list: %s"%(s,self.species))
             return i
         
         latest_i = min(d.shape[0] for d in
@@ -404,7 +411,14 @@ class FastDirData(DirectoryData):
             try:
                 i = self.conditions.index(c)
             except ValueError:
-                raise ValueError("%s not in conditions: %s"%(c,self.conditions))
+                try: # try if there is only one element, starting with the same name
+                    l = [x for x in self.conditions if (x.lower()).startswith(c.lower())]
+                    if len(l) == 1:
+                        i = self.conditions.index(l[0])
+                    else:
+                        raise ValueError
+                except ValueError: 
+                    raise ValueError("%s not in conditions: %s"%(c,self.conditions))
             return i
         
         latest_i = min(d.shape[0] for d in
@@ -422,7 +436,9 @@ class FastDirData(DirectoryData):
         in a separate batch interface module '''
         
         import matplotlib.pyplot as plt
+        plt.figure()
         plt.plot(self.t,self.get(species))
+        plt.yscale('log')
 
 
 
