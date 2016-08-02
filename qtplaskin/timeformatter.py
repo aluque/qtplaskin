@@ -9,6 +9,19 @@ import numpy as np
 from matplotlib.ticker import ScalarFormatter
 
 class TimeFormatter(ScalarFormatter):
+    ''' A function to display time axis with dynamic time units when you 
+    zoom in (ns, µs, ms...)
+    
+    Use
+    -------  
+    
+    time data has to be in seconds (s).
+    
+    >>> ax.xaxis.set_major_formatter(TimeFormatter())    
+    
+    In order to avoid errors, set the axis before plotting data. 
+    
+    '''
     
     def tformat(self,xp):
         
