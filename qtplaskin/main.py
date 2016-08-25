@@ -41,7 +41,7 @@ except:
 #import publib
 
 try:
-    from mpldatacursor import datacursor
+    import mpldatacursor
     CURSOR_AVAIL = True
 except:
     CURSOR_AVAIL = False
@@ -83,6 +83,7 @@ CONDITIONS_PRETTY_NAMES = {
             "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
             'elec_power_inelastic_n':
             "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
+
 
 class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
@@ -168,8 +169,19 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                                QtCore.SIGNAL("timeout()"),
                                self.data_update)
 
-    def datacursor(self,widget):
-        ''' Plot datacursors'''
+    def print_status(self,string):
+        ''' Print to status bar
+        Useful for debugging'''
+        self.statusbar.showMessage(string)
+
+    def datacursor(self,widget,unit=None,labname='Label'):
+        ''' Plot datacursors (useful when the number of lines gets confusing)
+        
+        Input
+        ------
+        
+        unit and labname: 
+            to customize the info box'''
 
         # Clean previous cursors  (prevent overlaps with remaining cursors)   
         while len(self.cursors) > 0:
@@ -177,10 +189,40 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             dc.hide().disable()
             
         if self.actionDatacursor.isChecked() and CURSOR_AVAIL:
+
+            def formatter(x=None, y=None, z=None, s=None, label=None, **kwargs):
+        
+                ax = kwargs['event'].mouseevent.inaxes
+                
+                output = []
+                output.append(u't: {0:0.3e} s'.format(x))
+                output.append(u'y: {0:0.3e} {1}'.format(y,unit))                
+                
+                for key, val in zip(['z', 's'], [z, s]):
+                    if val is not None:
+                        try:
+                            output.append(u'{key}: {val:0.3e}'.format(key=key, val=val))
+                        except ValueError:
+                            # X & Y will be strings at this point.
+                            # For masked arrays, etc, "z" and s values may be a string
+                            output.append(u'{key}: {val}'.format(key=key, val=val))
+        
+                # label may be None or an empty string (for an un-labeled AxesImage)...
+                # Un-labeled Line2D's will have labels that start with an underscore
+                if label and not label.startswith('_'):
+                    output.append(u'{0}: {1}'.format(labname,label))
+        
+                if kwargs.get(u'point_label', None) is not None:
+                    output.append(u'Point: ' + u', '.join(kwargs['point_label']))
+        
+                return u'\n'.join(output)
+            
             for ax in widget.axes:
                 if not ax.cursorlines is None:
-                    self.cursors.append(datacursor(ax.cursorlines,hover=True,size=14,color='k', 
-                                            bbox=dict(fc='white',alpha=0.9)))
+                    self.cursors.append(mpldatacursor.datacursor(
+                                ax.cursorlines,hover=True,size=14,color='k', 
+                                bbox=dict(fc='white',alpha=0.9),
+                                formatter=formatter))
         return None
 
     # Drag'n'Drop.  Implemented by Marc Foletto.
@@ -291,8 +333,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
-        citer = cycle(COLOR_SERIES)
         
+        citer = cycle(COLOR_SERIES)
         lines = []
         for item in iter_2_selected(self.speciesList):
             name = item[1]
@@ -305,7 +347,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.densWidget.add_data(self.data.t, dens, name)
             
         self.densWidget.densAx.cursorlines = lines
-        self.datacursor(self.densWidget)
+        self.datacursor(self.densWidget,unit='cm-3',labname='Spec.')
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
         self.densWidget.axes[0].set_xlabel("t [s]")
@@ -409,7 +451,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)
         self.sourceWidget.removalAx.cursorlines = lines
         
-        self.datacursor(self.sourceWidget)
+        self.datacursor(self.sourceWidget,unit='cm-3/s',labname='Reac.')
 
         self.sourceWidget.creationAx.set_ylabel(
             "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
@@ -474,8 +516,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.reactWidget.add_data(self.data.t, rate, label)
             
             
-        self.reactWidget.cursorlines = lines
-        self.datacursor(self.reactWidget)
+        self.reactWidget.rateAx.cursorlines = lines
+        self.datacursor(self.reactWidget,unit='cm-3/s',labname='Reaction')
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
             
