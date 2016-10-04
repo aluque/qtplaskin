@@ -10,13 +10,12 @@ def run(conn, model, init_file, field_file, max_dt=inf):
     # Initialize zdplaskin
     model.init()
     model.set_config(stat_accum=True, atol=1e-8, rtol=1e-8,
-                         bolsig_ee_frac=0.0, silence_mode=True)
+                     bolsig_ee_frac=0.0, silence_mode=True)
     model.set_conditions(gas_temperature=200,
-                             spec_heat_ratio=1.4,
-                             reduced_field=1.0,
-                             reduced_frequency=0.0,
-                             gas_heating=False)
-
+                         spec_heat_ratio=1.4,
+                         reduced_field=1.0,
+                         reduced_frequency=0.0,
+                         gas_heating=False)
 
     # Sets the initial densities
     model.load_densities(init_file)
@@ -47,16 +46,15 @@ def run(conn, model, init_file, field_file, max_dt=inf):
                              gas_heating=False)
         model.truncate_densities()
 
-        
         density = [model.get_density(s)
-                         for s in model.SPECIES]
+                   for s in model.SPECIES]
         rates = model.get_reaction_rates()
 
         current_conditions = model.get_conditions()
-        
+
         # Send the present status to the other end of the connection
         conn.send([i, density, rates, current_conditions])
-                
+
         model.controlled_timestep(it, idt, max_dt)
 
     conn.send(None)

@@ -30,11 +30,11 @@ import codecs
 long_description = 'A graphical tool to explore ZdPlaskin Results'
 if os.path.exists('README.md'):
     long_description = codecs.open('README.md', encoding="utf-8").read()
-        
+
 setup(name='qtplaskin',
       version='1.0.1',
       description='A graphical tool to explore ZdPlaskin Results',
-    	long_description=long_description,
+      long_description=long_description,
       url='https://github.com/erwanp/qtplaskin',
       author='Alejandro Luque. Updated by Erwan Pannier',
       author_email='erwan.pannier@gmail.com',
@@ -46,18 +46,18 @@ setup(name='qtplaskin',
           'h5py',
           'mpldatacursor',
           # 'pyqt'      # cannot be installed through pip. Install PyQt4 manually
-		  ],
+      ],
       classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Science/Research',
-        'Topic :: Scientific/Engineering',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        "Operating System :: OS Independent"],
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Science/Research',
+          'Topic :: Scientific/Engineering',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          "Operating System :: OS Independent"],
       packages=['qtplaskin'],
       scripts=[
           'scripts/qtplaskin'],
-	  include_package_data=True,
+      include_package_data=True,
       zip_safe=False)

@@ -21,18 +21,18 @@ PY2APP_OPTIONS = {
     'includes': ['sip', 'PyQt4',
                  'PyQt4.QtCore', 'PyQt4.QtGui',
                  #'PyQt4.QtXml', #'PyQt4.QtMultimedia',
-                 'matplotlib', 'numpy', 'scipy', 
+                 'matplotlib', 'numpy', 'scipy',
                  'h5py',
                  'h5py.defs',
                  'h5py.h5ac',
                  'h5py._errors',
-                 'h5py._objects', 
-                 'h5py.defs', 
+                 'h5py._objects',
+                 'h5py.defs',
                  'h5py.utils',
                  'h5py._proxy'],
-    'frameworks': ['/opt/local/share/qt4/plugins/imageformats/libqgif.dylib',],
+    'frameworks': ['/opt/local/share/qt4/plugins/imageformats/libqgif.dylib', ],
     'excludes': ['libQtGui.4.dylib', 'libQtGui.4.dylib'],
-    
+
     #              'PyQt4.QtDesigner', 'PyQt4.QtNetwork',
     #              'PyQt4.QtOpenGL', 'PyQt4.QtScript', 'PyQt4.QtSql',
     #              'PyQt4.QtTest', 'PyQt4.QtWebKit', 'PyQt4.QtXml',
@@ -41,8 +41,8 @@ PY2APP_OPTIONS = {
                   '/opt/local/lib/Resources/qt_menu.nib',
                   'modeldata.py', 'mainwindow.py', 'zdplaskin.py',
                   'runner.py', 'mplwidget.py'],
-    }
- 
+}
+
 # 'exclude_package_data': {'src':['*.c', '*.h',  '*.pyx', '*.pxd']}
 PY2EXE_OPTIONS = {
     "dll_excludes": ["MSVCP90.dll"],
@@ -61,7 +61,6 @@ if sys.argv[1] == 'py2exe':
         data_files=matplotlib.get_py2exe_datafiles())
     shutil.move('dist', 'qtplaskin-win')
     call("zip qtplaskin-win.zip qtplaskin-win/*", shell=True)
-    
 
 
 elif sys.argv[1] == 'py2app':
