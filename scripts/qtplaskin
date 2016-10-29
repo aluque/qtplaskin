@@ -17,13 +17,17 @@ from __future__ import print_function, division, unicode_literals, absolute_impo
 import sys
 import traceback
 
-from PyQt4 import QtGui
+try:
+    from PyQt5 import QtGui, QtWidgets
+except ImportError:
+    raise ImportError('Warning. Qtplaskin was updated to PyQt5. You need to' +
+                      ' install PyQt5.')
 
 from qtplaskin.main import DesignerMainWindow
 
 
 # create the GUI application
-app = QtGui.QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
 
 # instantiate the main window
 dmw = DesignerMainWindow()
@@ -38,7 +42,7 @@ dmw.show()
 dmw.raise_()
 
 def new_excepthook(type, value, tb):
-    em = QtGui.QErrorMessage(dmw)
+    em = QtWidgets.QErrorMessage(dmw)
     em.setModal(True)
     msg = "An unhandled exception was raised:\n"
     em.showMessage(msg + '&#xa;<br>'.join(traceback.format_exception(type, value, tb)))

@@ -4,14 +4,14 @@ import time
 import numpy as np
 
 
-# Python Qt4 bindings for GUI objects
-from PyQt4 import QtGui
+# Python Qt5 bindings for GUI objects
+from PyQt5 import QtGui, QtWidgets
 
-# import the Qt4Agg FigureCanvas object, that binds Figure to
-# Qt4Agg backend. It also inherits from QWidget
-from matplotlib.backends.backend_qt4agg \
+# import the Qt5Agg FigureCanvas object, that binds Figure to
+# Qt5Agg backend. It also inherits from QWidget
+from matplotlib.backends.backend_qt5agg \
     import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg \
+from matplotlib.backends.backend_qt5agg \
     import NavigationToolbar2QT as NavigationToolbar
 
 # Matplotlib Figure object
@@ -31,8 +31,8 @@ class MplCanvas(FigureCanvas):
 
         # we define the widget as expandable
         FigureCanvas.setSizePolicy(self,
-                                   QtGui.QSizePolicy.Expanding,
-                                   QtGui.QSizePolicy.Expanding)
+                                   QtWidgets.QSizePolicy.Expanding,
+                                   QtWidgets.QSizePolicy.Expanding)
 
         # notify the system of updated policy
         FigureCanvas.updateGeometry(self)
@@ -62,12 +62,12 @@ class VMToolbar(NavigationToolbar):
 #        home(self, *args, **kwargs)
 
 
-class MplWidget(QtGui.QWidget):
+class MplWidget(QtWidgets.QWidget):
     """Widget defined in Qt Designer"""
 
     def __init__(self, parent=None):
         # initialization of Qt MainWindow widget
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         # set the canvas to the Matplotlib widget
         self.canvas = MplCanvas(self)
@@ -86,7 +86,7 @@ class MplWidget(QtGui.QWidget):
             self.ntb = VMToolbar(self.canvas, self)
 
         # create a vertical box layout
-        self.vbl = QtGui.QVBoxLayout()
+        self.vbl = QtWidgets.QVBoxLayout()
 
         # add mpl widget and toolbar to vertical box
         self.vbl.addWidget(self.canvas)

@@ -18,12 +18,12 @@ import os
 from itertools import cycle
 import traceback
 
-# Qt4 bindings for core Qt functionalities (non-GUI)
-from PyQt4 import QtCore
+# Qt5 bindings for core Qt functionalities (non-GUI)
+from PyQt5 import QtCore
 
-# Python Qt4 bindings for GUI objects
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+# Python Qt5 bindings for GUI objects
+from PyQt5 import QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
                    argsort, r_)
@@ -85,7 +85,7 @@ CONDITIONS_PRETTY_NAMES = {
     "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
 
 
-class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     """Customization for Qt Designer created window"""
 
     def __init__(self, parent=None):
@@ -96,9 +96,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # In some lists we can select more than one item
         self.speciesList.setSelectionMode(
-            QtGui.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection)
         self.reactList.setSelectionMode(
-            QtGui.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection)
 
         for w in [self.reactList, self.speciesList, self.speciesSourceList,
                   self.condList]:
@@ -114,61 +114,16 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.latest_dir = "."
 
         # connect the signals with the slots
-        QtCore.QObject.connect(self.condButton,
-                               QtCore.SIGNAL("clicked()"),
-                               self.update_cond_graph)
-
-        QtCore.QObject.connect(self.plotButton,
-                               QtCore.SIGNAL("clicked()"),
-                               self.update_spec_graph)
-
-        QtCore.QObject.connect(self.sourceButton,
-                               QtCore.SIGNAL("clicked()"),
-                               self.update_source_graph)
-
-        QtCore.QObject.connect(self.reactButton,
-                               QtCore.SIGNAL("clicked()"),
-                               self.update_react_graph)
-
-        QtCore.QObject.connect(self.actionOpen,
-                               QtCore.SIGNAL('triggered()'),
-                               self.select_file)
-
-        QtCore.QObject.connect(self.actionStart_a_simulation,
-                               QtCore.SIGNAL('triggered()'),
-                               self.start_a_simulation)
-
-        QtCore.QObject.connect(self.actionImport_from_directory,
-                               QtCore.SIGNAL('triggered()'),
-                               self.import_from_directory)
-
-        QtCore.QObject.connect(self.actionUpdate,
-                               QtCore.SIGNAL('triggered()'),
-                               self.data_update)
-
-        QtCore.QObject.connect(self.actionExport_data,
-                               QtCore.SIGNAL('triggered()'),
-                               self.export_data)
-
-        QtCore.QObject.connect(self.actionSave,
-                               QtCore.SIGNAL('triggered()'),
-                               self.save_to_file)
-
-        QtCore.QObject.connect(self.actionLog_scale_in_time,
-                               QtCore.SIGNAL('triggered()'),
-                               self.action_set_logtime)
-
-        QtCore.QObject.connect(self.actionDatacursor,
-                               QtCore.SIGNAL('triggered()'),
-                               self.action_set_datacursor)
-
-        QtCore.QObject.connect(self.actionQuit,
-                               QtCore.SIGNAL('triggered()'),
-                               QtGui.qApp, QtCore.SLOT("quit()"))
-
-        QtCore.QObject.connect(self.update_timer,
-                               QtCore.SIGNAL("timeout()"),
-                               self.data_update)
+        self.condButton.clicked.connect(self.update_cond_graph)
+        self.plotButton.clicked.connect(self.update_spec_graph)
+        self.sourceButton.clicked.connect(self.update_source_graph)
+        self.reactButton.clicked.connect(self.update_react_graph)
+        
+        self.actionOpen.triggered.connect(self.select_file)
+        self.actionStart_a_simulation.triggered.connect(self.start_a_simulation)
+        self.actionImport_from_directory.triggered.connect(self.import_from_directory)
+        self.actionUpdate.triggered.connect(self.data_update)
+        self.actionExport_data.triggered.connect(self.export_data)
 
     def print_status(self, string):
         ''' Print to status bar
@@ -287,10 +242,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.condWidget.clear()
 
         if not autoscale:
-            self.condWidget.axes[0].autoscale(False, axis='x')
-
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
-
+            self.condWidget.axes[0].autoscale(False,axis='x')
+            
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+        
         y = array(self.data.condition(condition))
         condition_name = self.data.conditions[condition - 1]
 
@@ -314,7 +269,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.condWidget.draw()
 
         self.condWidget.add_data(self.data.t, y, label)
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_spec_graph(self, autoscale=None):
         """Updates the graph with densities"""
@@ -332,9 +287,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.densWidget.clear()
 
         if not autoscale:
-            self.densWidget.axes[0].autoscale(False, axis='x')
-
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+            self.densWidget.axes[0].autoscale(False,axis='x')
+            
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
 
         citer = cycle(COLOR_SERIES)
@@ -356,13 +311,14 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.densWidget.axes[0].set_xlabel("t [s]")
         self.densWidget.axes[0].set_ylabel("Density [cm$^\mathdefault{-3}$]")
         self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
-
+                
         self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
+
 
         # force an image redraw
         self.densWidget.draw()
 
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_source_graph(self, autoscale=None):
         """Updates the graph with sources rates"""
@@ -385,8 +341,8 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.sourceWidget.creationAx.autoscale(False, axis='x')
             self.sourceWidget.removalAx.autoscale(False, axis='x')
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
-
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+        
         dreactions = self.data.sources(species[0])
         reactions = list(dreactions.keys())
 
@@ -475,7 +431,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # force an image redraw
         self.sourceWidget.draw()
 
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_react_graph(self, autoscale=None):
         """Updates the graph with reaction rates"""
@@ -493,9 +449,9 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.reactWidget.clear()
 
         if not autoscale:
-            self.reactWidget.axes[0].autoscale(False, axis='x')
-
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
+            self.reactWidget.axes[0].autoscale(False,axis='x')
+            
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
         citer = cycle(COLOR_SERIES)
         lines = []
@@ -529,12 +485,12 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # force an image redraw
         self.reactWidget.draw()
 
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def select_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        file = QtGui.QFileDialog.getOpenFileName(self, "Open data file",
+        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open data file",
                                                  ".",
                                                  "HDF5 files (*.h5 *.hdf5);;"
                                                  "All files (*)")
@@ -548,7 +504,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.clear()
 
             except IOError as e:
-                QtGui.QErrorMessage(self).showMessage(
+                QtWidgets.QErrorMessage(self).showMessage(
                     "Failed to open file.  Incorrect format? <%s>" % e)
 
     def start_a_simulation(self):
@@ -558,10 +514,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.update_lists()
 
     def import_from_directory(self):
-        fname = QtGui.QFileDialog.getExistingDirectory(
+        fname = QtWidgets.QFileDialog.getExistingDirectory(
             self, "Import data from directory",
-            self.latest_dir, QtGui.QFileDialog.ShowDirsOnly)
-
+            self.latest_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+        
         self._import_from_directory(fname)
         self.latest_dir = fname
 
@@ -570,7 +526,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 self.data = FastDirData(fname)
             except MemoryError as e:
-                em = QtGui.QErrorMessage(self)
+                em = QtWidgets.QErrorMessage(self)
                 em.setModal(True)
                 em.showMessage(
                     ("Memory error: Failed to open directory (%s).\n" % str(e))
@@ -579,7 +535,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 try:
                     self.data = DirectoryData(fname)
                 except IOError as e:
-                    em = QtGui.QErrorMessage(self)
+                    em = QtWidgets.QErrorMessage(self)
                     em.setModal(True)
                     em.showMessage(
                         ("Failed to open directory (%s).\n" % str(e))
@@ -589,7 +545,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     em.exec_()
                     self.data = OldDirectoryData(fname)
             except IOError as e:
-                em = QtGui.QErrorMessage(self)
+                em = QtWidgets.QErrorMessage(self)
                 em.setModal(True)
                 em.showMessage(
                     ("Failed to open directory (%s).\n" % str(e))
@@ -603,7 +559,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.update_lists()
             self.clear()
         except IOError as e:
-            em = QtGui.QErrorMessage(self)
+            em = QtWidgets.QErrorMessage(self)
             em.setModal(True)
             em.exec_()
             em.showMessage(
@@ -620,7 +576,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def save_to_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        fname = QtGui.QFileDialog.getSaveFileName(self, "Save to file",
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Save to file",
                                                   ".",
                                                   "HDF5 files (*.h5 *.hdf5);;"
                                                   "All files (*)")
@@ -632,7 +588,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def export_data(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        fname = QtGui.QFileDialog.getSaveFileName(self, "Export data to file",
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
                                                   ".",
                                                   "TSV files (*.tsv);;"
                                                   "TXT files (*.txt);;"
@@ -680,13 +636,13 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 row = qtable.rowCount()
                 qtable.insertRow(row)
                 # The + 1 is to move to the FORTRAN/ZdPlaskin convention
-                nitem = QtGui.QTableWidgetItem(u'%4d' % (n + 1))
+                nitem = QtWidgets.QTableWidgetItem(u'%4d' % (n + 1))
                 nitem.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-                nitem.setTextColor(QtGui.QColor(160, 160, 160))
+                nitem.setForeground(QtGui.QColor(160, 160, 160))
                 qtable.setItem(row, 0, nitem)
 
                 showed_item = pretty_names.get(item, item)
-                sitem = QtGui.QTableWidgetItem(showed_item)
+                sitem = QtWidgets.QTableWidgetItem(showed_item)
                 sitem.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
                 qtable.setItem(row, 1, sitem)
 
@@ -750,10 +706,10 @@ def iter_2_selected(qtablewidget):
 if __name__ == '__main__':
 
     # create the GUI application
-    app = QtGui.QApplication.instance()  # checks if QApplication already exists
-    if not app:  # create QApplication if it doesnt exist
-        app = QtGui.QApplication(sys.argv)
-        # This check is useful not to crash when testing successive times from
+    app=QtWidgets.QApplication.instance() # checks if QApplication already exists 
+    if not app: # create QApplication if it doesnt exist 
+        app = QtWidgets.QApplication(sys.argv)
+        # This check is useful not to crash when testing successive times from 
         # IPython
 
     # instantiate the main window
@@ -769,7 +725,7 @@ if __name__ == '__main__':
     dmw.raise_()
 
     def new_excepthook(type, value, tb):
-        em = QtGui.QErrorMessage(dmw)
+        em = QtWidgets.QErrorMessage(dmw)
         em.setModal(True)
         msg = "An unhandled exception was raised:\n"
         em.showMessage(
