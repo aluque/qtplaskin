@@ -36,14 +36,14 @@ class TimeFormatter(ScalarFormatter):
             xp = nformat % (xp * 1e6) + 'µs'
         elif dt < 1e-1:
             xp = nformat % (xp * 1e3) + 'ms'
+        else:
+            xp = nformat % xp    # s
         return xp
 
     def pprint_val(self, x):
 
-        xp = (x - self.offset)  # / (10. ** self.orderOfMagnitude)
-        # if np.absolute(xp) < 1e-8:
-        #    xp = 0
-
+        xp = (x - self.offset)
+        
         xp = self.tformat(xp)
 
         return xp
