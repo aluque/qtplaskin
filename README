@@ -25,19 +25,21 @@ File -> Import from directory... in the program menu.
 
 ---
 
-### 2016 Erwan Pannier: 
+# 2016 Erwan Pannier: 
 
-improve QtPlaskin with tiny features
+Improvements over A. Luque's initial version:
 
-TODO:
+- Dynamic tooltips on plots to analyze graphs with dozens of different lines
 
-- fix QtPlaskin for Python 3.x
+- Synchronized timescales over all plots, and dynamic ticks to deal with 
+nanosecond to microsecond ranges
 
-- Dynamic tooltips on plots
+- ported to PyQt5 to keep up with the latest Python environnements
 
-- twinx on losses+production plots
+- Python3 compatible
 
-
+- Made qtplaskin an installable Python library, that can automatically be 
+called from the command line with `qtplaskin $FOLDER` to analyze a given directory
 
 
 
