@@ -6,6 +6,11 @@ Main module
 Use
 ------
     run it from the qtplaskin script under script/
+    
+Or from Python with:
+    
+    import qtplaskin
+    qtplaskin.main.load([FOLDER])
 
 """
 
@@ -18,11 +23,16 @@ import os
 from itertools import cycle
 import traceback
 
+try:
+    from PyQt5 import QtGui, QtWidgets
+except ImportError:
+    raise ImportError('Warning. Qtplaskin was upgraded to PyQt5. You need to' +
+                      ' install PyQt5.')
+
 # Qt5 bindings for core Qt functionalities (non-GUI)
 from PyQt5 import QtCore
 
 # Python Qt5 bindings for GUI objects
-from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
@@ -700,15 +710,15 @@ def iter_2_selected(qtablewidget):
 
     return selected
 
-
-# %% Run from here
-
-if __name__ == '__main__':
-
+def load(folder):
+    return main(['.',folder])
+    
+def main(argv):
+    
     # create the GUI application
     app=QtWidgets.QApplication.instance() # checks if QApplication already exists 
     if not app: # create QApplication if it doesnt exist 
-        app = QtWidgets.QApplication(sys.argv)
+        app = QtWidgets.QApplication(argv)
         # This check is useful not to crash when testing successive times from 
         # IPython
 
@@ -716,8 +726,8 @@ if __name__ == '__main__':
     dmw = DesignerMainWindow()
 
     # Load file if present in sys.argv
-    if(len(sys.argv) > 1):
-        fname = sys.argv[1]
+    if(len(argv) > 1):
+        fname = argv[1]
         dmw.import_file_or_dir(fname)
 
     # show it
@@ -739,3 +749,8 @@ if __name__ == '__main__':
     # start the Qt main loop execution, exiting from this script
     # with the same return code of Qt application
     sys.exit(app.exec_())
+
+# %% Run from here (for testing purpose)
+
+if __name__ == '__main__':
+    main(sys.argv)
