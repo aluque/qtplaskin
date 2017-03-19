@@ -15,6 +15,7 @@ from matplotlib.backends.backend_qt5agg \
     import NavigationToolbar2QT as NavigationToolbar
 
 # Matplotlib Figure object
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 
@@ -36,16 +37,31 @@ class MplCanvas(FigureCanvas):
 
         # notify the system of updated policy
         FigureCanvas.updateGeometry(self)
+#
+#class QtToolbar(NavigationToolbar):
+#    
+#    def __init__(self, plotCanvas, parent):
+#        NavigationToolbar.__init__(self, plotCanvas, parent)
+#        self._home = self.home
+#        self.home = self.new_home
+#
+#    def new_home(self, *args, **kwargs):
+#        ''' New navigation home button with forced reset 
+#        http://stackoverflow.com/questions/14896580/matplotlib-hooking-in-to-home-back-forward-button-events'''
+#        widget = self.parent
+#        #print('home!')
+#        #widget.update(rescale=True)
+#        widget.reset_lims()
+#        raise
+#        self._home(self, *args, **kwargs)
 
 # Thanks Laurent
 # http://groups.google.com/group/pyinstaller/browse_thread/thread/834bea87c7afcdff?pli=1
-
 
 class VMToolbar(NavigationToolbar):
 
     def __init__(self, plotCanvas, parent):
         NavigationToolbar.__init__(self, plotCanvas, parent)
-        self.home = self.new_home
 
     def _icon(self, name):
         # dirty hack to use exclusively .png and thus avoid .svg usage
@@ -53,17 +69,11 @@ class VMToolbar(NavigationToolbar):
         name = name.replace('.svg', '.png')
         return QtGui.QIcon(os.path.join(self.basedir, name))
 
-    def new_home(self, *args, **kwargs):
-        ''' New navigation home button with forced reset 
-        http://stackoverflow.com/questions/14896580/matplotlib-hooking-in-to-home-back-forward-button-events'''
-        widget = self.parent
-        print('home!')
-        widget.update(rescale=True)
-#        home(self, *args, **kwargs)
-
-
 class MplWidget(QtWidgets.QWidget):
     """Widget defined in Qt Designer"""
+
+    def handle_home(self, event):
+        self.reset_lims()
 
     def __init__(self, parent=None):
         # initialization of Qt MainWindow widget
@@ -95,11 +105,63 @@ class MplWidget(QtWidgets.QWidget):
         palette = self.ntb.palette()
         self.canvas.fig.set_facecolor([x / 255. for x in
                                        palette.window().color().getRgb()])
+    
+#        self.canvas.mpl_connect('home_event', self.handle_home)
+        
+        # Connect Home Button with New Home functions
+        self.ntb.actions()[0].triggered.connect(self.handle_home)
 
         # set the layout to th vertical box
         self.setLayout(self.vbl)
 
         self.clear_data()
+        
+        
+#    def get_npoints_on_screen(self, line_index=0):
+#        ''' 
+#        Input
+#        -----
+#        ax: matplotlib axe
+#        l: line number
+#        '''
+#    
+#        if ax is None:
+#            ax=plt.gca()
+#        line = ax.get_lines()[line_index]
+#    
+#    
+#        xmin, xmax = ax.xaxis.get_view_interval()
+#        ymin, ymax = ax.yaxis.get_view_interval()
+#    
+#        xdata = line.get_xdata()
+#        ydata = line.get_ydata()
+#    
+#        return sum((xdata>=xmin) & (xdata<=xmax) & (ydata>=ymin) & (ydata<=ymax))
+
+    
+    def reset_lims(self):
+    #    ax = plt.gca()
+       
+        for ax in self.axes:
+            lines = ax.get_lines()
+            if lines == []:
+                xmin = None
+                xmax = None
+                ymin = None
+                ymax = None
+            else:
+                xmin = min([min(l.get_xdata()) for l in lines])
+                xmax = max([max(l.get_xdata()) for l in lines])
+                ymin = min([min(l.get_ydata()) for l in lines])
+                ymax = max([max(l.get_ydata()) for l in lines])
+            
+            print('Reset xlim',xmin,xmax)
+            print('Reset ylim',ymin,ymax)
+            
+            ax.set_xlim(xmin=xmin,xmax=xmax)
+            ax.set_ylim(ymin=ymin,ymax=ymax)
+            ax.autoscale(tight=False)
+            plt.draw()
 
     def clear_data(self):
         # This is for the correct export of data.
@@ -111,6 +173,11 @@ class MplWidget(QtWidgets.QWidget):
         """ Adds axes to this widget.  """
         ax = self.fig.add_axes(*args, **kwargs)
         ax.cursorlines = None    # used to store lines to display cursors
+#        
+#        # Update lines         
+#        ax.callbacks.connect('xlim_changed', on_xlims_change)
+#        ax.callbacks.connect('ylim_changed', on_ylims_change)
+        
         self.axes.append(ax)
 
         return ax
@@ -174,6 +241,7 @@ class ConditionsPlotWidget(MplWidget):
 
         if gui.firstAx is None:
             gui.firstAx = self.condAx
+            self.reset_lims()
 
         self.grid()
 
@@ -190,6 +258,7 @@ class DensityPlotWidget(MplWidget):
 
         if gui.firstAx is None:
             gui.firstAx = self.densAx
+            self.reset_lims()
 
         self.grid()
 
@@ -209,6 +278,7 @@ class SourcePlotWidget(MplWidget):
 
         if gui.firstAx is None:
             gui.firstAx = self.removalAx
+            self.reset_lims()
 
         self.grid()
 
@@ -225,5 +295,6 @@ class RatePlotWidget(MplWidget):
 
         if gui.firstAx is None:
             gui.firstAx = self.rateAx
+            self.reset_lims()
 
         self.grid()

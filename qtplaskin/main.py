@@ -263,7 +263,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
         lines = []
         lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                                  label=label,
+                                                  label=label, scalex=False,
                                                   zorder=10)[0])
 
         self.condWidget.condAx.cursorlines = lines
@@ -309,7 +309,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dens = self.data.density(item[0])
             flt = dens > DENS_THRESHOLD
             lines.append(self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
-                                                      lw=LINE_WIDTH,
+                                                      lw=LINE_WIDTH, scalex=False, 
                                                       c=next(citer), label=name,
                                                       zorder=10)[0])
             self.densWidget.add_data(self.data.t, dens, name)
@@ -397,6 +397,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                            c=next(citer),
                                                            lw=LINE_WIDTH,
                                                            label=label,
+                                                           scalex=False, 
                                                            zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, r[i, :], label)
@@ -414,6 +415,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                           c=next(citer),
                                                           lw=LINE_WIDTH,
                                                           label=label,
+                                                          scalex=False, 
                                                           zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)

@@ -358,6 +358,16 @@ class FastDirData(DirectoryData):
         -------
 
         species: list'''
+        
+        return self.get_spec(species)
+
+    def get_spec(self, species):
+        ''' Get a given set species
+
+        Input:
+        -------
+
+        species: list'''
 
         def _index(s):
             try:
@@ -383,6 +393,41 @@ class FastDirData(DirectoryData):
 
         else:
             return [self.raw_density[:latest_i, _index(s)] for s in species]
+
+    def get_rate(self, reactions):
+        ''' Get a given reaction rate
+
+        Input:
+        -------
+
+        reactions: list'''
+        
+        
+        def _index(s):
+            try:
+                i = self.reactions.index(s)
+            except ValueError:
+                try:  # try if there is only one element, starting with the same name
+                    l = [x for x in self.species if (
+                        x.lower()).startswith(s.lower())]
+                    if len(l) == 1:
+                        i = self.species.index(l[0])
+                    else:
+                        raise ValueError
+                except ValueError:
+                    raise ValueError("%s not in reaction list: %s" %
+                                     (s, self.reactions))
+            return i
+
+        latest_i = min(d.shape[0] for d in
+                       (self.raw_density, self.raw_rates, self.raw_conditions))
+
+        if not type(reactions) == list:
+            return self.raw_rates[:latest_i, _index(reactions)]
+
+        else:
+            return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
+
 
     def get_cond(self, conditions):
         ''' Get a given set conditions
@@ -425,6 +470,27 @@ class FastDirData(DirectoryData):
         plt.figure()
         plt.plot(self.t, self.get(species))
         plt.yscale('log')
+        
+    def get_QTindex(self, i):
+        ''' Get index of item i. Useful when you want to find a particular reaction
+        in QtPlaskin but your model has hundreds of them. 
+        
+        Input
+        ------
+        
+        i: reaction, cond or species
+        '''
+        
+        if i in self.reactions:
+            print('{0} is Reaction #{1}'.format(i, self.reactions.index(i)+1))
+        elif i in self.species:
+            print('{0} is Species #{1}'.format(i, self.species.index(i)+1))
+        elif i in self.conditions:
+            print('{0} is Condition #{1}'.format(i, self.conditions.index(i)+1))
+        else:
+            raise ValueError("Couldnt find {0} in reactions, species or conditions".format(i))
+            
+            
 
 
 class OldDirectoryData(DirectoryData):
