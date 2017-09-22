@@ -155,8 +155,8 @@ class MplWidget(QtWidgets.QWidget):
                 ymin = min([min(l.get_ydata()) for l in lines])
                 ymax = max([max(l.get_ydata()) for l in lines])
             
-            print('Reset xlim',xmin,xmax)
-            print('Reset ylim',ymin,ymax)
+#            print('Reset xlim',xmin,xmax)
+#            print('Reset ylim',ymin,ymax)
             
             ax.set_xlim(xmin=xmin,xmax=xmax)
             ax.set_ylim(ymin=ymin,ymax=ymax)
