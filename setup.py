@@ -27,6 +27,13 @@ import os
 from setuptools import setup
 import codecs
 
+# Force installation of some librairies that cannot be installed with pip 
+try:
+    import PyQt5
+except ImportError:
+    raise ImportError("Please install these librairies manually first (with Anaconda is "+\
+                        "strongly recommended) \n >>> conda install pyqt")
+
 long_description = 'A graphical tool to explore ZdPlaskin Results'
 if os.path.exists('README.md'):
     long_description = codecs.open('README.md', encoding="utf-8").read()
@@ -45,7 +52,7 @@ setup(name='qtplaskin',
           'matplotlib',
           'h5py',
           'mpldatacursor',
-          # 'pyqt'      # cannot be installed through pip. Install PyQt4 manually
+          # 'pyqt'      # cannot be installed through pip. Install PyQt5 manually
       ],
       classifiers=[
           'Development Status :: 4 - Beta',
