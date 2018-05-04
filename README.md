@@ -5,8 +5,8 @@ kinetic code such as ZdPlasKin (1).  It supports both a specific data
 format based on HDF5 and importing directories with certain filesets
 that can be written from a running FORTRAN code.
 
-- QtPlaskin was created by A. Luque (see [original version](https://github.com/aluque))
-- It was updated by E. Pannier (see end of this file for main changes)
+- QtPlaskin was created by A. Luque (2012)
+- Updated by E. Pannier (2016-2018): see end of this file for main changes
 
 # Install
 
@@ -14,7 +14,7 @@ QtPlaskin runs in Linux, Mac OS X and Windows. QtPlaskin is now a Python library
 Install it from GitHub with:
 
 ```
-git clone https://github.com/erwanp/qtplaskin.git
+git clone https://github.com/aluque/qtplaskin.git
 cd qtplaskin
 pip install -e .
 ``` 
@@ -66,6 +66,9 @@ Then you can import the data of your simulation into QtPlaskin by using
 File -> Import from directory... in the program menu.
 
 
+# References
+
+
 ---
 (1)  ZdPlaskin is a computer code developed by S. Pancheshnyi, B. Eismann, 
      G.J.M. Hagelaar and L.C. Pitchford, 
@@ -75,9 +78,11 @@ File -> Import from directory... in the program menu.
 
 ---
 
-# Features specific to this Fork: 
+# Log 
 
-Improvements over A. Luque's initial version:
+### 1.1 version improvements
+
+Improvements over initial version (1.0):
 
 - Dynamic tooltips on plots to analyze graphs with dozens of different lines
 
