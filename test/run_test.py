@@ -15,4 +15,6 @@ Dont forget never to git these files
 
 import qtplaskin
 
-qtplaskin.main.load('./Results')
+if __name__ == '__main__':
+
+    qtplaskin.main.load('./Results')
