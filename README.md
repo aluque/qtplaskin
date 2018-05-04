@@ -62,6 +62,7 @@ nanosecond to microsecond ranges
 
 - call qtplaskin from the command line with with `qtplaskin $FOLDER` to analyze a given directory
 
+- faster Results folder loading using Pandas instead of Numpy
 
 
 
