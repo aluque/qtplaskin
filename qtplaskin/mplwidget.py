@@ -74,6 +74,7 @@ class MplWidget(QtWidgets.QWidget):
 
     def handle_home(self, event):
         self.reset_lims()
+        self.draw()
 
     def __init__(self, parent=None):
         # initialization of Qt MainWindow widget
@@ -116,6 +117,10 @@ class MplWidget(QtWidgets.QWidget):
 
         self.clear_data()
         
+    def get_gui(self):
+        gui = self.parent().parent().parent().parent().parent()
+        return gui
+        
         
 #    def get_npoints_on_screen(self, line_index=0):
 #        ''' 
@@ -141,6 +146,8 @@ class MplWidget(QtWidgets.QWidget):
     
     def reset_lims(self):
     #    ax = plt.gca()
+    
+#        print('called reset_lims()')
        
         for ax in self.axes:
             lines = ax.get_lines()
@@ -160,7 +167,7 @@ class MplWidget(QtWidgets.QWidget):
             
             ax.set_xlim(xmin=xmin,xmax=xmax)
             ax.set_ylim(ymin=ymin,ymax=ymax)
-            ax.autoscale(tight=False)
+            ax.autoscale(True, tight=False)
             plt.draw()
 
     def clear_data(self):
@@ -232,34 +239,40 @@ class MplWidget(QtWidgets.QWidget):
 class ConditionsPlotWidget(MplWidget):
 
     def init_axes(self):
+        
+        # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
-        gui = self.parent().parent().parent().parent().parent()
+        gui = self.get_gui()
         if gui.firstAx is not None:
             sharex = gui.firstAx
 
         self.condAx = self.add_axes([0.1, 0.1, 0.85, 0.85], sharex=sharex)
 
-        if gui.firstAx is None:
+        if gui.firstAx is None:  # register this Widget as the Ax to be sync with
             gui.firstAx = self.condAx
             self.reset_lims()
 
+        # Add grid
         self.grid()
 
 
 class DensityPlotWidget(MplWidget):
 
     def init_axes(self):
+        
+        # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
-        gui = self.parent().parent().parent().parent().parent()
+        gui = self.get_gui()
         if gui.firstAx is not None:
             sharex = gui.firstAx
 
         self.densAx = self.add_axes([0.085, 0.1, 0.7, 0.85], sharex=sharex)
 
-        if gui.firstAx is None:
+        if gui.firstAx is None:  # register this Widget as the Ax to be sync with
             gui.firstAx = self.densAx
             self.reset_lims()
 
+        # Add grid
         self.grid()
 
 
@@ -267,8 +280,10 @@ class SourcePlotWidget(MplWidget):
     ''' sensitivity analysis '''
 
     def init_axes(self):
+        
+        # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
-        gui = self.parent().parent().parent().parent().parent()
+        gui = self.get_gui()
         if gui.firstAx is not None:
             sharex = gui.firstAx
 
@@ -276,25 +291,29 @@ class SourcePlotWidget(MplWidget):
         self.creationAx = self.add_axes(
             [0.085, 0.58, 0.65, 0.4], sharex=self.removalAx)
 
-        if gui.firstAx is None:
+        if gui.firstAx is None:  # register this Widget as the Ax to be sync with
             gui.firstAx = self.removalAx
             self.reset_lims()
 
+        # Add grid
         self.grid()
 
 
 class RatePlotWidget(MplWidget):
 
     def init_axes(self):
+        
+        # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
-        gui = self.parent().parent().parent().parent().parent()
+        gui = self.get_gui()
         if gui.firstAx is not None:
             sharex = gui.firstAx
 
         self.rateAx = self.add_axes([0.085, 0.1, 0.65, 0.85], sharex=sharex)
 
-        if gui.firstAx is None:
+        if gui.firstAx is None:  # register this Widget as the Ax to be sync with
             gui.firstAx = self.rateAx
             self.reset_lims()
 
+        # Add grid
         self.grid()

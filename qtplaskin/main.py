@@ -233,27 +233,32 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             return 'linear'
 
-    def update_cond_graph(self, autoscale=None):
-        """Updates the graph with conditions"""
+    def update_cond_graph(self):
+        """Updates the graph with conditions
+        
+        Attributes
+        ----------
+        
+        autoscale
+            will keep timescale from last ax unless it's the first plot. Default None.
+        """
 
         try:
             condition = list(iter_2_selected(self.condList))[0][0]
         except AttributeError:
             return
 
-        # Don't change time if there was data already
-        if autoscale is None:
-            autoscale = self.firstAx is None
-
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
+            
         # clear the Axes
         if not self.condWidget.axes:
             self.condWidget.init_axes()
         else:
             self.condWidget.clear()
 
-        if not autoscale:
-            self.condWidget.axes[0].autoscale(False,axis='x')
-            
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
         y = array(self.data.condition(condition))
@@ -263,7 +268,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
         lines = []
         lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                                  label=label, scalex=False,
+                                                  label=label, #scalex=False,
                                                   zorder=10)[0])
 
         self.condWidget.condAx.cursorlines = lines
@@ -272,6 +277,12 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
         self.condWidget.axes[0].set_xlabel("t [s]")
         self.condWidget.axes[0].set_ylabel(label)
+        
+        # Reset former xrange
+        if former_xrange is not None:
+            self.condWidget.axes[0].set_xlim(former_xrange)
+        else:  # autoscale to full range
+            self.condWidget.axes[0].autoscale(True,axis='x')
 
         self.condWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
@@ -282,22 +293,27 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_spec_graph(self, autoscale=None):
-        """Updates the graph with densities"""
+        """Updates the graph with densities
+        
+        Attributes
+        ----------
+        
+        autoscale
+            will keep timescale from last ax unless it's the first plot. Default None.
+        """
         # clear the Axes
         if not self.speciesList.selectedItems():
             return
-
-        # Don't change time if there was data already
-        if autoscale is None:
-            autoscale = self.firstAx is None
 
         if not self.densWidget.axes:
             self.densWidget.init_axes()
         else:
             self.densWidget.clear()
 
-        if not autoscale:
-            self.densWidget.axes[0].autoscale(False,axis='x')
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
             
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
@@ -322,6 +338,12 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.densWidget.axes[0].set_ylabel("Density [cm$^\mathdefault{-3}$]")
         self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
                 
+        # Reset former xrange
+        if former_xrange is not None:
+            self.densWidget.axes[0].set_xlim(former_xrange)
+        else:  # autoscale to full range
+            self.densWidget.axes[0].autoscale(True,axis='x')
+            
         self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
 
@@ -331,25 +353,29 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_source_graph(self, autoscale=None):
-        """Updates the graph with sources rates"""
+        """Updates the graph with sources rates
+        
+        Attributes
+        ----------
+        
+        autoscale
+            will keep timescale from last ax unless it's the first plot. Default None.
+        """
         try:
             species = list(iter_2_selected(self.speciesSourceList))[0]
         except AttributeError:
             return
 
-        # Don't change time if there was data already
-        if autoscale is None:
-            autoscale = self.firstAx is None
-
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
+            
         # clear the Axes
         if not self.sourceWidget.axes:
             self.sourceWidget.init_axes()
         else:
             self.sourceWidget.clear()
-
-        if not autoscale:
-            self.sourceWidget.creationAx.autoscale(False, axis='x')
-            self.sourceWidget.removalAx.autoscale(False, axis='x')
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
@@ -437,6 +463,13 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.sourceWidget.set_scales(yscale='log', xscale=self.xscale)
 
+        # Reset former xrange
+        if former_xrange is not None:
+            self.sourceWidget.creationAx.set_xlim(former_xrange)
+#            self.sourceWidget.removalAx.set_xlim(former_xrange)  # synchronized already
+        else:  # autoscale to full range
+            self.sourceWidget.creationAx.autoscale(True,axis='x')
+            
         self.sourceWidget.creationAx.xaxis.set_major_formatter(TimeFormatter())
         self.sourceWidget.removalAx.xaxis.set_major_formatter(TimeFormatter())
 
@@ -446,23 +479,28 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def update_react_graph(self, autoscale=None):
-        """Updates the graph with reaction rates"""
+        """Updates the graph with reaction rates
+        
+        Attributes
+        ----------
+        
+        autoscale
+            will keep timescale from last ax unless it's the first plot. Default None.
+        """
         if not self.reactList.selectedItems():
             return
 
-        # Don't change time if there was data already
-        if autoscale is None:
-            autoscale = self.firstAx is None
-
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
+            
         # clear the Axes
         if not self.reactWidget.axes:
             self.reactWidget.init_axes()
         else:
             self.reactWidget.clear()
 
-        if not autoscale:
-            self.reactWidget.axes[0].autoscale(False,axis='x')
-            
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
 
         citer = cycle(COLOR_SERIES)
@@ -492,6 +530,10 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.reactWidget.axes[0].legend(loc=(1.025, 0.0),
                                         prop=dict(size=8))
 
+        # Reset former xrange
+        if former_xrange is not None:
+            self.condWidget.axes[0].set_xlim(former_xrange)
+            
         self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
         # force an image redraw
@@ -584,7 +626,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.update_spec_graph()
         self.update_source_graph()
         self.update_react_graph()
-
+        
     def save_to_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file

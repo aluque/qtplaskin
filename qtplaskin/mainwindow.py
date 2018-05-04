@@ -94,7 +94,7 @@ class Ui_MainWindow(object):
         self.condButton.setObjectName(_fromUtf8("condButton"))
         self.verticalLayout_6.addWidget(self.condButton)
         self.horizontalLayout_5.addLayout(self.verticalLayout_6)
-        self.firstAx = None
+        self.firstAx = None     # Manually added: stores the first ax so others are sync with it
         self.condWidget = ConditionsPlotWidget(self.tab_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
