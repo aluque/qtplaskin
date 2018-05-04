@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 How to use?
+-----------
 
 ZdPlaskin output files are not embedded in QtPlaskin, as they are very heavy
 

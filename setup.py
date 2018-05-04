@@ -39,11 +39,11 @@ if os.path.exists('README.md'):
     long_description = codecs.open('README.md', encoding="utf-8").read()
 
 setup(name='qtplaskin',
-      version='1.0.1',
+      version='1.0.2',
       description='A graphical tool to explore ZdPlaskin Results',
       long_description=long_description,
       url='https://github.com/erwanp/qtplaskin',
-      author='Alejandro Luque. Updated by Erwan Pannier',
+      author='Alejandro Luque. Turned into a Python package by Erwan Pannier',
       author_email='erwan.pannier@gmail.com',
       install_requires=[
           'future',  # for builtins

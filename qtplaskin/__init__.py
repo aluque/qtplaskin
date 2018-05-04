@@ -12,3 +12,5 @@ from . import mplwidget
 from . import runner
 from . import zdplaskin
 from . import timeformatter
+
+from .modeldata import FastDirData
