@@ -6,14 +6,14 @@ A graphical tool to explore ZdPlaskin Results
 
 https://github.com/aluque/qtplaskin
 
-Written by Alejandro Luque
+Written by Alejandro Luque (2012)
 
 ---
 
-Updated by Erwan Pannier, 2016 to turn it into an app
+Updated by Erwan Pannier (2016-2018) to turn it into a Python library
 
-Note: you still have to install PyQt4 manually as it cannot be installed
-from pip. Read Alejandro's INSTALL.txt file to see how to install PyQt4. 
+Note: you still have to install PyQt5 manually as it cannot be installed
+from pip. Read Alejandro's INSTALL.txt file to see how to install PyQt. 
 Note that although PyQt cannot be installed through pip, you can install
 if with "conda install pyqt" if you're using the Anaconda distribution of 
 Python
@@ -39,12 +39,12 @@ if os.path.exists('README.md'):
     long_description = codecs.open('README.md', encoding="utf-8").read()
 
 setup(name='qtplaskin',
-      version='1.0.3',
+      version='1.1.0',
       description='A graphical tool to explore ZdPlaskin Results',
       long_description=long_description,
-      url='https://github.com/erwanp/qtplaskin',
-      author='Alejandro Luque. Turned into a Python package by Erwan Pannier',
-      author_email='erwan.pannier@gmail.com',
+      url='https://github.com/aluque/qtplaskin',
+      author='Alejandro Luque, updated Erwan Pannier',
+      author_email='luquex@gmail.com',
       install_requires=[
           'future',  # for builtins
           'numpy',
@@ -62,6 +62,7 @@ setup(name='qtplaskin',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
           "Operating System :: OS Independent"],
       packages=['qtplaskin'],
       scripts=[
