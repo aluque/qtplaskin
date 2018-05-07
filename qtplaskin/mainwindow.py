@@ -296,6 +296,7 @@ class Ui_MainWindow(object):
         self.actionLog_scale_in_time.setObjectName(_fromUtf8("actionLog_scale_in_time"))
         self.actionDatacursor = QtWidgets.QAction(MainWindow)
         self.actionDatacursor.setCheckable(True)
+        self.actionDatacursor.setChecked(True)
         self.actionDatacursor.setObjectName(_fromUtf8("actionDatacursor"))
         self.actionExport_data = QtWidgets.QAction(MainWindow)
         self.actionExport_data.setObjectName(_fromUtf8("actionExport_data"))
