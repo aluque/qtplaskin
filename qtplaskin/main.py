@@ -191,7 +191,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             for ax in widget.axes:
                 if not ax.cursorlines is None:
                     self.cursors.append(mpldatacursor.datacursor(
-                        ax.cursorlines, hover=True, size=14, color='k',
+                        ax.cursorlines, hover=True, size=10, color='k',
                         bbox=dict(fc='white', alpha=0.9),
                         formatter=formatter))
         return None
