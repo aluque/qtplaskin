@@ -8,6 +8,7 @@ import pandas as pd
 import h5py
 
 from qtplaskin.runner import run
+from qtplaskin.database import get_molar_mass, Na
 
 
 class ModelData(object):
@@ -241,6 +242,7 @@ class DirectoryData(ModelData):
         self.species = self._read_list(self.F_SPECIES_LIST)
         self.reactions = self._read_list(self.F_REACTIONS_LIST)
         self.conditions = self._read_list(self.F_CONDITIONS_LIST)
+        self.molarmass = self._get_molarmass()
 
         self.n_species = len(self.species)
         self.n_reactions = len(self.reactions)
@@ -281,6 +283,10 @@ class DirectoryData(ModelData):
         self.raw_rates = _raw_rates[:latest_i, 1:]
         self.raw_density = _raw_density[:latest_i, 1:]
         self.t = _raw_density[:latest_i, 0]
+        
+        # Add total
+        self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
+        self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
 
     def _path(self, fname):
         # This is just to save typing
@@ -304,6 +310,16 @@ class DirectoryData(ModelData):
             d[ri] = self.raw_rates[:, ri] * c[ri]
 
         return d
+
+    def _get_molarmass(self):
+        
+        M = []
+        for s in self.species:
+            if s == 'E':
+                M.append(0)
+            else:
+                M.append(get_molar_mass(s))
+        return np.array(M)
 
 
 class FastDirData(DirectoryData):
@@ -349,31 +365,47 @@ class FastDirData(DirectoryData):
         self.raw_density = _raw_density[:latest_i, 1:]
         self.t = _raw_density[:latest_i, 0]
 
+        # Add total
+        self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
+        self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
+
     # %% Plus add some convenient functions to work with data
 
     def get(self, species):
-        ''' Get a given set species
+        ''' Get number density of a given set of species
 
-        Input:
+        Parameters
+        ----------
+
+        species: list
+        
+        Returns
         -------
-
-        species: list'''
+        
+        number density in cm-3
+        '''
         
         return self.get_spec(species)
 
     def get_spec(self, species):
-        ''' Get a given set species
+        ''' Get number density of a given set of species
 
-        Input:
+        Parameters
+        ----------
+
+        species: list
+        
+        Returns
         -------
-
-        species: list'''
+        
+        number density in cm-3
+        '''
 
         def _index(s):
             try:
                 i = self.species.index(s)
             except ValueError:
-                try:  # try if there is only one element, starting with the same name
+                try:  # look if there is only one element, starting with the same name
                     l = [x for x in self.species if (
                         x.lower()).startswith(s.lower())]
                     if len(l) == 1:
@@ -393,6 +425,26 @@ class FastDirData(DirectoryData):
 
         else:
             return [self.raw_density[:latest_i, _index(s)] for s in species]
+
+    def get_mole_fraction(self, species):
+        ''' 
+        Returns mole fraction (molec/molec)
+        
+        See Also
+        --------
+        
+        :meth:`~qtplaskin.modeldata.FastDirData.get_spec`
+        '''
+        
+        return self.get_spec(species)/self.total_number_density
+
+    def get_mass_fraction(self, species):
+        ''' Return mass fraction (kg/kg)'''
+        
+        number_density = self.get_spec(species)
+        M = self.molarmass[self.species.index(species)]
+        return (number_density*M/Na)/self.total_mass_density
+        
 
     def get_rate(self, reactions):
         ''' Get a given reaction rate
@@ -461,7 +513,7 @@ class FastDirData(DirectoryData):
 
         else:
             return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
-
+        
     def plot(self, species):
         ''' Quickly plot a species directly from FastDirData. To be moved later
         in a separate batch interface module '''
