@@ -109,6 +109,9 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QAbstractItemView.ExtendedSelection)
         self.reactList.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
+        # @EP: also allow to select several conditions (useful for User defined data)
+        self.condList.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection)
 
         for w in [self.reactList, self.speciesList, self.speciesSourceList,
                   self.condList]:
@@ -143,8 +146,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def datacursor(self, widget, unit=None, labname='Label'):
         ''' Plot datacursors (useful when the number of lines gets confusing)
 
-        Input
-        ------
+        Parameters
+        ----------
 
         unit and labname: 
             to customize the info box'''
@@ -241,12 +244,13 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
+            
         """
-
-        try:
-            condition = list(iter_2_selected(self.condList))[0][0]
-        except AttributeError:
-            return
+#
+#        try:
+#            condition = list(iter_2_selected(self.condList))[0][0]
+#        except AttributeError:
+#            return
 
         # Get current range
         former_xrange = None
@@ -261,15 +265,20 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
-        y = array(self.data.condition(condition))
-        condition_name = self.data.conditions[condition - 1]
-
-        flt = y > 0
-        label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
+        citer = cycle(COLOR_SERIES)
         lines = []
-        lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                                  label=label, #scalex=False,
-                                                  zorder=10)[0])
+        # Loop over all selected conditions
+        for item in iter_2_selected(self.condList):
+            name = item[1]
+            y = array(self.data.condition(item[0]))
+            condition_name = self.data.conditions[item[0] - 1]
+            
+            flt = y > 0
+            label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
+            lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
+                                                      label=name, #scalex=False,
+                                                      zorder=10,
+                                                      c=next(citer))[0])
 
         self.condWidget.condAx.cursorlines = lines
         self.datacursor(self.condWidget)
@@ -320,6 +329,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         citer = cycle(COLOR_SERIES)
         lines = []
+        # Loop over all selected species
         for item in iter_2_selected(self.speciesList):
             name = item[1]
             dens = self.data.density(item[0])
