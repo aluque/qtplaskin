@@ -35,7 +35,9 @@ _molar_mass_dict = {
         'C':12.0107,
         'N':14.0067,
         'O':15.9994,
-        'Ar':39.948,}
+        'Ar':39.948,
+        'X':0,   # virtual species
+        }
 ''' molar mass in g/mol '''
   
 def get_molecule(state):
