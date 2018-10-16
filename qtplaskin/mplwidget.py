@@ -201,9 +201,12 @@ class MplWidget(QtWidgets.QWidget):
             ax.clear()
 
         self.grid()
+        # Re-add field-on if needed
+        self.show_field_on_region()
+
         self.draw()
         self.clear_data()
-
+        
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
             if xscale is not None:
@@ -235,6 +238,15 @@ class MplWidget(QtWidgets.QWidget):
 
             np.savetxt(fout, d)
 
+    def show_field_on_region(self):
+        gui = self.get_gui()
+        if gui.actionShowField.isChecked():
+            field = gui.data.get_cond('Reduced field')
+            field = field>field[0]
+            for ax in self.axes:
+                ax.axvspan(gui.data.t[field.argmax()], gui.data.t[len(gui.data.t) - field[::-1].argmax() - 1], 
+                               alpha=0.05, color='b')
+
 
 class ConditionsPlotWidget(MplWidget):
 
@@ -254,8 +266,10 @@ class ConditionsPlotWidget(MplWidget):
 
         # Add grid
         self.grid()
-
-
+        
+        # Show field-on region 
+        self.show_field_on_region()
+        
 class DensityPlotWidget(MplWidget):
 
     def init_axes(self):
@@ -275,6 +289,9 @@ class DensityPlotWidget(MplWidget):
         # Add grid
         self.grid()
 
+        # Show field-on region 
+        self.show_field_on_region()
+        
 
 class SourcePlotWidget(MplWidget):
     ''' sensitivity analysis '''
@@ -298,6 +315,9 @@ class SourcePlotWidget(MplWidget):
         # Add grid
         self.grid()
 
+        # Show field-on region 
+        self.show_field_on_region()
+        
 
 class RatePlotWidget(MplWidget):
 
@@ -317,3 +337,7 @@ class RatePlotWidget(MplWidget):
 
         # Add grid
         self.grid()
+
+        # Show field-on region 
+        self.show_field_on_region()
+        

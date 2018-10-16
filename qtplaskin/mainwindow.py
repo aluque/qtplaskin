@@ -298,6 +298,10 @@ class Ui_MainWindow(object):
         self.actionDatacursor.setCheckable(True)
         self.actionDatacursor.setChecked(True)
         self.actionDatacursor.setObjectName(_fromUtf8("actionDatacursor"))
+        self.actionShowField = QtWidgets.QAction(MainWindow)
+        self.actionShowField.setCheckable(True)
+        self.actionShowField.setChecked(True)
+        self.actionShowField.setObjectName(_fromUtf8("actionShowField"))
         self.actionExport_data = QtWidgets.QAction(MainWindow)
         self.actionExport_data.setObjectName(_fromUtf8("actionExport_data"))
         self.actionStart_a_simulation = QtWidgets.QAction(MainWindow)
@@ -324,6 +328,7 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionAbout)
         self.menuOptions.addAction(self.actionLog_scale_in_time)
         self.menuOptions.addAction(self.actionDatacursor)
+        self.menuOptions.addAction(self.actionShowField)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuOptions.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -388,6 +393,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Log scale in time", None))
         self.actionDatacursor.setText(_translate(
             "MainWindow", "Use Datacursor", None))
+        self.actionShowField.setText(_translate(
+            "MainWindow", "Show Field On", None))
         self.actionExport_data.setText(_translate(
             "MainWindow", "Export data...", None))
         self.actionStart_a_simulation.setText(_translate(

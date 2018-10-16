@@ -67,32 +67,19 @@ DENS_THRESHOLD = 1e-10
 RATE_THRESHOLD = 1e-20
 
 CONDITIONS_PRETTY_NAMES = {
-    'gas_temperature':
-    "Gas temperature [K]",
-    'Tgas_K':
-    "Gas temperature [K]",
-    'reduced_frequency':
-    "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
-    'reduced_field':
-    "Reduced field E/N [Td]",
-    'E/N_Td':
-    "Reduced field E/N [Td]",
-    'elec_temperature':
-    "Electron temperature [K]",
-    'Telec_K':
-    "Electron temperature [K]",
-    'elec_drift_velocity':
-    "Electron drift velocity [cm/s]",
-    'elec_diff_coeff':
-    "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
-    'elec_frequency_n':
-    "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_n':
-    "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_elastic_n':
-    "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_inelastic_n':
-    "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
+    'gas_temperature': "Gas temperature [K]",
+    'Tgas_K': "Gas temperature [K]",
+    'reduced_frequency': "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
+    'reduced_field': "Reduced field E/N [Td]",
+    'E/N_Td': "Reduced field E/N [Td]",
+    'elec_temperature': "Electron temperature [K]",
+    'Telec_K': "Electron temperature [K]",
+    'elec_drift_velocity': "Electron drift velocity [cm/s]",
+    'elec_diff_coeff': "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
+    'elec_frequency_n': "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_n': "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_elastic_n': "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_inelastic_n': "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
 
 
 class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
