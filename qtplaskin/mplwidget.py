@@ -207,6 +207,7 @@ class MplWidget(QtWidgets.QWidget):
         self.draw()
         self.clear_data()
         
+        
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
             if xscale is not None:
@@ -239,13 +240,23 @@ class MplWidget(QtWidgets.QWidget):
             np.savetxt(fout, d)
 
     def show_field_on_region(self):
+        ''' 
+        Notes
+        -----
+        
+        @EP: BUG: if vspan is on, the old yrange is kept if is was larger
+        than the new one. This is kinda annoying and i didn't manage to 
+        delete the old axvspan object to fix that, nor to reset the limits. 
+        
+        I set the default actionShowField.setChecked(False) in the meantime.
+        '''
         gui = self.get_gui()
         if gui.actionShowField.isChecked():
             field = gui.data.get_cond('Reduced field')
             field = field>field[0]
             for ax in self.axes:
                 ax.axvspan(gui.data.t[field.argmax()], gui.data.t[len(gui.data.t) - field[::-1].argmax() - 1], 
-                               alpha=0.05, color='b')
+                                            alpha=0.05, color='b')
 
 
 class ConditionsPlotWidget(MplWidget):

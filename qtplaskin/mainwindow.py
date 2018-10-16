@@ -300,7 +300,7 @@ class Ui_MainWindow(object):
         self.actionDatacursor.setObjectName(_fromUtf8("actionDatacursor"))
         self.actionShowField = QtWidgets.QAction(MainWindow)
         self.actionShowField.setCheckable(True)
-        self.actionShowField.setChecked(True)
+        self.actionShowField.setChecked(False)
         self.actionShowField.setObjectName(_fromUtf8("actionShowField"))
         self.actionExport_data = QtWidgets.QAction(MainWindow)
         self.actionExport_data.setObjectName(_fromUtf8("actionExport_data"))
