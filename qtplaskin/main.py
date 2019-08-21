@@ -394,13 +394,13 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         delta, max_rates = filters[self.Combo_filter.currentIndex()]
 
         spos = nanmax(where(r > 0, r, 0), axis=0)
-        fpos = r // spos
+        fpos = r / spos
 
         # This is b.c. numpy does not provide a nanargsort
         fpos = where(isfinite(fpos), fpos, 0)
 
         sneg = nanmin(where(r < 0, r, 0), axis=0)
-        fneg = r // sneg
+        fneg = r / sneg
 
         # This is b.c. numpy does not provide a nanargsort
         fneg = where(isfinite(fneg), fneg, 0)
