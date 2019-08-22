@@ -529,7 +529,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Reset former xrange
         if former_xrange is not None:
-            self.condWidget.axes[0].set_xlim(former_xrange)
+            self.reactWidget.axes[0].set_xlim(former_xrange)
             
         self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
 
