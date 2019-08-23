@@ -22,7 +22,7 @@ install:
   # Activate and install test-only dependencies
   - source activate qtplaskin-env
   - pip install pytest-cov
-  - python setup.py install
+  - pip install -e .
 
 script:
   # Your test script goes here
