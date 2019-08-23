@@ -1,0 +1,2 @@
+  1 Reduced field [Td]
+  2 Gas temperature [K]

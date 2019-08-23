@@ -376,15 +376,6 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         
-        dreactions = self.data.sources(species[0])
-        reactions = list(dreactions.keys())
-
-        r = zeros((len(reactions), len(self.data.t)))
-        for i, react in enumerate(reactions):
-            r[i, :] = dreactions[react]
-
-        # Find the reactions that are at some point at least a delta of the
-        # total
         filters = {0: (0.1, -1),
                    1: (0.01, -1),
                    2: (0.001, -1),
@@ -393,55 +384,44 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         delta, max_rates = filters[self.Combo_filter.currentIndex()]
 
-        spos = nanmax(where(r > 0, r, 0), axis=0)
-        fpos = r // spos
-
-        # This is b.c. numpy does not provide a nanargsort
-        fpos = where(isfinite(fpos), fpos, 0)
-
-        sneg = nanmin(where(r < 0, r, 0), axis=0)
-        fneg = r // sneg
-
-        # This is b.c. numpy does not provide a nanargsort
-        fneg = where(isfinite(fneg), fneg, 0)
-
-        icreation = select_rates(fpos, delta, max_rates=max_rates)
-        idestruct = select_rates(fneg, delta, max_rates=max_rates)
+        icreation, idestruct = select_rates(self.data, species[0], delta, max_rates=max_rates)
 
         citer = cycle(COLOR_SERIES)
         lines = []
         for i in icreation:
-            name = self.data.reactions[reactions[i]]
-            flt = abs(r[i, :]) > RATE_THRESHOLD
-            label = "[%d] %s" % (reactions[i] + 1, name)
+            name = self.data.reactions[i-1]
+            rate = array(self.data.rate(i))
+            flt = rate > RATE_THRESHOLD
+            label = "[%d] %s" % (i, name)
 
             lines.append(self.sourceWidget.creationAx.plot(self.data.t[flt],
-                                                           abs(r[i, flt]),
+                                                           rate[flt],
                                                            c=next(citer),
                                                            lw=LINE_WIDTH,
                                                            label=label,
                                                            scalex=False, 
                                                            zorder=10)[0])
 
-            self.sourceWidget.add_data(self.data.t, r[i, :], label)
+            self.sourceWidget.add_data(self.data.t, rate, label)
         self.sourceWidget.creationAx.cursorlines = lines
 
         citer = cycle(COLOR_SERIES)
         lines = []
         for i in idestruct:
-            name = self.data.reactions[reactions[i]]
-            flt = abs(r[i, :]) > RATE_THRESHOLD
-            label = "[%d] %s" % (reactions[i] + 1, name)
+            name = self.data.reactions[i-1]
+            rate = array(self.data.rate(i))
+            flt = rate > RATE_THRESHOLD
+            label = "[%d] %s" % (i, name)
 
             lines.append(self.sourceWidget.removalAx.plot(self.data.t[flt],
-                                                          abs(r[i, flt]),
+                                                          rate[flt],
                                                           c=next(citer),
                                                           lw=LINE_WIDTH,
                                                           label=label,
                                                           scalex=False, 
                                                           zorder=10)[0])
 
-            self.sourceWidget.add_data(self.data.t, r[i, :], "- " + label)
+            self.sourceWidget.add_data(self.data.t, rate, "- " + label)
         self.sourceWidget.removalAx.cursorlines = lines
 
         self.datacursor(self.sourceWidget, unit='cm-3/s', labname='Reac.')
@@ -711,7 +691,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         pass
 
 
-def select_rates(f, delta, max_rates=4, min_rates=0):
+def filter_rates(f, delta, max_rates=4, min_rates=0):
     fmax = nanmax(f, axis=1)
 
     asort = argsort(-fmax)
@@ -737,6 +717,32 @@ def select_rates(f, delta, max_rates=4, min_rates=0):
     rest2 = p[fmax[p] > (1 - delta)]
     return r_[highest, rest, rest2]
 
+
+def select_rates(data, specie_index, delta, max_rates):
+    '''
+    Returns a tuple of two sets containing reaction indices
+    of production (first set) and losses (second set)
+    '''
+    dreactions = data.sources(specie_index)
+    reactions = list(dreactions.keys())
+
+    r = zeros((len(reactions), len(data.t)))
+    for i, react in enumerate(reactions):
+        r[i, :] = dreactions[react]
+
+    spos = nanmax(where(r > 0, r, 0), axis=0)
+    fpos = r / spos
+    # This is b.c. numpy does not provide a nanargsort
+    fpos = where(isfinite(fpos), fpos, 0)
+
+    sneg = nanmin(where(r < 0, r, 0), axis=0)
+    fneg = r / sneg
+    # This is b.c. numpy does not provide a nanargsort
+    fneg = where(isfinite(fneg), fneg, 0)
+
+    prod = {reactions[i]+1 for i in filter_rates(fpos, delta, max_rates=max_rates)}
+    loss = {reactions[i]+1 for i in filter_rates(fneg, delta, max_rates=max_rates)}
+    return prod, loss
 
 def iter_2_selected(qtablewidget):
     selectedRanges = qtablewidget.selectedRanges()
