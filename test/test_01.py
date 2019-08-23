@@ -2,12 +2,13 @@
 
 from qtplaskin.modeldata import FastDirData
 from qtplaskin.main import select_rates
+from os.path import join, abspath, dirname
 
 import pytest
 
 @pytest.fixture
 def data():
-    return FastDirData('./data/01')
+    return FastDirData(join(abspath(dirname(__file__)), './data/01'))
 
 def test_X_sources_10pct(data):
     icreation, idestruct = select_rates(data, 1, 0.1, -1)  
