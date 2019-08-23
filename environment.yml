@@ -1,0 +1,14 @@
+# See https://github.com/binder-examples/conda
+name: qtplaskin-env
+channels:
+- conda-forge
+dependencies:
+- python=3.6
+- numpy
+- scipy
+- matplotlib
+- h5py
+- pytest
+- pip
+- pip:
+  - mpldatacursor
