@@ -1,4 +1,4 @@
-[![GitHub version](https://img.shields.io/github/v/release/erwanp/qtplaskin/all.svg)](https://img.shields.io/github/v/release/erwanp/qtplaskin/all.svg)
+[![GitHub version](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)
 [![Tests](https://img.shields.io/travis/erwanp/qtplaskin.svg)](https://travis-ci.org/erwanp/qtplaskin)
 [![Code coverage](https://codecov.io/gh/erwanp/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/erwanp/qtplaskin)
 
