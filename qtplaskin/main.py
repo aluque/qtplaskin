@@ -619,7 +619,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def export_data(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
+        fname, _filter = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
                                                   ".",
                                                   "TSV files (*.tsv);;"
                                                   "TXT files (*.txt);;"
