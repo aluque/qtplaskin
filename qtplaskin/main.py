@@ -521,7 +521,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def select_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open data file",
+        file, *_rest = QtWidgets.QFileDialog.getOpenFileName(self, "Open data file",
                                                  ".",
                                                  "HDF5 files (*.h5 *.hdf5);;"
                                                  "All files (*)")
@@ -607,7 +607,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def save_to_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Save to file",
+        fname, *_rest = QtWidgets.QFileDialog.getSaveFileName(self, "Save to file",
                                                   ".",
                                                   "HDF5 files (*.h5 *.hdf5);;"
                                                   "All files (*)")
@@ -619,7 +619,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def export_data(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
-        fname, _filter = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
+        fname, *_rest = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
                                                   ".",
                                                   "TSV files (*.tsv);;"
                                                   "TXT files (*.txt);;"
