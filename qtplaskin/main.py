@@ -297,6 +297,12 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
         """
+
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
+        
         # clear the Axes
         if not self.speciesList.selectedItems():
             return
@@ -305,11 +311,6 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.densWidget.init_axes()
         else:
             self.densWidget.clear()
-
-        # Get current range
-        former_xrange = None
-        if self.firstAx is not None:
-            former_xrange = self.firstAx.get_xlim()
             
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
