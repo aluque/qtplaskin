@@ -598,12 +598,22 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 "Failed to open directory (%s).\n" % str(e))
 
     def data_update(self):
-        self.data.update()
+        try:
+            self.data.update()
+        except AttributeError:
+            em = QtWidgets.QErrorMessage(self)
+            em.setModal(True)
+            em.showMessage("No data to update! Load data first.")
+            return
 
-        self.update_cond_graph()
-        self.update_spec_graph()
-        self.update_source_graph()
-        self.update_react_graph()
+        if self.condWidget.axes:
+            self.update_cond_graph()
+        if self.densWidget.axes:
+            self.update_spec_graph()
+        if self.sourceWidget.axes:
+            self.update_source_graph()
+        if self.reactWidget.axes:
+            self.update_react_graph()
         
     def save_to_file(self):
         """opens a file select dialog"""
