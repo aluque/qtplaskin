@@ -36,7 +36,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
-                   argsort, r_)
+                   argsort, r_, isreal, logical_and)
 
 # import the MainWindow widget from the converted .ui files
 try:
@@ -260,7 +260,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             y = array(self.data.condition(item[0]))
             condition_name = self.data.conditions[item[0] - 1]
             
-            flt = y > 0
+            flt = logical_and(isreal(y), isfinite(y))
             label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
             lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
                                                       label=name, #scalex=False,
