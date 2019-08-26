@@ -337,14 +337,14 @@ class FastDirData(DirectoryData):
         """ Reads or re-reads those files that may change during the execution.
         """
         _raw_density = pd.read_csv(self._path(self.F_DENSITIES), delim_whitespace=True,
-                                   iterator=True, chunksize=50000)
+                                   dtype=float, iterator=True, chunksize=50000)
         _raw_density = pd.concat(_raw_density, ignore_index=True)
         _raw_density = np.array(_raw_density)
 
         i_dens = _raw_density.shape[0]
 
         _raw_rates = pd.read_csv(self._path(self.F_RATES), delim_whitespace=True,
-                                 iterator=True, chunksize=50000)
+                                 dtype=float, iterator=True, chunksize=50000)
         _raw_rates = pd.concat(_raw_rates, ignore_index=True)
         _raw_rates = np.array(_raw_rates)
 
@@ -353,7 +353,7 @@ class FastDirData(DirectoryData):
         self.source_matrix = np.array(_source_matrix)
 
         _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True,
-                                      iterator=True, chunksize=50000)
+                                      dtype=float, iterator=True, chunksize=50000)
         _raw_conditions = pd.concat(_raw_conditions, ignore_index=True)
         _raw_conditions = np.array(_raw_conditions)
 

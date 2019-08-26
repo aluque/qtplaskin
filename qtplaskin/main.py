@@ -557,12 +557,15 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             try:
                 self.data = FastDirData(fname)
-            except MemoryError as e:
+            except (MemoryError, ValueError, TypeError) as e:
                 em = QtWidgets.QErrorMessage(self)
                 em.setModal(True)
-                em.showMessage(
-                    ("Memory error: Failed to open directory (%s).\n" % str(e))
-                    + "Now trying the old (slower) way.")
+                em.setWindowTitle("QtPlaskin: Error")
+                em.showMessage('''
+                    Failed to open directory. <br>
+                    {}: {}. <br>
+                    Now trying the old (slower) way.
+                    '''.format( type(e).__name__, str(e)))
                 em.exec_()
                 try:
                     self.data = DirectoryData(fname)
