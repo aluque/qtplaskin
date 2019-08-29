@@ -124,6 +124,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionImport_from_directory.triggered.connect(self.import_from_directory)
         self.actionUpdate.triggered.connect(self.data_update)
         self.actionExport_data.triggered.connect(self.export_data)
+        self.actionSave.triggered.connect(self.save_to_file)
 
     def print_status(self, string):
         ''' Print to status bar

@@ -69,6 +69,7 @@ class ModelData(object):
         g.create_dataset('t', data=self.t)
         g.create_dataset('source_matrix', data=self.source_matrix,
                          compression='gzip')
+        f.close()
 
     def old_save(self, ofile, metadata={}):
         """ Saves the data in an old format.
