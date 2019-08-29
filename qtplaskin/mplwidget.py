@@ -151,16 +151,11 @@ class MplWidget(QtWidgets.QWidget):
        
         for ax in self.axes:
             lines = ax.get_lines()
-            if lines == []:
-                xmin = None
-                xmax = None
-                ymin = None
-                ymax = None
-            else:
-                xmin = min([min(l.get_xdata()) for l in lines])
-                xmax = max([max(l.get_xdata()) for l in lines])
-                ymin = min([min(l.get_ydata()) for l in lines])
-                ymax = max([max(l.get_ydata()) for l in lines])
+            
+            xmin = min([min(l.get_xdata(), default=None) for l in lines], default=None)
+            xmax = max([max(l.get_xdata(), default=None) for l in lines], default=None)
+            ymin = min([min(l.get_ydata(), default=None) for l in lines], default=None)
+            ymax = max([max(l.get_ydata(), default=None) for l in lines], default=None)
             
 #            print('Reset xlim',xmin,xmax)
 #            print('Reset ylim',ymin,ymax)
