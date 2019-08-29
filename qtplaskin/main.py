@@ -254,6 +254,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         citer = cycle(COLOR_SERIES)
         lines = []
+        label = ''
         # Loop over all selected conditions
         for item in iter_2_selected(self.condList):
             name = item[1]
