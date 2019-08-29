@@ -1,6 +1,7 @@
 [![GitHub version](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)
 [![Tests](https://img.shields.io/travis/erwanp/qtplaskin.svg)](https://travis-ci.org/erwanp/qtplaskin)
 [![Code coverage](https://codecov.io/gh/erwanp/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/erwanp/qtplaskin)
+[![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
 
 # QtPlaskin
 
@@ -10,7 +11,9 @@ format based on HDF5 and importing directories with certain filesets
 that can be written from a running FORTRAN code.
 
 QtPlaskin was created by A. Luque (see [original version](https://github.com/aluque)). 
-The development of current Fork is open-sourced. [Feel free to contribute!](https://github.com/erwanp/qtplaskin/graphs/contributors) 
+The development of current Fork is open-sourced. [Feel free to contribute!](https://github.com/erwanp/qtplaskin/graphs/contributors). For any questions you can [look at the Issues](https://github.com/erwanp/qtplaskin/issues?utf8=%E2%9C%93&q=is%3Aissue+) or join the Community Chat below: 
+
+[![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
 
 # Install
 
