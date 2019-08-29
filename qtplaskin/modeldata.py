@@ -33,7 +33,7 @@ class ModelData(object):
         g = f.create_group('main')
         ref_dtype = h5py.special_dtype(ref=h5py.Reference)
 
-        for k, val in metadata.iteritems():
+        for k, val in metadata.items():
             g.attrs[k] = val
 
         # We always write at least these two metadata
@@ -77,7 +77,7 @@ class ModelData(object):
         f = h5py.File(ofile, 'w')
         g = f.create_group('zdplaskin')
 
-        for k, val in metadata.iteritems():
+        for k, val in metadata.items():
             g.attrs[k] = val
 
         # We always write at least these two metadata
@@ -114,7 +114,7 @@ class ModelData(object):
             s_group = gsources.create_group(species)
 
             react_dict = self.sources(species)
-            for reaction, rate in react_dict.iteritems():
+            for reaction, rate in react_dict.items():
                 print("   Writing reaction `%s'" % reaction)
                 try:
                     s_group.create_dataset(reaction.replace('.', '_'),
@@ -623,7 +623,7 @@ class RealtimeData(ModelData):
                 self.raw_density[i, :] = c_density
                 self.raw_rates[i, :] = c_rates
 
-                for k, a in self.conditions_dict.iteritems():
+                for k, a in self.conditions_dict.items():
                     a[i] = c_conditions[k]
 
                 # To save space we will store only nonzero species/reaction
