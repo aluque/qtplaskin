@@ -151,7 +151,7 @@ class MplWidget(QtWidgets.QWidget):
        
         for ax in self.axes:
             lines = ax.get_lines()
-            
+
             xmin = min([min(l.get_xdata(), default=None) for l in lines], default=None)
             xmax = max([max(l.get_xdata(), default=None) for l in lines], default=None)
             ymin = min([min(l.get_ydata(), default=None) for l in lines], default=None)
@@ -160,8 +160,8 @@ class MplWidget(QtWidgets.QWidget):
 #            print('Reset xlim',xmin,xmax)
 #            print('Reset ylim',ymin,ymax)
             
-            ax.set_xlim(xmin=xmin,xmax=xmax)
-            ax.set_ylim(ymin=ymin,ymax=ymax)
+            ax.set_xlim(left=xmin, right=xmax)
+            ax.set_ylim(bottom=ymin, top=ymax)
             ax.autoscale(True, tight=False)
             plt.draw()
 
