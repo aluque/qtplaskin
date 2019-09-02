@@ -14,6 +14,8 @@ With the latest version of ZDPlaskin you can use
 Then you can import the data of your simulation into QtPlaskin by using
 File -> Import from directory... in the program menu.
 
+The code was developed by Alejandro Luque at the Instituto de Astrofísica 
+de Andalucía (IAA), CSIC and is licensed under the LGPLv3 License.
 ---
 (1)  ZdPlaskin is a computer code developed by S. Pancheshnyi, B. Eismann, 
      G.J.M. Hagelaar and L.C. Pitchford, 
