@@ -1,0 +1,184 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module ${module_name} ! in 
+    interface  ! in :zdplaskin
+        module zdplaskin ! in :zdplaskin:???.F90
+            use dvode_f90_m,,only: vode_opts
+            integer parameter :: species_max=${species_max}
+            integer public,parameter,optional :: species_electrons=${species_electrons}
+            character(len=${species_length},kind=str) public,dimension(${species_length},${species_max}) :: species_name
+            integer public,private,dimension(2,12) :: bolsig_addsect
+            integer public,private,optional :: bolsig_collisions_max=0
+            double precision public,private,parameter,optional :: bolsig_field_min=1.00d-01
+            double precision public,private,parameter,optional :: bolsig_rtol_half=3.16d-02
+            character(len=${reactions_length}) public,dimension(${reactions_length},${reactions_max}) :: reaction_sign
+            character(len=*) public,private,parameter,optional :: bolsigfile="bolsigdb.dat"
+            logical public,private :: lbolsig_ignore_gas_temp
+            integer public,parameter,optional :: reactions_length=${reactions_length}
+            integer public,dimension(${species_max}) :: species_charge
+            double precision public,allocatable,dimension(:) :: bolsig_rates
+            double precision public,dimension(${reactions_max}) :: rrt
+            integer public,parameter,optional :: species_length=${species_length}
+            logical public,dimension(${reactions_max}) :: lreaction_block
+            character(len=6) public,private,dimension(${bolsig_species_max}) :: bolsig_species
+            double precision public,private,parameter,optional :: bolsig_field_max=1.00d+03
+            double precision public,dimension(${species_max}) :: density
+            integer public,private,parameter,optional :: bolsig_addsect_max=12
+            double precision public,private,parameter,optional :: bolsig_rtol=1.00d-03
+            integer public,parameter,optional :: reactions_max=${reactions_max}
+            logical public,private :: lbolsig_maxwell_eedf
+            integer public,optional,dimension(${bolsig_rates_max}) :: bolsig_pointer=-1
+            integer public,private,parameter,optional :: bolsig_species_length=6
+            double precision public,private,parameter,optional :: bolsig_eecol_frac=1.00d-05
+            integer public,private,parameter,optional :: bolsig_species_max=${bolsig_species_max}
+            integer public,private,optional,dimension(${bolsig_species_max}) :: bolsig_species_index=-1
+            integer public,private,parameter,optional :: bolsig_rates_max=${bolsig_rates_max}
+            interface  ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                subroutine zdplaskin_bolsig_initconditions ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                end subroutine zdplaskin_bolsig_initconditions
+                subroutine zdplaskin_bolsig_readcollisions(str1,str2) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    character*(*) intent(in) :: str1
+                    character*(*) intent(in) :: str2
+                end subroutine zdplaskin_bolsig_readcollisions
+                subroutine zdplaskin_bolsig_getcollision(i,j) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    integer intent(out) :: i
+                    integer intent(out) :: j
+                end subroutine zdplaskin_bolsig_getcollision
+                subroutine zdplaskin_bolsig_sname(string_bn,i) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    character*(*) intent(out) :: string_bn
+                    integer intent(in) :: i
+                end subroutine zdplaskin_bolsig_sname
+                subroutine zdplaskin_bolsig_reacsgn(string_bn,i) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    character*(*) intent(out) :: string_bn
+                    integer intent(in) :: i
+                end subroutine zdplaskin_bolsig_reacsgn
+                subroutine zdplaskin_bolsig_solveboltzmann(i,a,j,b) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    integer intent(in) :: i
+                    double precision dimension(*),intent(in) :: a
+                    integer intent(in) :: j
+                    double precision dimension(*),intent(out) :: b
+                end subroutine zdplaskin_bolsig_solveboltzmann
+                subroutine zdplaskin_bolsig_geteedf(i,j,a) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin:unknown_interface
+                    integer intent(in) :: i
+                    integer intent(out) :: j
+                    double precision dimension(*),intent(out) :: a
+                end subroutine zdplaskin_bolsig_geteedf
+            end interface 
+            subroutine zdplaskin_init ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+            end subroutine zdplaskin_init
+            subroutine zdplaskin_timestep(time,dtime) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                use dvode_f90_m,,only: dvode_f90
+                double precision intent(in) :: time
+                double precision intent(inout) :: dtime
+            end subroutine zdplaskin_timestep
+            subroutine zdplaskin_timestep_explicit(time,dtime,rtol_loc,atol_loc,switch_implicit) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision intent(in) :: time
+                double precision intent(inout) :: dtime
+                double precision intent(in) :: rtol_loc
+                double precision intent(in) :: atol_loc
+                double precision optional,intent(in) :: switch_implicit
+            end subroutine zdplaskin_timestep_explicit
+            subroutine zdplaskin_bolsig_rates(lbolsig_force) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                logical optional,intent(in) :: lbolsig_force
+            end subroutine zdplaskin_bolsig_rates
+            subroutine zdplaskin_get_species_index(str,i) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                character*(*) intent(in) :: str
+                integer intent(out) :: i
+            end subroutine zdplaskin_get_species_index
+            subroutine zdplaskin_set_density(string_bn,dens,ldens_const) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                character*(*) intent(in) :: string_bn
+                double precision optional,intent(in) :: dens
+                logical optional,intent(in) :: ldens_const
+            end subroutine zdplaskin_set_density
+            subroutine zdplaskin_get_density(string_bn,dens,ldens_const) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                character*(*) intent(in) :: string_bn
+                double precision optional,intent(out) :: dens
+                logical optional,intent(out) :: ldens_const
+            end subroutine zdplaskin_get_density
+            subroutine zdplaskin_get_density_total(all_species,all_neutral,all_ion_positive,all_ion_negative,all_charge) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision optional,intent(out) :: all_species
+                double precision optional,intent(out) :: all_neutral
+                double precision optional,intent(out) :: all_ion_positive
+                double precision optional,intent(out) :: all_ion_negative
+                double precision optional,intent(out) :: all_charge
+            end subroutine zdplaskin_get_density_total
+            subroutine zdplaskin_get_rates(source_terms,reaction_rates,source_terms_matrix,mean_density,mean_source_terms,mean_reaction_rates,mean_source_terms_matrix) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision optional,dimension(${species_max}),intent(out) :: source_terms
+                double precision optional,dimension(${reactions_max}),intent(out) :: reaction_rates
+                double precision optional,dimension(${species_max},${reactions_max}),intent(out) :: source_terms_matrix
+                double precision optional,dimension(${species_max}),intent(out) :: mean_density
+                double precision optional,dimension(${species_max}),intent(out) :: mean_source_terms
+                double precision optional,dimension(${reactions_max}),intent(out) :: mean_reaction_rates
+                double precision optional,dimension(${species_max},${reactions_max}),intent(out) :: mean_source_terms_matrix
+            end subroutine zdplaskin_get_rates
+            subroutine zdplaskin_set_config(atol,rtol,silence_mode,stat_accum,bolsig_ee_frac,bolsig_ignore_gas_temperature) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                use dvode_f90_m,,only: set_intermediate_opts
+                double precision optional,intent(in) :: atol
+                double precision optional,intent(in) :: rtol
+                double precision optional,intent(in) :: bolsig_ee_frac
+                logical optional,intent(in) :: silence_mode
+                logical optional,intent(in) :: stat_accum
+                logical optional,intent(in) :: bolsig_ignore_gas_temperature
+            end subroutine zdplaskin_set_config
+            subroutine zdplaskin_set_conditions(gas_temperature,reduced_frequency,reduced_field,elec_temperature,gas_heating,spec_heat_ratio,soft_reset) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision optional,intent(in) :: gas_temperature
+                double precision optional,intent(in) :: reduced_field
+                double precision optional,intent(in) :: reduced_frequency
+                double precision optional,intent(in) :: elec_temperature
+                logical optional,intent(in) :: gas_heating
+                double precision optional,intent(in) :: spec_heat_ratio
+                logical optional,intent(in) :: soft_reset
+            end subroutine zdplaskin_set_conditions
+            subroutine zdplaskin_get_conditions(gas_temperature,reduced_frequency,reduced_field,elec_temperature,elec_drift_velocity,elec_diff_coeff,elec_frequency_n,elec_power_n,elec_power_elastic_n,elec_power_inelastic_n,elec_eedf) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision optional,intent(out) :: gas_temperature
+                double precision optional,intent(out) :: reduced_field
+                double precision optional,intent(out) :: reduced_frequency
+                double precision optional,intent(out) :: elec_temperature
+                double precision optional,intent(out) :: elec_drift_velocity
+                double precision optional,intent(out) :: elec_diff_coeff
+                double precision optional,intent(out) :: elec_frequency_n
+                double precision optional,intent(out) :: elec_power_n
+                double precision optional,intent(out) :: elec_power_elastic_n
+                double precision optional,intent(out) :: elec_power_inelastic_n
+                double precision optional,dimension(2,128),intent(out) :: elec_eedf
+            end subroutine zdplaskin_get_conditions
+            subroutine zdplaskin_reset ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+            end subroutine zdplaskin_reset
+            subroutine zdplaskin_stop(string_bn) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                character*(*) intent(in) :: string_bn
+            end subroutine zdplaskin_stop
+            subroutine zdplaskin_write_file(file_species,file_reactions,file_source_matrix) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                character*(*) optional,intent(in) :: file_species
+                character*(*) optional,intent(in) :: file_reactions
+                character*(*) optional,intent(in) :: file_source_matrix
+            end subroutine zdplaskin_write_file
+            subroutine zdplaskin_reac_source_matrix(reac_rate_local,reac_source_local) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                double precision dimension(${reactions_max}),intent(in) :: reac_rate_local
+                double precision dimension(${species_max},${reactions_max}),intent(out) :: reac_source_local
+            end subroutine zdplaskin_reac_source_matrix
+            subroutine zdplaskin_fex(neq,t,y,ydot) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                integer optional,intent(in),check(len(y)>=neq),depend(y) :: neq=len(y)
+                double precision intent(in) :: t
+                double precision dimension(neq),intent(in) :: y
+                double precision dimension(neq),intent(out),depend(neq) :: ydot
+            end subroutine zdplaskin_fex
+            subroutine zdplaskin_jex(neq,t,y,ml,mu,pd,nrpd) ! in :zdplaskin:zdplaskin_m2.F90:zdplaskin
+                integer optional,intent(in),check(len(y)>=neq),depend(y) :: neq=len(y)
+                double precision intent(in) :: t
+                double precision dimension(neq),intent(in) :: y
+                integer intent(in) :: ml
+                integer intent(in) :: mu
+                double precision dimension(nrpd,neq),intent(out),depend(nrpd,neq) :: pd
+                integer intent(in) :: nrpd
+            end subroutine zdplaskin_jex
+          end module zdplaskin
+          subroutine zdplaskin_reac_rates(time) ! in :zdplaskin:zdplaskin_m2.F90
+            use zdplaskin,,only: zdplaskin_bolsig_rates,lreaction_block,zdplaskin_get_density_total,bolsig_pointer,bolsig_rates,zdplaskin_cfg,rrt
+            double precision intent(in) :: time
+          end subroutine zdplaskin_reac_rates
+       end interface
+     end module zdplaskin
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

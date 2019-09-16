@@ -10,7 +10,8 @@ kinetic code such as ZdPlasKin (1).  It supports both a specific data
 format based on HDF5 and importing directories with certain filesets
 that can be written from a running FORTRAN code.
 
-QtPlaskin was created by A. Luque (see [original version](https://github.com/aluque)). 
+QtPlaskin was developed by [Alejandro Luque](http://www.iaa.es/~aluque) (see [original version](https://github.com/aluque))
+at the [Instituto de Astrofísica de Andalucía](https://www.iaa.csic.es) (IAA), [CSIC](http://www.csic.es) and is licensed under the [LGPLv3 License](https://www.gnu.org/licenses/lgpl-3.0.html). 
 The development of current Fork is open-sourced. [Feel free to contribute!](https://github.com/erwanp/qtplaskin/graphs/contributors). For any questions you can [look at the Issues](https://github.com/erwanp/qtplaskin/issues?utf8=%E2%9C%93&q=is%3Aissue+) or join the Community Chat below: 
 
 [![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
