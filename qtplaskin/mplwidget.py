@@ -248,10 +248,15 @@ class MplWidget(QtWidgets.QWidget):
         gui = self.get_gui()
         if gui.actionShowField.isChecked():
             field = gui.data.get_cond('Reduced field')
-            field = field>field[0]
-            for ax in self.axes:
-                ax.axvspan(gui.data.t[field.argmax()], gui.data.t[len(gui.data.t) - field[::-1].argmax() - 1], 
-                                            alpha=0.05, color='b')
+            b = np.array(field>field[0], dtype=np.int64)
+            pulse_start = np.argwhere(np.diff(b)==1)
+            pulse_stop = np.argwhere(np.diff(b)==-1)
+            if len(pulse_stop) < len(pulse_start):
+                pulse_stop = np.vstack((pulse_stop, len(field)-1))
+            for istart, istop in zip(pulse_start.flatten(), pulse_stop.flatten()):
+                for ax in self.axes:
+                    ax.axvspan(gui.data.t[istart], gui.data.t[istop], 
+                                                alpha=0.05, color='b')
 
 
 class ConditionsPlotWidget(MplWidget):
@@ -275,6 +280,8 @@ class ConditionsPlotWidget(MplWidget):
         
         # Show field-on region 
         self.show_field_on_region()
+        
+        self.condAx.set_ylim(ymin=self.condAx.get_ylim()[0])
         
 class DensityPlotWidget(MplWidget):
 
