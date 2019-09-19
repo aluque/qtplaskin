@@ -67,4 +67,5 @@ setup(name='qtplaskin',
       scripts=[
           'scripts/qtplaskin'],
       include_package_data=True,
+      entry_points={"console_scripts": ["realpython=qtplaskin.main:main"]},
       zip_safe=False)
