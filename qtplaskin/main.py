@@ -36,7 +36,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
-                   argsort, r_)
+                   argsort, r_, isreal, logical_and)
 
 # import the MainWindow widget from the converted .ui files
 try:
@@ -124,6 +124,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionImport_from_directory.triggered.connect(self.import_from_directory)
         self.actionUpdate.triggered.connect(self.data_update)
         self.actionExport_data.triggered.connect(self.export_data)
+        self.actionSave.triggered.connect(self.save_to_file)
+        self.actionQuit.triggered.connect(QtWidgets.qApp.quit)
 
     def print_status(self, string):
         ''' Print to status bar
@@ -254,13 +256,14 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         citer = cycle(COLOR_SERIES)
         lines = []
+        label = ''
         # Loop over all selected conditions
         for item in iter_2_selected(self.condList):
             name = item[1]
             y = array(self.data.condition(item[0]))
             condition_name = self.data.conditions[item[0] - 1]
             
-            flt = y > 0
+            flt = logical_and(isreal(y), isfinite(y))
             label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
             lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
                                                       label=name, #scalex=False,
@@ -297,6 +300,12 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
         """
+
+        # Get current range
+        former_xrange = None
+        if self.firstAx is not None:
+            former_xrange = self.firstAx.get_xlim()
+        
         # clear the Axes
         if not self.speciesList.selectedItems():
             return
@@ -305,11 +314,6 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.densWidget.init_axes()
         else:
             self.densWidget.clear()
-
-        # Get current range
-        former_xrange = None
-        if self.firstAx is not None:
-            former_xrange = self.firstAx.get_xlim()
             
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
@@ -556,12 +560,15 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             try:
                 self.data = FastDirData(fname)
-            except MemoryError as e:
+            except (MemoryError, ValueError, TypeError) as e:
                 em = QtWidgets.QErrorMessage(self)
                 em.setModal(True)
-                em.showMessage(
-                    ("Memory error: Failed to open directory (%s).\n" % str(e))
-                    + "Now trying the old (slower) way.")
+                em.setWindowTitle("QtPlaskin: Error")
+                em.showMessage('''
+                    Failed to open directory. <br>
+                    {}: {}. <br>
+                    Now trying the old (slower) way.
+                    '''.format( type(e).__name__, str(e)))
                 em.exec_()
                 try:
                     self.data = DirectoryData(fname)
@@ -597,12 +604,22 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 "Failed to open directory (%s).\n" % str(e))
 
     def data_update(self):
-        self.data.update()
+        try:
+            self.data.update()
+        except AttributeError:
+            em = QtWidgets.QErrorMessage(self)
+            em.setModal(True)
+            em.showMessage("No data to update! Load data first.")
+            return
 
-        self.update_cond_graph()
-        self.update_spec_graph()
-        self.update_source_graph()
-        self.update_react_graph()
+        if self.condWidget.axes:
+            self.update_cond_graph()
+        if self.densWidget.axes:
+            self.update_spec_graph()
+        if self.sourceWidget.axes:
+            self.update_source_graph()
+        if self.reactWidget.axes:
+            self.update_react_graph()
         
     def save_to_file(self):
         """opens a file select dialog"""

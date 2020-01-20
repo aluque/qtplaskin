@@ -151,22 +151,17 @@ class MplWidget(QtWidgets.QWidget):
        
         for ax in self.axes:
             lines = ax.get_lines()
-            if lines == []:
-                xmin = None
-                xmax = None
-                ymin = None
-                ymax = None
-            else:
-                xmin = min([min(l.get_xdata()) for l in lines])
-                xmax = max([max(l.get_xdata()) for l in lines])
-                ymin = min([min(l.get_ydata()) for l in lines])
-                ymax = max([max(l.get_ydata()) for l in lines])
+
+            xmin = min([min(l.get_xdata(), default=None) for l in lines], default=None)
+            xmax = max([max(l.get_xdata(), default=None) for l in lines], default=None)
+            ymin = min([min(l.get_ydata(), default=None) for l in lines], default=None)
+            ymax = max([max(l.get_ydata(), default=None) for l in lines], default=None)
             
 #            print('Reset xlim',xmin,xmax)
 #            print('Reset ylim',ymin,ymax)
             
-            ax.set_xlim(xmin=xmin,xmax=xmax)
-            ax.set_ylim(ymin=ymin,ymax=ymax)
+            ax.set_xlim(left=xmin, right=xmax)
+            ax.set_ylim(bottom=ymin, top=ymax)
             ax.autoscale(True, tight=False)
             plt.draw()
 
@@ -253,10 +248,15 @@ class MplWidget(QtWidgets.QWidget):
         gui = self.get_gui()
         if gui.actionShowField.isChecked():
             field = gui.data.get_cond('Reduced field')
-            field = field>field[0]
-            for ax in self.axes:
-                ax.axvspan(gui.data.t[field.argmax()], gui.data.t[len(gui.data.t) - field[::-1].argmax() - 1], 
-                                            alpha=0.05, color='b')
+            b = np.array(field>field[0], dtype=np.int64)
+            pulse_start = np.argwhere(np.diff(b)==1)
+            pulse_stop = np.argwhere(np.diff(b)==-1)
+            if len(pulse_stop) < len(pulse_start):
+                pulse_stop = np.vstack((pulse_stop, len(field)-1))
+            for istart, istop in zip(pulse_start.flatten(), pulse_stop.flatten()):
+                for ax in self.axes:
+                    ax.axvspan(gui.data.t[istart], gui.data.t[istop], 
+                                                alpha=0.05, color='b')
 
 
 class ConditionsPlotWidget(MplWidget):
@@ -280,6 +280,8 @@ class ConditionsPlotWidget(MplWidget):
         
         # Show field-on region 
         self.show_field_on_region()
+        
+        self.condAx.set_ylim(ymin=self.condAx.get_ylim()[0])
         
 class DensityPlotWidget(MplWidget):
 

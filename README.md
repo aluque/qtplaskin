@@ -1,6 +1,6 @@
-[![GitHub version](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)](https://img.shields.io/github/v/release/erwanp/qtplaskin.svg)
-[![Tests](https://img.shields.io/travis/erwanp/qtplaskin.svg)](https://travis-ci.org/erwanp/qtplaskin)
-[![Code coverage](https://codecov.io/gh/erwanp/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/erwanp/qtplaskin)
+[![GitHub version](https://img.shields.io/github/v/release/aluque/qtplaskin.svg)](https://img.shields.io/github/v/release/aluque/qtplaskin.svg)
+[![Tests](https://img.shields.io/travis/aluque/qtplaskin.svg)](https://travis-ci.org/aluque/qtplaskin)
+[![Code coverage](https://codecov.io/gh/aluque/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/aluque/qtplaskin)
 [![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
 
 # QtPlaskin
@@ -12,7 +12,7 @@ that can be written from a running FORTRAN code.
 
 QtPlaskin was developed by [Alejandro Luque](http://www.iaa.es/~aluque) (see [original version](https://github.com/aluque))
 at the [Instituto de Astrofísica de Andalucía](https://www.iaa.csic.es) (IAA), [CSIC](http://www.csic.es) and is licensed under the [LGPLv3 License](https://www.gnu.org/licenses/lgpl-3.0.html). 
-The development of current Fork is open-sourced. [Feel free to contribute!](https://github.com/erwanp/qtplaskin/graphs/contributors). For any questions you can [look at the Issues](https://github.com/erwanp/qtplaskin/issues?utf8=%E2%9C%93&q=is%3Aissue+) or join the Community Chat below: 
+The development of current Fork is open-sourced. [Feel free to contribute!](https://github.com/aluque/qtplaskin/graphs/contributors). For any questions you can [look at the Issues](https://github.com/aluque/qtplaskin/issues?utf8=%E2%9C%93&q=is%3Aissue+) or join the Community Chat below: 
 
 [![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
 
@@ -22,7 +22,7 @@ QtPlaskin runs in Linux, Mac OS X and Windows. QtPlaskin is now a Python library
 Install it from GitHub with:
 
 ```
-git clone https://github.com/erwanp/qtplaskin.git
+git clone https://github.com/aluque/qtplaskin.git
 cd qtplaskin
 pip install -e .
 ``` 

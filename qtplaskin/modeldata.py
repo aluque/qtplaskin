@@ -10,6 +10,8 @@ import h5py
 from qtplaskin.runner import run
 from qtplaskin.database import get_molar_mass, Na
 
+from warnings import warn
+
 
 class ModelData(object):
     """ This class abstracts the reading of model data and its output
@@ -33,7 +35,7 @@ class ModelData(object):
         g = f.create_group('main')
         ref_dtype = h5py.special_dtype(ref=h5py.Reference)
 
-        for k, val in metadata.iteritems():
+        for k, val in metadata.items():
             g.attrs[k] = val
 
         # We always write at least these two metadata
@@ -69,6 +71,7 @@ class ModelData(object):
         g.create_dataset('t', data=self.t)
         g.create_dataset('source_matrix', data=self.source_matrix,
                          compression='gzip')
+        f.close()
 
     def old_save(self, ofile, metadata={}):
         """ Saves the data in an old format.
@@ -77,7 +80,7 @@ class ModelData(object):
         f = h5py.File(ofile, 'w')
         g = f.create_group('zdplaskin')
 
-        for k, val in metadata.iteritems():
+        for k, val in metadata.items():
             g.attrs[k] = val
 
         # We always write at least these two metadata
@@ -114,7 +117,7 @@ class ModelData(object):
             s_group = gsources.create_group(species)
 
             react_dict = self.sources(species)
-            for reaction, rate in react_dict.iteritems():
+            for reaction, rate in react_dict.items():
                 print("   Writing reaction `%s'" % reaction)
                 try:
                     s_group.create_dataset(reaction.replace('.', '_'),
@@ -307,7 +310,7 @@ class DirectoryData(ModelData):
         c = self.source_matrix[key - 1, :]
         d = {}
         for ri in np.nonzero(c)[0]:
-            d[ri] = self.raw_rates[:, ri] * c[ri]
+            d[ri] = self.raw_rates[:, ri] * int(c[ri])
 
         return d
 
@@ -323,7 +326,7 @@ class DirectoryData(ModelData):
 
 
 class FastDirData(DirectoryData):
-    """ An faster, updated version of DirectoryData using Pandas to read the 
+    """ A faster, updated version of DirectoryData using Pandas to read the 
     input files 
 
     Up to 5x faster on a ~1 Gb case (1.15 min -> 15 s) but not fully tested and 
@@ -336,25 +339,32 @@ class FastDirData(DirectoryData):
     def update(self):
         """ Reads or re-reads those files that may change during the execution.
         """
-        _raw_density = pd.read_csv(self._path(self.F_DENSITIES), delim_whitespace=True,
-                                   iterator=True, chunksize=50000)
-        _raw_density = pd.concat(_raw_density, ignore_index=True)
+        _raw_density = pd.read_csv(self._path(self.F_DENSITIES), delim_whitespace=True) #,
+#                                   iterator=True, chunksize=50000)
+#        _raw_density = pd.concat(_raw_density, ignore_index=True)
+#        _raw_density.apply(pd.to_numeric)
         _raw_density = np.array(_raw_density)
 
         i_dens = _raw_density.shape[0]
 
-        _raw_rates = pd.read_csv(self._path(self.F_RATES), delim_whitespace=True,
-                                 iterator=True, chunksize=50000)
-        _raw_rates = pd.concat(_raw_rates, ignore_index=True)
+        _raw_rates = pd.read_csv(self._path(self.F_RATES), delim_whitespace=True) # ,
+#                                 iterator=True, chunksize=50000)
+#        _raw_rates = pd.concat(_raw_rates, ignore_index=True)
+#        try:
+#            _raw_rates.apply(pd.to_numeric)
+#        except ValueError as err:
+#            print(err)
+#            raise ValueError('Impossible to read the format. There may be negative rates. See log above')
         _raw_rates = np.array(_raw_rates)
 
         _source_matrix = pd.read_csv(self._path(self.F_MATRIX), delim_whitespace=True,
                                      dtype='d', header=None)
         self.source_matrix = np.array(_source_matrix)
 
-        _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True,
-                                      iterator=True, chunksize=50000)
-        _raw_conditions = pd.concat(_raw_conditions, ignore_index=True)
+        _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True) #,
+#                                      iterator=True, chunksize=50000)
+#        _raw_conditions = pd.concat(_raw_conditions, ignore_index=True)
+#        _raw_conditions.apply(pd.to_numeric)
         _raw_conditions = np.array(_raw_conditions)
 
         latest_i = min(d.shape[0] for d in
@@ -368,6 +378,7 @@ class FastDirData(DirectoryData):
         # Add total
         self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
         self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
+        # TODO: discard species starting with 'X' here
 
     # %% Plus add some convenient functions to work with data
 
@@ -541,8 +552,9 @@ class FastDirData(DirectoryData):
             print('{0} is Condition #{1}'.format(i, self.conditions.index(i)+1))
         else:
             raise ValueError("Couldnt find {0} in reactions, species or conditions".format(i))
-            
-            
+
+    
+# %%
 
 
 class OldDirectoryData(DirectoryData):
@@ -623,7 +635,7 @@ class RealtimeData(ModelData):
                 self.raw_density[i, :] = c_density
                 self.raw_rates[i, :] = c_rates
 
-                for k, a in self.conditions_dict.iteritems():
+                for k, a in self.conditions_dict.items():
                     a[i] = c_conditions[k]
 
                 # To save space we will store only nonzero species/reaction
