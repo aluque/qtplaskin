@@ -243,6 +243,7 @@ class DirectoryData(ModelData):
         self.dirname = os.path.expanduser(dirname)
 
         self.species = self._read_list(self.F_SPECIES_LIST)
+        self.check_species_name_format()
         self.reactions = self._read_list(self.F_REACTIONS_LIST)
         self.conditions = self._read_list(self.F_CONDITIONS_LIST)
         self.molarmass = self._get_molarmass()
@@ -253,6 +254,13 @@ class DirectoryData(ModelData):
         self.update()
 
         super(DirectoryData, self).__init__()
+        
+    def check_species_name_format(self):
+        """Search for two-letters atoms and correct the type case.
+        """
+        atom_list = ['He','Ne','Ar','Fe']
+        for at in atom_list:
+            self.species=[s.replace(at.upper(),at) for s in self.species]    
 
     def _read_list(self, fname):
         with open(self._path(fname)) as fp:
