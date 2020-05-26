@@ -1,0 +1,13 @@
+ 1 bolsig:AR->AR^+     
+ 2 bolsig:AR->AR*      
+ 3 bolsig:AR*->AR      
+ 4 bolsig:AR*->AR^+    
+ 5 AR2^++E=>AR*+AR     
+ 6 AR2^++AR=>AR^++AR+AR
+ 7 AR*+AR*=>AR2^++E    
+ 8 AR^++E+E=>AR+E      
+ 9 AR*+AR+AR=>AR+AR+AR 
+10 AR^++AR+AR=>AR2^++AR
+11 AR^+=>AR(W)^+       
+12 AR2^+=>AR2(W)^+     
+13 E=>E(W)             
