@@ -37,6 +37,7 @@ _molar_mass_dict = {
         'O':15.9994,
         'Ar':39.948,
         'X':0,   # virtual species
+        'E':0,   # electron mass is neglected
         }
 ''' molar mass in g/mol '''
   
