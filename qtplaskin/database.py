@@ -37,6 +37,7 @@ _molar_mass_dict = {
         'O':15.9994,
         'Ar':39.948,
         'X':0,   # virtual species
+        'E':0,   # electron mass is neglected
         }
 ''' molar mass in g/mol '''
   
@@ -45,11 +46,18 @@ def get_molecule(state):
     
     return state.split('(')[0].split('^')[0]
 
-def get_molar_mass(state):
+def get_molar_mass(state, warn_err=True):
     
     molecule = get_molecule(state)
     atoms_dict = get_atoms_in(molecule)
-    return sum([_molar_mass_dict[k]*v for k,v in atoms_dict.items()])
+    try:
+        return sum([_molar_mass_dict[k]*v for k,v in atoms_dict.items()])
+    except KeyError as err:
+        from numpy import nan
+        from warnings import warn
+        if warn_err:
+            warn('Unknown molar mass for specie '+str(err))
+        return(nan)
 
 
 # %% Some tests
