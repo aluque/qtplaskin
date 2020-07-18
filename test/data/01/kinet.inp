@@ -1,0 +1,14 @@
+ELEMENTS
+X
+END
+
+SPECIES
+X X(1) X(2)
+END
+
+REACTIONS
+X => X(1)      ! 1.0d+0
+X(1) => X(2)   ! 1.0d-1
+X(2) => X      ! 1.0d+0
+X(1) => X      ! 1.0d-2
+END

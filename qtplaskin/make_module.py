@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 from subprocess import call, Popen, PIPE
 from string import Template
 import os
@@ -11,18 +11,20 @@ import shutil
 import re
 
 # Read global config
-import config
+from qtplaskin import config
+
 
 def preprocessor(infile, outfile='.'):
     p = Popen(os.path.join(config.ZDPLASKIN_EXEC_PATH, 'preprocessor'),
               shell=True, stdin=PIPE)
     p.communicate("%s\n%s\n\n" % (infile, outfile))
-    
+
 re_sep = re.compile(r',\s*')
 re_assign = re.compile(r'\s*([a-zA-Z0-9_]+)\s*=\s*(\S+)')
 
 bolsig_lib = {'darwin': 'bolsig_x86_64.dylib',
               'linux2': 'bolsig_x86_64.so'}
+
 
 def find_params(fortran_file):
     d = {}
@@ -64,6 +66,7 @@ def iter_joined_lines(line_iterator):
             yield current + sline
             current = ''
 
+
 def create_dvode_m():
     """ Creates the dvode_f90_m.mod if it does not exist. """
     target = os.path.join(config.ZDPLASKIN_EXEC_PATH, 'dvode_f90_m.mod')
@@ -81,16 +84,14 @@ def create_dvode_m():
     # We move it to an accessible place for next time
     shutil.copyfile('dvode_f90_m.mod', target)
 
-    
-    
+
 def f2py(module, pyf_file, fortran_file, bolsig=None):
-    os.environ["NO_SCIPY_IMPORT"]="f2py"
+    os.environ["NO_SCIPY_IMPORT"] = "f2py"
     from numpy.f2py import main as f2py_main
-    
+
     if bolsig is None:
         bolsig = os.path.join(config.ZDPLASKIN_LIB_PATH,
                               bolsig_lib[sys.platform])
-
 
     # In Mac OS X, f2py expects a .so file but shared libraries have a .dylib
     # We simply copy the .dylib to a .so
@@ -101,14 +102,14 @@ def f2py(module, pyf_file, fortran_file, bolsig=None):
         bolsig = so_file
 
     create_dvode_m()
-    
-    args = ("f2py -m %s -c --opt=\"-O3\" %s %s %s %s --fcompiler=gnu95"
-           % (module, pyf_file, fortran_file,
-              os.path.join(config.ZDPLASKIN_EXEC_PATH, 'dvode_f90_m.F90'),
-              bolsig)).split()
 
-    print args
-    
+    args = ("f2py -m %s -c --opt=\"-O3\" %s %s %s %s --fcompiler=gnu95"
+            % (module, pyf_file, fortran_file,
+               os.path.join(config.ZDPLASKIN_EXEC_PATH, 'dvode_f90_m.F90'),
+               bolsig)).split()
+
+    print(args)
+
     sys.argv = args
     f2py_main()
 
@@ -116,25 +117,25 @@ def f2py(module, pyf_file, fortran_file, bolsig=None):
     if sys.platform == 'darwin':
         dylib_file = '.'.join([module, 'dylib'])
         so_file = '.'.join([module, 'so'])
-        
+
         os.remove(dylib_file)
         os.symlink(so_file, dylib_file)
-    
-        
+
 
 def cleanup():
     """ If some files exist, they can cause problems in the compilation.
     """
     remove_files = ['zdplaskin.mod']
     for f in remove_files:
-        print "Removing %s" % f
+        print("Removing %s" % f)
         try:
             os.remove(f)
         except OSError:
             pass
-        
+
+
 def main():
-    parser = OptionParser()
+    parser = ArgumentParser()
     (opts, args) = parser.parse_args()
 
     for inp in args:
@@ -152,7 +153,6 @@ def main():
         preprocessor(inp, outfile=fortran_file)
         fill_template(base, fortran_file, pyf_file)
         f2py(base, pyf_file, fortran_file)
-        
 
 
 if __name__ == "__main__":

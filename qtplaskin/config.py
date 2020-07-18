@@ -1,8 +1,8 @@
-import ConfigParser
+import configparser
 import os.path
 
 MY_PATH = os.path.split(__file__)[0]
-config = ConfigParser.SafeConfigParser()
+config = configparser.SafeConfigParser()
 config.read(os.path.join(os.environ['HOME'], '.pyplaskinrc'))
 
 

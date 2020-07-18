@@ -1,0 +1,7 @@
+       Time_s           01           02
+   0.0000E+00   0.0000E+00          NaN
+   1.0000E-01   1.0000E+00    -Infinity
+   2.0000E-01     Infinity    +Infinity
+   3.0000E-01    +Infinity     Infinity
+   4.0000E-01    -Infinity   1.0000E+00
+   5.0000E-01          NaN   0.0000E+00

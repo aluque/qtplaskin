@@ -1,82 +1,71 @@
-import sys
-from distutils.core import setup
-#from setuptools import setup
-import shutil
-from subprocess import call
+# -*- coding: utf-8 -*-
+"""
+QtPlaskin
 
-import matplotlib
+A graphical tool to explore ZdPlaskin Results
+
+https://github.com/aluque/qtplaskin
+
+Written by Alejandro Luque
+
+---
+
+Updated by Erwan Pannier, 2016 to turn it into an app
+
+Note: you still have to install PyQt4 manually as it cannot be installed
+from pip. Read Alejandro's INSTALL.txt file to see how to install PyQt4. 
+Note that although PyQt cannot be installed through pip, you can install
+if with "conda install pyqt" if you're using the Anaconda distribution of 
+Python
+
+
+"""
+
+from __future__ import absolute_import
+
+import os
+from setuptools import setup
+import codecs
+
+# Force installation of some librairies that cannot be installed with pip 
 try:
-    import py2exe
+    import PyQt5
 except ImportError:
-    pass
+    raise ImportError("Please install these librairies manually first (with Anaconda is "+\
+                        "strongly recommended) \n >>> conda install pyqt")
 
-APP = ['qtplaskin.py']
-PY2APP_OPTIONS = {
-    'iconfile': 'qtplaskin3.icns',
-    'argv_emulation': False,
-    'semi_standalone': False,
-    # 'strip': False,
-    'includes': ['sip', 'PyQt4',
-                 'PyQt4.QtCore', 'PyQt4.QtGui',
-                 #'PyQt4.QtXml', #'PyQt4.QtMultimedia',
-                 'matplotlib', 'numpy', 'scipy', 
-                 'h5py',
-                 'h5py.defs',
-                 'h5py.h5ac',
-                 'h5py._errors',
-                 'h5py._objects', 
-                 'h5py.defs', 
-                 'h5py.utils',
-                 'h5py._proxy'],
-    'frameworks': ['/opt/local/share/qt4/plugins/imageformats/libqgif.dylib',],
-    'excludes': ['libQtGui.4.dylib', 'libQtGui.4.dylib'],
-    
-    #              'PyQt4.QtDesigner', 'PyQt4.QtNetwork',
-    #              'PyQt4.QtOpenGL', 'PyQt4.QtScript', 'PyQt4.QtSql',
-    #              'PyQt4.QtTest', 'PyQt4.QtWebKit', 'PyQt4.QtXml',
-    #              'PyQt4.phonon'],
-    'resources': ['qtplaskin3.png',
-                  '/opt/local/lib/Resources/qt_menu.nib',
-                  'modeldata.py', 'mainwindow.py', 'zdplaskin.py',
-                  'runner.py', 'mplwidget.py'],
-    }
- 
-# 'exclude_package_data': {'src':['*.c', '*.h',  '*.pyx', '*.pxd']}
-PY2EXE_OPTIONS = {
-    "dll_excludes": ["MSVCP90.dll"],
-    "includes": ["sip", "h5py.*"]}
+long_description = 'A graphical tool to explore ZdPlaskin Results'
+if os.path.exists('README.md'):
+    long_description = codecs.open('README.md', encoding="utf-8").read()
 
-shutil.rmtree('dist', ignore_errors=True)
-
-if sys.argv[1] == 'py2exe':
-    from distutils.core import setup
-    setup(
-        app=APP,
-        options={'py2app': PY2APP_OPTIONS,
-                 'py2exe': PY2EXE_OPTIONS},
-        windows=['qtplaskin.py'],
-        setup_requires=['py2app'],
-        data_files=matplotlib.get_py2exe_datafiles())
-    shutil.move('dist', 'qtplaskin-win')
-    call("zip qtplaskin-win.zip qtplaskin-win/*", shell=True)
-    
-
-
-elif sys.argv[1] == 'py2app':
-    from setuptools import setup
-    setup(
-        name="QtPlaskin",
-        version="0.2",
-        app=APP,
-        options={'py2app': PY2APP_OPTIONS,
-                 'py2exe': PY2EXE_OPTIONS},
-        data_files=matplotlib.get_py2exe_datafiles())
-
-    # py2app does not handle plugins correctly, so we copy them manually
-
-    # Be careful with the absolute paths here.  They may change.
-    shutil.copytree("/opt/local/share/qt4/plugins",
-                    "dist/qtplaskin.app/Contents/MacOS/plugins")
-    shutil.copy("qt.conf", "dist/qtplaskin.app/Contents/Resources/")
-    shutil.copy("README", "dist/README.txt")
-    call("hdiutil create QtPlaskin.dmg -ov -srcfolder dist/", shell=True)
+setup(name='qtplaskin',
+      version='1.1.2',
+      description='A graphical tool to explore ZdPlaskin Results',
+      long_description=long_description,
+      url='https://github.com/erwanp/qtplaskin',
+      author='Alejandro Luque. Turned into a Python package by Erwan Pannier',
+      author_email='erwan.pannier@gmail.com',
+      install_requires=[
+          'future',  # for builtins
+          'numpy',
+          'scipy',
+          'matplotlib',
+          'h5py',
+          'mpldatacursor',
+          # 'pyqt'      # cannot be installed through pip. Install PyQt5 manually
+      ],
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Science/Research',
+          'Topic :: Scientific/Engineering',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          "Operating System :: OS Independent"],
+      packages=['qtplaskin'],
+      scripts=[
+          'scripts/qtplaskin'],
+      include_package_data=True,
+      entry_points={"console_scripts": ["realpython=qtplaskin.main:main"]},
+      zip_safe=False)

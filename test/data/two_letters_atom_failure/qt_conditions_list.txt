@@ -1,0 +1,5 @@
+  1 Reduced field [Td]
+  2 Gas temperature [K]
+  3 Electron temperature [K]
+  4 Current density [A/cm2]
+  5 Power density [W/cm3]

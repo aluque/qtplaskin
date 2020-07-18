@@ -1,0 +1,18 @@
+#! /usr/bin/env python 
+
+"""
+Launching script
+
+Use
+------
+    qtplaskin [f] 
+    
+    where f can be a folder or a file to load on startup
+
+"""
+
+import qtplaskin
+import sys
+
+qtplaskin.main.main(sys.argv)
+
