@@ -58,4 +58,4 @@ If you want to contribute to the Community development of QtPlaskin, and make th
 we definitly need some development help on making the new fork packaged/executable. Afterwards we would be able
 to merge it.
 
-Interested ? See more in https://github.com/aluque/qtplaskin/pull/5
+Interested ? See more in https://github.com/aluque/qtplaskin/pull/5 and https://github.com/erwanp/qtplaskin/issues/17
