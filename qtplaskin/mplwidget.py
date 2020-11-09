@@ -63,7 +63,7 @@ class VMToolbar(NavigationToolbar):
     def __init__(self, plotCanvas, parent):
         NavigationToolbar.__init__(self, plotCanvas, parent)
 
-    def _icon(self, name):
+    def _icon(self, name, *args, **kwargs):
         # dirty hack to use exclusively .png and thus avoid .svg usage
         # because .exe generation is problematic with .svg
         name = name.replace('.svg', '.png')
