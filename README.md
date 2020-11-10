@@ -1,6 +1,6 @@
 [![GitHub version](https://img.shields.io/github/v/release/aluque/qtplaskin.svg)](https://img.shields.io/github/v/release/aluque/qtplaskin.svg)
-[![Tests](https://img.shields.io/travis/aluque/qtplaskin.svg)](https://travis-ci.org/aluque/qtplaskin)
-[![Code coverage](https://codecov.io/gh/aluque/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/aluque/qtplaskin)
+[![Tests](https://img.shields.io/travis/erwanp/qtplaskin.svg)](https://travis-ci.com/erwanp/qtplaskin)
+[![Code coverage](https://codecov.io/gh/erwanp/qtplaskin/branch/master/graph/badge.svg)](https://codecov.io/gh/erwanp/qtplaskin)
 [![Join Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zdplaskin/community#)
 
 # QtPlaskin
@@ -22,7 +22,7 @@ QtPlaskin runs in Linux, Mac OS X and Windows. QtPlaskin is now a Python library
 Install it from GitHub with:
 
 ```
-git clone https://github.com/aluque/qtplaskin.git
+git clone https://github.com/erwanp/qtplaskin.git
 cd qtplaskin
 pip install -e .
 ``` 
