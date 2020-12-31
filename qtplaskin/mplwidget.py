@@ -236,14 +236,6 @@ class MplWidget(QtWidgets.QWidget):
 
     def show_field_on_region(self):
         ''' 
-        Notes
-        -----
-        
-        @EP: BUG: if vspan is on, the old yrange is kept if is was larger
-        than the new one. This is kinda annoying and i didn't manage to 
-        delete the old axvspan object to fix that, nor to reset the limits. 
-        
-        I set the default actionShowField.setChecked(False) in the meantime.
         '''
         gui = self.get_gui()
         if gui.actionShowField.isChecked():
@@ -257,7 +249,11 @@ class MplWidget(QtWidgets.QWidget):
                 for ax in self.axes:
                     ax.axvspan(gui.data.t[istart], gui.data.t[istop], 
                                                 alpha=0.05, color='b')
-
+                    # Reset y-axis to cope with bug when old yrange was larger
+                    # than the new one (see https://github.com/erwanp/qtplaskin/issues/18)
+                    ax.relim()
+                    ax.autoscale_view(scalex=False, scaley=True)
+                    
 
 class ConditionsPlotWidget(MplWidget):
 
@@ -281,7 +277,7 @@ class ConditionsPlotWidget(MplWidget):
         # Show field-on region 
         self.show_field_on_region()
         
-        self.condAx.set_ylim(ymin=self.condAx.get_ylim()[0])
+#        self.condAx.set_ylim(ymin=self.condAx.get_ylim()[0])
         
 class DensityPlotWidget(MplWidget):
 
