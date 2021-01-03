@@ -43,25 +43,22 @@ def test_rate_slow(slow_data, rate, expected):
     assert_array_equal(expected, actual)
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("specie, expected",
     [(1, test_arr), (2, test_arr[::-1]) ] )
 def test_density_fast(fast_data, specie, expected):
     actual = fast_data.density(specie)
-    assert_array_equal(expected, actual)
+    assert_array_equal(expected, actual, err_msg="check if pandas>=1.0")
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("cond, expected",
     [(1, test_arr), (2, test_arr[::-1]) ] )
 def test_condition_fast(fast_data, cond, expected):
     actual = fast_data.condition(cond)
-    assert_array_equal(expected, actual)
+    assert_array_equal(expected, actual, err_msg="check if pandas>=1.0")
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("rate, expected",
     [(1, test_arr)] )
 def test_rate_fast(fast_data, rate, expected):
     actual = fast_data.condition(rate)
-    assert_array_equal(expected, actual)
+    assert_array_equal(expected, actual, err_msg="check if pandas>=1.0")

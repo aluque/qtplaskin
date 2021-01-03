@@ -52,6 +52,7 @@ setup(name='qtplaskin',
           'matplotlib',
           'h5py',
           'mpldatacursor',
+          'pandas>=1.0',
           # 'pyqt'      # cannot be installed through pip. Install PyQt5 manually
       ],
       classifiers=[
