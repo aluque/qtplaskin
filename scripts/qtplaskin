@@ -3,11 +3,19 @@
 """
 Launching script
 
-Use
-------
-    qtplaskin [f] 
+Examples
+--------
+
+::
+
+    $ qtplaskin [f] 
     
-    where f can be a folder or a file to load on startup
+where f can be a folder or a file to load on startup
+
+Run within Python ::
+    
+    ipython -i -c "import qtplaskin; qtplaskin.main.main(['.', PATH_TO_FOLDER])"
+
 
 """
 
