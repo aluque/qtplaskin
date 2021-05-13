@@ -1,0 +1,13 @@
+coverage:
+  status:
+    # pull-requests only
+    patch:
+      default:
+        threshold: 0.1%
+ignore:
+  - "qtplaskin/mainwindow.py"
+  - "qtplaskin/make_module.py"
+  - "qtplaskin/run_model.py"
+  - "qtplaskin/main.py"
+  - "qtplaskin/mplwidget.py"
+  - "qtplaskin/zdplaskin.py"
