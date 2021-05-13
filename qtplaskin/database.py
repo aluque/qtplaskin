@@ -8,17 +8,22 @@ import re
 
 # Constants
 
-Na = 6.02214129e+23   
+Na = 6.02214129e+23
 ''' Avogadro number (molec/mole)'''
 
+
+def get_molecule(state):
+    ''' Get molecule radical of ion / excited level '''
+
+    return state.split('(')[0].split('^')[0]
 
 # Get parse atoms in molecule
 
 _parse_molecule = re.compile('([A-Z][a-z]?)(\d+)?')
 
 def get_atoms_in(molecule):
-    
-    out = dict(_parse_molecule.findall(molecule))
+
+    out = dict(_parse_molecule.findall(get_molecule(molecule)))
     for k, v in out.items():
         if v == '':
             out[k] = 1
@@ -26,9 +31,8 @@ def get_atoms_in(molecule):
             out[k] = int(v)
     return out
 
-
 # get mole fractions
-  
+
 _molar_mass_dict = {
         'H':1.0079,
         'He':4.0026,
@@ -40,14 +44,9 @@ _molar_mass_dict = {
         'E':0,   # electron mass is neglected
         }
 ''' molar mass in g/mol '''
-  
-def get_molecule(state):
-    ''' Get molecule radical of ion / excited level '''
-    
-    return state.split('(')[0].split('^')[0]
 
 def get_molar_mass(state, warn_err=True):
-    
+
     molecule = get_molecule(state)
     atoms_dict = get_atoms_in(molecule)
     try:
@@ -61,13 +60,9 @@ def get_molar_mass(state, warn_err=True):
 
 
 # %% Some tests
-    
-def _test(*args, **kwargs):
-    assert get_atoms_in('CO2') == {'C':1, 'O':2}
-    assert get_molar_mass('CO2(v1)') == 44.0095
-    assert get_molar_mass('N2+') == 28.0134
-    
 
 if __name__ == '__main__':
-    # Some tests
-    _test()
+
+    import pytest
+
+    print("Testing atom parsing:", pytest.main(["../test/test_parsing_atoms.py"]))
