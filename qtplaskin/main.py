@@ -36,7 +36,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
-                   argsort, r_, isreal, logical_and)
+                   argsort, r_, isreal, logical_and, float64)
 
 # import the MainWindow widget from the converted .ui files
 try:
@@ -260,7 +260,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Loop over all selected conditions
         for item in iter_2_selected(self.condList):
             name = item[1]
-            y = array(self.data.condition(item[0]))
+            y = array(self.data.condition(item[0]), dtype=float64)
             condition_name = self.data.conditions[item[0] - 1]
             
             flt = logical_and(isreal(y), isfinite(y))
