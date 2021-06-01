@@ -254,13 +254,13 @@ class DirectoryData(ModelData):
         self.update()
 
         super(DirectoryData, self).__init__()
-        
+
     def check_species_name_format(self):
         """Search for two-letters atoms and correct the type case.
         """
         atom_list = ['He','Ne','Ar','Fe']
         for at in atom_list:
-            self.species=[s.replace(at.upper(),at) for s in self.species]    
+            self.species=[s.replace(at.upper(),at) for s in self.species]
 
     def _read_list(self, fname):
         with open(self._path(fname)) as fp:
@@ -294,7 +294,7 @@ class DirectoryData(ModelData):
         self.raw_rates = _raw_rates[:latest_i, 1:]
         self.raw_density = _raw_density[:latest_i, 1:]
         self.t = _raw_density[:latest_i, 0]
-        
+
         # Add total
         self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
         self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
@@ -323,7 +323,7 @@ class DirectoryData(ModelData):
         return d
 
     def _get_molarmass(self):
-        
+
         M = []
         for s in self.species:
             if s == 'E':
@@ -334,13 +334,13 @@ class DirectoryData(ModelData):
 
 
 class FastDirData(DirectoryData):
-    """ A faster, updated version of DirectoryData using Pandas to read the 
-    input files 
+    """ A faster, updated version of DirectoryData using Pandas to read the
+    input files
 
-    Up to 5x faster on a ~1 Gb case (1.15 min -> 15 s) but not fully tested and 
+    Up to 5x faster on a ~1 Gb case (1.15 min -> 15 s) but not fully tested and
     some features such as real time tracking may be broken.
 
-    Problem with large sizes (>800 Mb) solved with chunking. 
+    Problem with large sizes (>800 Mb) solved with chunking.
 
     @erwanp 26/06/16"""
 
@@ -396,10 +396,11 @@ class FastDirData(DirectoryData):
         Parameters
         ----------
         species: list
-        
+
         Returns
         -------
-        array: number density in cm-3
+
+        number density in cm-3
         '''
         
         return self.get_spec(species)
@@ -409,11 +410,13 @@ class FastDirData(DirectoryData):
 
         Parameters
         ----------
+
         species: list
-        
+
         Returns
         -------
-        array: number density in cm-3
+
+        number density in cm-3
         '''
 
         def _index(s):
@@ -442,31 +445,33 @@ class FastDirData(DirectoryData):
             return [self.raw_density[:latest_i, _index(s)] for s in species]
 
     def get_mole_fraction(self, species):
-        '''Returns mole fraction (mol/mol)
-        
+        '''
+        Returns mole fraction (molec/molec)
+
         See Also
         --------
         :meth:`~qtplaskin.modeldata.FastDirData.get_spec`
         '''
-        
+
         return self.get_spec(species)/self.total_number_density
 
     def get_mass_fraction(self, species):
         ''' Return mass fraction (kg/kg)'''
-        
+
         number_density = self.get_spec(species)
         M = self.molarmass[self.species.index(species)]
         return (number_density*M/Na)/self.total_mass_density
-        
+
 
     def get_rate(self, reactions):
         ''' Get a given reaction rate
 
-        Parameters
-        ----------
+        Input:
+        -------
+
         reactions: list'''
-        
-        
+
+
         def _index(s):
             try:
                 i = self.reactions.index(s)
@@ -493,96 +498,58 @@ class FastDirData(DirectoryData):
             return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
 
 
-    def _condition_index(self, c):
-        """Get condition index. 
-        If there is no ambiguity, only the beginning of the condition name is enough
-
-        Parameters
-        ----------
-        c: str
-            condition name
-        """
-        try:
-            i = self.conditions.index(c)
-        except ValueError:
-            try:  # try if there is only one element, starting with the same name
-                l = [x for x in self.conditions if (
-                    x.lower()).startswith(c.lower())]
-                if len(l) == 1:
-                    i = self.conditions.index(l[0])
-                else:
-                    raise ValueError
-            except ValueError:
-                raise ValueError("%s not in conditions: %s" %
-                                 (c, self.conditions))
-        return i
-
     def get_cond(self, conditions):
-        ''' Get a given set conditions.
+        ''' Get a given set conditions
 
-        Parameters
-        ----------
-        species: list
+        Input:
+        -------
 
-        Examples
-        --------
+        species: list'''
 
-        If there is no ambiguity, only the beginning of the condition name is enough: 
-
-        ::
-            d.get("Gas temperature [K]")
-            d.get("Gas temperature")    # are both valid
-
-        '''
+        def _index(c):
+            try:
+                i = self.conditions.index(c)
+            except ValueError:
+                try:  # try if there is only one element, starting with the same name
+                    l = [x for x in self.conditions if (
+                        x.lower()).startswith(c.lower())]
+                    if len(l) == 1:
+                        i = self.conditions.index(l[0])
+                    else:
+                        raise ValueError
+                except ValueError:
+                    raise ValueError("%s not in conditions: %s" %
+                                     (c, self.conditions))
+            return i
 
         latest_i = min(d.shape[0] for d in
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if not type(conditions) == list:
-            return self.raw_conditions[:latest_i, self._condition_index(conditions)]
+            return self.raw_conditions[:latest_i, _index(conditions)]
 
         else:
-            return [self.raw_conditions[:latest_i, self._condition_index(c)] for c in conditions]
-        
-    def plot_cond(self, condition):
-        ''' Quickly plot a species directly from FastDirData. 
+            return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
 
-        To be moved later in a separate batch interface module '''
-
-        condition_fullname = self.conditions[self._condition_index(condition)]
-
-        import matplotlib.pyplot as plt
-        plt.figure()
-        plt.plot(self.t, self.get_cond(condition_fullname))
-        plt.ylabel(condition_fullname)
-        plt.xlabel("t [s]")
-        
-    def plot(self, species):
+    def plot(self, species,figname=None):
         ''' Quickly plot a species directly from FastDirData. To be moved later
-        in a separate batch interface module 
-
-        Examples
-        --------
-        ::
-            d.plot("CO2")
-        '''
+        in a separate batch interface module '''
 
         import matplotlib.pyplot as plt
-        plt.figure()
-        plt.plot(self.t, self.get(species))
-        plt.xlabel("t [s]")
-        plt.ylabel("density [cm-3]")
+        plt.figure(figname)
+        plt.plot(self.t, self.get(species),label=species)
         plt.yscale('log')
-        
+
     def get_QTindex(self, i):
         ''' Get index of item i. Useful when you want to find a particular reaction
-        in QtPlaskin but your model has hundreds of them. 
-        
-        Parameters
-        ----------
-        int: reaction, cond or species index
+        in QtPlaskin but your model has hundreds of them.
+
+        Input
+        ------
+
+        i: reaction, cond or species
         '''
-        
+
         if i in self.reactions:
             print('{0} is Reaction #{1}'.format(i, self.reactions.index(i)+1))
         elif i in self.species:
@@ -592,7 +559,7 @@ class FastDirData(DirectoryData):
         else:
             raise ValueError("Couldnt find {0} in reactions, species or conditions".format(i))
 
-    
+
 # %%
 
 
