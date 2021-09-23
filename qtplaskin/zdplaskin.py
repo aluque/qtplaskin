@@ -184,7 +184,7 @@ class Kinetics(object):
             nsteps = int(attempt_dt / max_dt) + 1
             realized_dt = max_dt / nsteps
 
-            for i in range(nsteps):
+            for _ in range(nsteps):
                 self.timestep(t, realized_dt)
 
 

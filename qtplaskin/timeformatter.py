@@ -5,71 +5,49 @@ Created on Wed Jun 15 23:47:41 2016
 @author: erwan
 """
 
-import numpy as np
 from matplotlib.ticker import ScalarFormatter
 
 
 class TimeFormatter(ScalarFormatter):
-    ''' A function to display time axis with dynamic time units when you 
+    ''' A class to display time axis with dynamic time units when you
     zoom in (ns, µs, ms...)
 
     Use
-    -------  
+    -------
 
     time data has to be in seconds (s).
 
-    >>> ax.xaxis.set_major_formatter(TimeFormatter())    
+    >>> ax.xaxis.set_major_formatter(TimeFormatter().simple_function)
 
-    In order to avoid errors, set the axis before plotting data. 
+    In order to avoid errors, set the axis before plotting data.
 
     '''
 
-    def tformat(self, xp):
+    # pylint: disable=unused-argument
+    @staticmethod
+    def simple_function(time, pos, number_after_decimals=0):
+        """Function to be used with ax.xaxis.set_major_formatter
 
-        dt = np.diff(self.axis.get_view_interval())
 
-        nformat = '%.2f'
+        Args:
+            time (float): the time (in s)
+            pos ([type]): not used here, but needed by matplotlib
+            number_after_decimals (int, optional): number after decimal displayed. Defaults to 0.
 
-        if dt < 1e-7:
-            xp = nformat % (xp * 1e9) + 'ns'
-        elif dt < 1e-4:
-            xp = nformat % (xp * 1e6) + 'µs'
-        elif dt < 1e-1:
-            xp = nformat % (xp * 1e3) + 'ms'
+        Returns:
+            str: time in a more readable way
+        """
+        x_label = ''
+
+        precision = "." + str(number_after_decimals) + "f"
+        if time < 1e-9:
+            x_label = f"{time * 1e12:{precision}} ps"
+        elif time < 1e-6:
+            x_label = f"{time * 1e9:{precision}} ns"
+        elif time < 1e-3:
+            x_label = f"{time * 1e6:{precision}} µs"
+        elif time < 1:
+            x_label = f"{time * 1e3:{precision}} ms"
         else:
-            xp = nformat % xp    # s
-        return xp
-
-    def pprint_val(self, x):
-
-        xp = (x - self.offset)
-        
-        xp = self.tformat(xp)
-
-        return xp
-
-    def get_offset(self):
-        """Return scientific notation, plus offset"""
-        if len(self.locs) == 0:
-            return ''
-        s = ''
-        if self.orderOfMagnitude or self.offset:
-            offsetStr = ''
-            if self.offset:
-                #                offsetStr = self.format_data(self.offset)=
-                if np.abs(self.offset) < 1e-7:
-                    offsetStr = '%.2fns' % (self.offset * 1e9)
-                elif np.abs(self.offset) < 1e-4:
-                    offsetStr = '%.2fµs' % (self.offset * 1e6)
-                elif np.abs(self.offset) < 1e-1:
-                    offsetStr = '%.2fms' % (self.offset * 1e3)
-                if self.offset > 0:
-                    offsetStr = '+' + offsetStr
-            if self._useMathText:
-                s = ''.join(('$', r'\mathdefault{', offsetStr, '}$'))
-            elif self._usetex:
-                s = '$%s$' % offsetStr
-            else:
-                s = offsetStr
-
-        return self.fix_minus(s)
+            x_label = f"{time:.2f} x_label"
+        return x_label

@@ -19,6 +19,7 @@ def preprocessor(infile, outfile='.'):
               shell=True, stdin=PIPE)
     p.communicate("%s\n%s\n\n" % (infile, outfile))
 
+
 re_sep = re.compile(r',\s*')
 re_assign = re.compile(r'\s*([a-zA-Z0-9_]+)\s*=\s*(\S+)')
 
@@ -96,7 +97,7 @@ def f2py(module, pyf_file, fortran_file, bolsig=None):
     # In Mac OS X, f2py expects a .so file but shared libraries have a .dylib
     # We simply copy the .dylib to a .so
     if sys.platform == 'darwin':
-        base, ext = os.path.splitext(bolsig)
+        base, _ = os.path.splitext(bolsig)
         so_file = '.'.join([base, 'so'])
         shutil.copyfile(bolsig, so_file)
         bolsig = so_file
@@ -136,7 +137,7 @@ def cleanup():
 
 def main():
     parser = ArgumentParser()
-    (opts, args) = parser.parse_args()
+    (_, args) = parser.parse_args()
 
     for inp in args:
         base, ext = os.path.splitext(inp)

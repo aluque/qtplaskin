@@ -36,7 +36,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
-                   argsort, r_, isreal, logical_and, float64)
+                   argsort, r_, isreal, logical_and, float64, diff)
 
 # import the MainWindow widget from the converted .ui files
 try:
@@ -69,17 +69,17 @@ RATE_THRESHOLD = 1e-20
 CONDITIONS_PRETTY_NAMES = {
     'gas_temperature': "Gas temperature [K]",
     'Tgas_K': "Gas temperature [K]",
-    'reduced_frequency': "Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
+    'reduced_frequency': r"Reduced frequency cm$^\mathdefault{3}$s$^\mathdefault{-1}$",
     'reduced_field': "Reduced field E/N [Td]",
     'E/N_Td': "Reduced field E/N [Td]",
     'elec_temperature': "Electron temperature [K]",
     'Telec_K': "Electron temperature [K]",
     'elec_drift_velocity': "Electron drift velocity [cm/s]",
-    'elec_diff_coeff': "Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
-    'elec_frequency_n': "Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_n': "Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_elastic_n': "Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
-    'elec_power_inelastic_n': "Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
+    'elec_diff_coeff': r"Electron diffusion coeff. [cm$^\mathdefault{2}$s$^\mathdefault{-1}$]",
+    'elec_frequency_n': r"Electron reduced colission freq. [cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_n': r"Electron reduced power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_elastic_n': r"Electron reduced elastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]",
+    'elec_power_inelastic_n': r"Electron reduced inelastic power [eV cm$^\mathdefault{3}$s$^\mathdefault{-1}$]"}
 
 
 class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -118,10 +118,12 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotButton.clicked.connect(self.update_spec_graph)
         self.sourceButton.clicked.connect(self.update_source_graph)
         self.reactButton.clicked.connect(self.update_react_graph)
-        
+
         self.actionOpen.triggered.connect(self.select_file)
-        self.actionStart_a_simulation.triggered.connect(self.start_a_simulation)
-        self.actionImport_from_directory.triggered.connect(self.import_from_directory)
+        self.actionStart_a_simulation.triggered.connect(
+            self.start_a_simulation)
+        self.actionImport_from_directory.triggered.connect(
+            self.import_from_directory)
         self.actionUpdate.triggered.connect(self.data_update)
         self.actionExport_data.triggered.connect(self.export_data)
         self.actionSave.triggered.connect(self.save_to_file)
@@ -150,10 +152,11 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             def formatter(x=None, y=None, z=None, s=None, label=None, **kwargs):
 
-                ax = kwargs['event'].mouseevent.inaxes
+                _ = kwargs['event'].mouseevent.inaxes
 
                 output = []
-                output.append(u't: {0:0.3e} s'.format(x))
+                # output.append(u't: {0:0.3e} s'.format(x))
+                output.append(TimeFormatter().simple_function(x, 0, number_after_decimals=3))
                 output.append(u'y: {0:0.3e} {1}'.format(y, unit))
 
                 for key, val in zip(['z', 's'], [z, s]):
@@ -227,13 +230,13 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def update_cond_graph(self):
         """Updates the graph with conditions
-        
+
         Attributes
         ----------
-        
+
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
-            
+
         """
 #
 #        try:
@@ -245,7 +248,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         former_xrange = None
         if self.firstAx is not None:
             former_xrange = self.firstAx.get_xlim()
-            
+
         # clear the Axes
         if not self.condWidget.axes:
             self.condWidget.init_axes()
@@ -253,7 +256,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.condWidget.clear()
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
-        
+
         citer = cycle(COLOR_SERIES)
         lines = []
         label = ''
@@ -262,11 +265,11 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             name = item[1]
             y = array(self.data.condition(item[0]), dtype=float64)
             condition_name = self.data.conditions[item[0] - 1]
-            
+
             flt = logical_and(isreal(y), isfinite(y))
             label = CONDITIONS_PRETTY_NAMES.get(condition_name, condition_name)
             lines.append(self.condWidget.axes[0].plot(self.data.t[flt], y[flt], lw=LINE_WIDTH,
-                                                      label=name, #scalex=False,
+                                                      label=name,  # scalex=False,
                                                       zorder=10,
                                                       c=next(citer))[0])
 
@@ -274,16 +277,16 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.datacursor(self.condWidget)
 
         self.condWidget.set_scales(yscale='linear', xscale=self.xscale)
-        self.condWidget.axes[0].set_xlabel("t [s]")
+        self.condWidget.axes[0].set_xlabel("time")
         self.condWidget.axes[0].set_ylabel(label)
-        
+
         # Reset former xrange
         if former_xrange is not None:
             self.condWidget.axes[0].set_xlim(former_xrange)
         else:  # autoscale to full range
-            self.condWidget.axes[0].autoscale(True,axis='x')
+            self.condWidget.axes[0].autoscale(True, axis='x')
 
-        self.condWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
+        self.condWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
 
         # force an image redraw
         self.condWidget.draw()
@@ -293,10 +296,10 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def update_spec_graph(self, autoscale=None):
         """Updates the graph with densities
-        
+
         Attributes
         ----------
-        
+
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
         """
@@ -305,7 +308,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         former_xrange = None
         if self.firstAx is not None:
             former_xrange = self.firstAx.get_xlim()
-        
+
         # clear the Axes
         if not self.speciesList.selectedItems():
             return
@@ -314,7 +317,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.densWidget.init_axes()
         else:
             self.densWidget.clear()
-            
+
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
         self.data.flush()
 
@@ -326,7 +329,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dens = self.data.density(item[0])
             flt = dens > DENS_THRESHOLD
             lines.append(self.densWidget.axes[0].plot(self.data.t[flt], dens[flt],
-                                                      lw=LINE_WIDTH, scalex=False, 
+                                                      lw=LINE_WIDTH, scalex=False,
                                                       c=next(citer), label=name,
                                                       zorder=10)[0])
             self.densWidget.add_data(self.data.t, dens, name)
@@ -335,18 +338,17 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.datacursor(self.densWidget, unit='cm-3', labname='Spec.')
 
         self.densWidget.set_scales(yscale='log', xscale=self.xscale)
-        self.densWidget.axes[0].set_xlabel("t [s]")
-        self.densWidget.axes[0].set_ylabel("Density [cm$^\mathdefault{-3}$]")
+        self.densWidget.axes[0].set_xlabel("time")
+        self.densWidget.axes[0].set_ylabel(r"Density [cm$^\mathdefault{-3}$]")
         self.densWidget.axes[0].legend(loc=(1.05, 0.0), prop=dict(size=11))
-                
+
         # Reset former xrange
         if former_xrange is not None:
             self.densWidget.axes[0].set_xlim(former_xrange)
         else:  # autoscale to full range
-            self.densWidget.axes[0].autoscale(True,axis='x')
-            
-        self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
+            self.densWidget.axes[0].autoscale(True, axis='x')
 
+        self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
 
         # force an image redraw
         self.densWidget.draw()
@@ -355,10 +357,10 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def update_source_graph(self, autoscale=None):
         """Updates the graph with sources rates
-        
+
         Attributes
         ----------
-        
+
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
         """
@@ -371,7 +373,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         former_xrange = None
         if self.firstAx is not None:
             former_xrange = self.firstAx.get_xlim()
-            
+
         # clear the Axes
         if not self.sourceWidget.axes:
             self.sourceWidget.init_axes()
@@ -379,7 +381,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sourceWidget.clear()
 
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(Qt.WaitCursor))
-        
+
         filters = {0: (0.1, -1),
                    1: (0.01, -1),
                    2: (0.001, -1),
@@ -388,7 +390,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         delta, max_rates = filters[self.Combo_filter.currentIndex()]
 
-        icreation, idestruct = select_rates(self.data, species[0], delta, max_rates=max_rates)
+        icreation, idestruct = select_rates(
+            self.data, species[0], delta, max_rates=max_rates)
 
         citer = cycle(COLOR_SERIES)
         lines = []
@@ -403,7 +406,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                            c=next(citer),
                                                            lw=LINE_WIDTH,
                                                            label=label,
-                                                           scalex=False, 
+                                                           scalex=False,
                                                            zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, rate, label)
@@ -422,7 +425,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                           c=next(citer),
                                                           lw=LINE_WIDTH,
                                                           label=label,
-                                                          scalex=False, 
+                                                          scalex=False,
                                                           zorder=10)[0])
 
             self.sourceWidget.add_data(self.data.t, rate, "- " + label)
@@ -431,13 +434,14 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.datacursor(self.sourceWidget, unit='cm-3/s', labname='Reac.')
 
         self.sourceWidget.creationAx.set_ylabel(
-            "Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+            r"Production [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
         self.sourceWidget.creationAx.legend(loc=(1.05, 0.0),
                                             prop=dict(size=9))
 
         self.sourceWidget.removalAx.set_ylabel(
-            "Losses [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
-        self.sourceWidget.removalAx.set_xlabel("t [s]")
+            r"Losses [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+
+        self.sourceWidget.removalAx.set_xlabel("time")
 
         self.sourceWidget.removalAx.legend(loc=(1.05, 0.0),
                                            prop=dict(size=9))
@@ -446,13 +450,20 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Reset former xrange
         if former_xrange is not None:
+            if former_xrange[0] <= 0 and self.xscale == 'log':
+                former_xrange = (1e-11, former_xrange[1])
             self.sourceWidget.creationAx.set_xlim(former_xrange)
 #            self.sourceWidget.removalAx.set_xlim(former_xrange)  # synchronized already
         else:  # autoscale to full range
-            self.sourceWidget.creationAx.autoscale(True,axis='x')
-            
-        self.sourceWidget.creationAx.xaxis.set_major_formatter(TimeFormatter())
-        self.sourceWidget.removalAx.xaxis.set_major_formatter(TimeFormatter())
+            self.sourceWidget.creationAx.autoscale(True, axis='x')
+
+        # self.sourceWidget.creationAx.xaxis.set_major_formatter(TimeFormatter())
+        # self.sourceWidget.removalAx.xaxis.set_major_formatter(TimeFormatter())
+
+        self.sourceWidget.creationAx.xaxis.set_major_formatter(
+            TimeFormatter().simple_function)
+        self.sourceWidget.removalAx.xaxis.set_major_formatter(
+            TimeFormatter().simple_function)
 
         # force an image redraw
         self.sourceWidget.draw()
@@ -461,10 +472,10 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def update_react_graph(self, autoscale=None):
         """Updates the graph with reaction rates
-        
+
         Attributes
         ----------
-        
+
         autoscale
             will keep timescale from last ax unless it's the first plot. Default None.
         """
@@ -475,7 +486,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         former_xrange = None
         if self.firstAx is not None:
             former_xrange = self.firstAx.get_xlim()
-            
+
         # clear the Axes
         if not self.reactWidget.axes:
             self.reactWidget.init_axes()
@@ -505,17 +516,17 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.reactWidget.set_scales(yscale='log', xscale=self.xscale)
 
-        self.reactWidget.axes[0].set_xlabel("t [s]")
+        self.reactWidget.axes[0].set_xlabel("time")
         self.reactWidget.axes[0].set_ylabel(
-            "Rate [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
+            r"Rate [cm$^\mathdefault{-3}$s$^\mathdefault{-1}$]")
         self.reactWidget.axes[0].legend(loc=(1.025, 0.0),
                                         prop=dict(size=8))
 
         # Reset former xrange
         if former_xrange is not None:
             self.reactWidget.axes[0].set_xlim(former_xrange)
-            
-        self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter())
+
+        self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
 
         # force an image redraw
         self.reactWidget.draw()
@@ -526,9 +537,9 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """opens a file select dialog"""
         # open the dialog and get the selected file
         file, *_rest = QtWidgets.QFileDialog.getOpenFileName(self, "Open data file",
-                                                 ".",
-                                                 "HDF5 files (*.h5 *.hdf5);;"
-                                                 "All files (*)")
+                                                             ".",
+                                                             "HDF5 files (*.h5 *.hdf5);;"
+                                                             "All files (*)")
         # if a file is selected
         if file:
             try:
@@ -552,7 +563,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         fname = QtWidgets.QFileDialog.getExistingDirectory(
             self, "Import data from directory",
             self.latest_dir, QtWidgets.QFileDialog.ShowDirsOnly)
-        
+
         self._import_from_directory(fname)
         self.latest_dir = fname
 
@@ -568,7 +579,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     Failed to open directory. <br>
                     {}: {}. <br>
                     Now trying the old (slower) way.
-                    '''.format( type(e).__name__, str(e)))
+                    '''.format(type(e).__name__, str(e)))
                 em.exec_()
                 try:
                     self.data = DirectoryData(fname)
@@ -620,14 +631,14 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.update_source_graph()
         if self.reactWidget.axes:
             self.update_react_graph()
-        
+
     def save_to_file(self):
         """opens a file select dialog"""
         # open the dialog and get the selected file
         fname, *_rest = QtWidgets.QFileDialog.getSaveFileName(self, "Save to file",
-                                                  ".",
-                                                  "HDF5 files (*.h5 *.hdf5);;"
-                                                  "All files (*)")
+                                                              ".",
+                                                              "HDF5 files (*.h5 *.hdf5);;"
+                                                              "All files (*)")
 
         # if a file is selected
         if fname:
@@ -637,11 +648,11 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """opens a file select dialog"""
         # open the dialog and get the selected file
         fname, *_rest = QtWidgets.QFileDialog.getSaveFileName(self, "Export data to file",
-                                                  ".",
-                                                  "TSV files (*.tsv);;"
-                                                  "TXT files (*.txt);;"
-                                                  "DAT files (*.dat);;"
-                                                  "All files (*)")
+                                                              ".",
+                                                              "TSV files (*.tsv);;"
+                                                              "TXT files (*.txt);;"
+                                                              "DAT files (*.dat);;"
+                                                              "All files (*)")
 
         # if a file is selected
         if fname:
@@ -677,7 +688,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.conditions = sorted(self.data.conditions)
 
         def _populate(qtable, list, pretty_names={}):
-            for i in range(qtable.rowCount()):
+            for _ in range(qtable.rowCount()):
                 qtable.removeRow(0)
 
             for n, item in enumerate(list):
@@ -757,9 +768,12 @@ def select_rates(data, specie_index, delta, max_rates):
     # This is b.c. numpy does not provide a nanargsort
     fneg = where(isfinite(fneg), fneg, 0)
 
-    prod = {reactions[i]+1 for i in filter_rates(fpos, delta, max_rates=max_rates)}
-    loss = {reactions[i]+1 for i in filter_rates(fneg, delta, max_rates=max_rates)}
+    prod = {reactions[i] +
+            1 for i in filter_rates(fpos, delta, max_rates=max_rates)}
+    loss = {reactions[i] +
+            1 for i in filter_rates(fneg, delta, max_rates=max_rates)}
     return prod, loss
+
 
 def iter_2_selected(qtablewidget):
     selectedRanges = qtablewidget.selectedRanges()
@@ -774,16 +788,19 @@ def iter_2_selected(qtablewidget):
 
     return selected
 
+
 def load(folder):
-    return main(['.',folder])
-    
+    return main(['.', folder])
+
+
 def main(argv):
-    
+
     # create the GUI application
-    app=QtWidgets.QApplication.instance() # checks if QApplication already exists 
-    if not app: # create QApplication if it doesnt exist 
+    # checks if QApplication already exists
+    app = QtWidgets.QApplication.instance()
+    if not app:  # create QApplication if it doesnt exist
         app = QtWidgets.QApplication(argv)
-        # This check is useful not to crash when testing successive times from 
+        # This check is useful not to crash when testing successive times from
         # IPython
 
     # instantiate the main window
@@ -815,6 +832,7 @@ def main(argv):
     sys.exit(app.exec_())
 
 # %% Run from here (for testing purpose)
+
 
 if __name__ == '__main__':
     main(sys.argv)
