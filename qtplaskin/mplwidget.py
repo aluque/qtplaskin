@@ -38,15 +38,15 @@ class MplCanvas(FigureCanvas):
         # notify the system of updated policy
         FigureCanvas.updateGeometry(self)
 #
-#class QtToolbar(NavigationToolbar):
-#    
+# class QtToolbar(NavigationToolbar):
+#
 #    def __init__(self, plotCanvas, parent):
 #        NavigationToolbar.__init__(self, plotCanvas, parent)
 #        self._home = self.home
 #        self.home = self.new_home
 #
 #    def new_home(self, *args, **kwargs):
-#        ''' New navigation home button with forced reset 
+#        ''' New navigation home button with forced reset
 #        http://stackoverflow.com/questions/14896580/matplotlib-hooking-in-to-home-back-forward-button-events'''
 #        widget = self.parent
 #        #print('home!')
@@ -58,6 +58,7 @@ class MplCanvas(FigureCanvas):
 # Thanks Laurent
 # http://groups.google.com/group/pyinstaller/browse_thread/thread/834bea87c7afcdff?pli=1
 
+
 class VMToolbar(NavigationToolbar):
 
     def __init__(self, plotCanvas, parent):
@@ -68,6 +69,7 @@ class VMToolbar(NavigationToolbar):
         # because .exe generation is problematic with .svg
         name = name.replace('.svg', '.png')
         return QtGui.QIcon(os.path.join(self.basedir, name))
+
 
 class MplWidget(QtWidgets.QWidget):
     """Widget defined in Qt Designer"""
@@ -106,9 +108,9 @@ class MplWidget(QtWidgets.QWidget):
         palette = self.ntb.palette()
         self.canvas.fig.set_facecolor([x / 255. for x in
                                        palette.window().color().getRgb()])
-    
+
 #        self.canvas.mpl_connect('home_event', self.handle_home)
-        
+
         # Connect Home Button with New Home functions
         self.ntb.actions()[0].triggered.connect(self.handle_home)
 
@@ -116,50 +118,57 @@ class MplWidget(QtWidgets.QWidget):
         self.setLayout(self.vbl)
 
         self.clear_data()
-        
+
     def get_gui(self):
         gui = self.parent().parent().parent().parent().parent()
         return gui
-        
-        
+
+
 #    def get_npoints_on_screen(self, line_index=0):
-#        ''' 
+#        '''
 #        Input
 #        -----
 #        ax: matplotlib axe
 #        l: line number
 #        '''
-#    
+#
 #        if ax is None:
 #            ax=plt.gca()
 #        line = ax.get_lines()[line_index]
-#    
-#    
+#
+#
 #        xmin, xmax = ax.xaxis.get_view_interval()
 #        ymin, ymax = ax.yaxis.get_view_interval()
-#    
+#
 #        xdata = line.get_xdata()
 #        ydata = line.get_ydata()
-#    
+#
 #        return sum((xdata>=xmin) & (xdata<=xmax) & (ydata>=ymin) & (ydata<=ymax))
 
-    
+
     def reset_lims(self):
-    #    ax = plt.gca()
-    
-#        print('called reset_lims()')
-       
+        #    ax = plt.gca()
+
+        #        print('called reset_lims()')
+
         for ax in self.axes:
             lines = ax.get_lines()
 
-            xmin = min([min(l.get_xdata(), default=None) for l in lines], default=None)
-            xmax = max([max(l.get_xdata(), default=None) for l in lines], default=None)
-            ymin = min([min(l.get_ydata(), default=None) for l in lines], default=None)
-            ymax = max([max(l.get_ydata(), default=None) for l in lines], default=None)
-            
+            xmin = min([min(l.get_xdata(), default=None)
+                       for l in lines], default=None)
+            xmax = max([max(l.get_xdata(), default=None)
+                       for l in lines], default=None)
+            ymin = min([min(l.get_ydata(), default=None)
+                       for l in lines], default=None)
+            ymax = max([max(l.get_ydata(), default=None)
+                       for l in lines], default=None)
+
 #            print('Reset xlim',xmin,xmax)
 #            print('Reset ylim',ymin,ymax)
-            
+
+            if ax.get_xscale() == 'log':
+                xmin = 1e-11
+
             ax.set_xlim(left=xmin, right=xmax)
             ax.set_ylim(bottom=ymin, top=ymax)
             ax.autoscale(True, tight=False)
@@ -175,11 +184,11 @@ class MplWidget(QtWidgets.QWidget):
         """ Adds axes to this widget.  """
         ax = self.fig.add_axes(*args, **kwargs)
         ax.cursorlines = None    # used to store lines to display cursors
-#        
-#        # Update lines         
+#
+#        # Update lines
 #        ax.callbacks.connect('xlim_changed', on_xlims_change)
 #        ax.callbacks.connect('ylim_changed', on_ylims_change)
-        
+
         self.axes.append(ax)
 
         return ax
@@ -201,8 +210,7 @@ class MplWidget(QtWidgets.QWidget):
 
         self.draw()
         self.clear_data()
-        
-        
+
     def set_scales(self, xscale=None, yscale=None, redraw=False):
         for ax in self.axes:
             if xscale is not None:
@@ -240,25 +248,25 @@ class MplWidget(QtWidgets.QWidget):
         gui = self.get_gui()
         if gui.actionShowField.isChecked():
             field = gui.data.get_cond('Reduced field')
-            b = np.array(field>field[0], dtype=np.int64)
-            pulse_start = np.argwhere(np.diff(b)==1)
-            pulse_stop = np.argwhere(np.diff(b)==-1)
+            b = np.array(field > field[0], dtype=np.int64)
+            pulse_start = np.argwhere(np.diff(b) == 1)
+            pulse_stop = np.argwhere(np.diff(b) == -1)
             if len(pulse_stop) < len(pulse_start):
                 pulse_stop = np.vstack((pulse_stop, len(field)-1))
             for istart, istop in zip(pulse_start.flatten(), pulse_stop.flatten()):
                 for ax in self.axes:
-                    ax.axvspan(gui.data.t[istart], gui.data.t[istop], 
-                                                alpha=0.05, color='b')
+                    ax.axvspan(gui.data.t[istart], gui.data.t[istop],
+                               alpha=0.05, color='b')
                     # Reset y-axis to cope with bug when old yrange was larger
                     # than the new one (see https://github.com/erwanp/qtplaskin/issues/18)
                     ax.relim()
                     ax.autoscale_view(scalex=False, scaley=True)
-                    
+
 
 class ConditionsPlotWidget(MplWidget):
 
     def init_axes(self):
-        
+
         # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
         gui = self.get_gui()
@@ -273,16 +281,17 @@ class ConditionsPlotWidget(MplWidget):
 
         # Add grid
         self.grid()
-        
-        # Show field-on region 
+
+        # Show field-on region
         self.show_field_on_region()
-        
+
 #        self.condAx.set_ylim(ymin=self.condAx.get_ylim()[0])
-        
+
+
 class DensityPlotWidget(MplWidget):
 
     def init_axes(self):
-        
+
         # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
         gui = self.get_gui()
@@ -298,15 +307,15 @@ class DensityPlotWidget(MplWidget):
         # Add grid
         self.grid()
 
-        # Show field-on region 
+        # Show field-on region
         self.show_field_on_region()
-        
+
 
 class SourcePlotWidget(MplWidget):
     ''' sensitivity analysis '''
 
     def init_axes(self):
-        
+
         # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
         gui = self.get_gui()
@@ -324,14 +333,14 @@ class SourcePlotWidget(MplWidget):
         # Add grid
         self.grid()
 
-        # Show field-on region 
+        # Show field-on region
         self.show_field_on_region()
-        
+
 
 class RatePlotWidget(MplWidget):
 
     def init_axes(self):
-        
+
         # Synchronize timescale with first Ax (or make it the first Ax)
         sharex = None
         gui = self.get_gui()
@@ -347,6 +356,5 @@ class RatePlotWidget(MplWidget):
         # Add grid
         self.grid()
 
-        # Show field-on region 
+        # Show field-on region
         self.show_field_on_region()
-        

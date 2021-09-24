@@ -9,6 +9,7 @@
 
 # Note: manually updated to PyQt5 on 29/10/16. mainwindow.ui not updated yet
 
+from qtplaskin.mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 try:
@@ -19,6 +20,7 @@ except AttributeError:
 
 try:
     _encoding = QtWidgets.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
@@ -33,7 +35,8 @@ class Ui_MainWindow(object):
         MainWindow.resize(1276, 746)
         MainWindow.setAcceptDrops(True)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -45,7 +48,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -63,16 +67,20 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.condList = QtWidgets.QTableWidget(self.tab_4)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.condList.sizePolicy().hasHeightForWidth())
         self.condList.setSizePolicy(sizePolicy)
-        self.condList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.condList.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.condList.setAlternatingRowColors(True)
-        self.condList.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.condList.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.condList.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection)
+        self.condList.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
         self.condList.setShowGrid(False)
         self.condList.setObjectName(_fromUtf8("condList"))
         self.condList.setColumnCount(2)
@@ -96,7 +104,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addLayout(self.verticalLayout_6)
         self.firstAx = None     # Manually added: stores the first ax so others are sync with it
         self.condWidget = ConditionsPlotWidget(self.tab_4)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -115,15 +124,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.speciesList = QtWidgets.QTableWidget(self.tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.speciesList.sizePolicy().hasHeightForWidth())
         self.speciesList.setSizePolicy(sizePolicy)
-        self.speciesList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.speciesList.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.speciesList.setAlternatingRowColors(True)
-        self.speciesList.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.speciesList.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
         self.speciesList.setShowGrid(False)
         self.speciesList.setObjectName(_fromUtf8("speciesList"))
         self.speciesList.setColumnCount(2)
@@ -143,7 +155,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.plotButton)
         self.horizontalLayout_2.addLayout(self.verticalLayout_3)
         self.densWidget = DensityPlotWidget(self.tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -161,15 +174,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.reactList = QtWidgets.QTableWidget(self.tab_3)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.reactList.sizePolicy().hasHeightForWidth())
         self.reactList.setSizePolicy(sizePolicy)
-        self.reactList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.reactList.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.reactList.setAlternatingRowColors(True)
-        self.reactList.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.reactList.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
         self.reactList.setShowGrid(False)
         self.reactList.setObjectName(_fromUtf8("reactList"))
         self.reactList.setColumnCount(2)
@@ -190,7 +206,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.reactButton)
         self.horizontalLayout_4.addLayout(self.verticalLayout_4)
         self.reactWidget = RatePlotWidget(self.tab_3)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -208,16 +225,20 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(5, 20, 5, 20)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.speciesSourceList = QtWidgets.QTableWidget(self.tab_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.speciesSourceList.sizePolicy().hasHeightForWidth())
         self.speciesSourceList.setSizePolicy(sizePolicy)
-        self.speciesSourceList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.speciesSourceList.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers)
         self.speciesSourceList.setAlternatingRowColors(True)
-        self.speciesSourceList.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.speciesSourceList.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.speciesSourceList.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection)
+        self.speciesSourceList.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
         self.speciesSourceList.setShowGrid(False)
         self.speciesSourceList.setObjectName(_fromUtf8("speciesSourceList"))
         self.speciesSourceList.setColumnCount(2)
@@ -233,7 +254,8 @@ class Ui_MainWindow(object):
         self.speciesSourceList.verticalHeader().setMinimumSectionSize(10)
         self.verticalLayout_2.addWidget(self.speciesSourceList)
         self.Combo_filter = QtWidgets.QComboBox(self.tab_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -251,7 +273,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.sourceButton)
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
         self.sourceWidget = SourcePlotWidget(self.tab_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -263,7 +286,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.tabWidget)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -293,7 +317,8 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionLog_scale_in_time = QtWidgets.QAction(MainWindow)
         self.actionLog_scale_in_time.setCheckable(True)
-        self.actionLog_scale_in_time.setObjectName(_fromUtf8("actionLog_scale_in_time"))
+        self.actionLog_scale_in_time.setObjectName(
+            _fromUtf8("actionLog_scale_in_time"))
         self.actionDatacursor = QtWidgets.QAction(MainWindow)
         self.actionDatacursor.setCheckable(True)
         self.actionDatacursor.setChecked(True)
@@ -305,9 +330,11 @@ class Ui_MainWindow(object):
         self.actionExport_data = QtWidgets.QAction(MainWindow)
         self.actionExport_data.setObjectName(_fromUtf8("actionExport_data"))
         self.actionStart_a_simulation = QtWidgets.QAction(MainWindow)
-        self.actionStart_a_simulation.setObjectName(_fromUtf8("actionStart_a_simulation"))
+        self.actionStart_a_simulation.setObjectName(
+            _fromUtf8("actionStart_a_simulation"))
         self.actionImport_from_directory = QtWidgets.QAction(MainWindow)
-        self.actionImport_from_directory.setObjectName(_fromUtf8("actionImport_from_directory"))
+        self.actionImport_from_directory.setObjectName(
+            _fromUtf8("actionImport_from_directory"))
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setObjectName(_fromUtf8("actionSave"))
         self.actionUpdate = QtWidgets.QAction(MainWindow)
@@ -410,5 +437,3 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Filter small rates", None))
         self.actionFilter_small_rates.setToolTip(_translate(
             "MainWindow", "When checked, some rates are not displayed in the sensitivity analisys to avoid cluttering", None))
-
-from qtplaskin.mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget

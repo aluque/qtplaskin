@@ -8,7 +8,7 @@ import pandas as pd
 import h5py
 
 from qtplaskin.runner import run
-from qtplaskin.database import get_molar_mass, Na
+from qtplaskin.database import get_molar_mass, AVOGADRO_CST
 
 from warnings import warn
 
@@ -258,9 +258,9 @@ class DirectoryData(ModelData):
     def check_species_name_format(self):
         """Search for two-letters atoms and correct the type case.
         """
-        atom_list = ['He','Ne','Ar','Fe']
+        atom_list = ['He', 'Ne', 'Ar', 'Fe']
         for at in atom_list:
-            self.species=[s.replace(at.upper(),at) for s in self.species]
+            self.species = [s.replace(at.upper(), at) for s in self.species]
 
     def _read_list(self, fname):
         with open(self._path(fname)) as fp:
@@ -296,8 +296,10 @@ class DirectoryData(ModelData):
         self.t = _raw_density[:latest_i, 0]
 
         # Add total
-        self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
-        self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
+        self.total_number_density = self.raw_density.sum(
+            axis=1)    # molec/cm-3
+        self.total_mass_density = (
+            self.raw_density*self.molarmass).sum(axis=1)/AVOGADRO_CST  # g/cm-3
 
     def _path(self, fname):
         # This is just to save typing
@@ -347,7 +349,8 @@ class FastDirData(DirectoryData):
     def update(self):
         """ Reads or re-reads those files that may change during the execution.
         """
-        _raw_density = pd.read_csv(self._path(self.F_DENSITIES), delim_whitespace=True) #,
+        _raw_density = pd.read_csv(self._path(
+            self.F_DENSITIES), delim_whitespace=True)  # ,
 #                                   iterator=True, chunksize=50000)
 #        _raw_density = pd.concat(_raw_density, ignore_index=True)
 #        _raw_density.apply(pd.to_numeric)
@@ -355,7 +358,8 @@ class FastDirData(DirectoryData):
 
         i_dens = _raw_density.shape[0]
 
-        _raw_rates = pd.read_csv(self._path(self.F_RATES), delim_whitespace=True) # ,
+        _raw_rates = pd.read_csv(self._path(
+            self.F_RATES), delim_whitespace=True)  # ,
 #                                 iterator=True, chunksize=50000)
 #        _raw_rates = pd.concat(_raw_rates, ignore_index=True)
 #        try:
@@ -369,7 +373,8 @@ class FastDirData(DirectoryData):
                                      dtype='d', header=None)
         self.source_matrix = np.array(_source_matrix)
 
-        _raw_conditions = pd.read_csv(self._path(self.F_CONDITIONS), delim_whitespace=True) #,
+        _raw_conditions = pd.read_csv(self._path(
+            self.F_CONDITIONS), delim_whitespace=True)  # ,
 #                                      iterator=True, chunksize=50000)
 #        _raw_conditions = pd.concat(_raw_conditions, ignore_index=True)
 #        _raw_conditions.apply(pd.to_numeric)
@@ -384,8 +389,10 @@ class FastDirData(DirectoryData):
         self.t = _raw_density[:latest_i, 0]
 
         # Add total
-        self.total_number_density = self.raw_density.sum(axis=1)    # molec/cm-3
-        self.total_mass_density = (self.raw_density*self.molarmass).sum(axis=1)/Na  # g/cm-3
+        self.total_number_density = self.raw_density.sum(
+            axis=1)    # molec/cm-3
+        self.total_mass_density = (
+            self.raw_density*self.molarmass).sum(axis=1)/AVOGADRO_CST  # g/cm-3
         # TODO: discard species starting with 'X' here
 
     # %% Plus add some convenient functions to work with data
@@ -402,7 +409,7 @@ class FastDirData(DirectoryData):
 
         number density in cm-3
         '''
-        
+
         return self.get_spec(species)
 
     def get_spec(self, species):
@@ -460,8 +467,7 @@ class FastDirData(DirectoryData):
 
         number_density = self.get_spec(species)
         M = self.molarmass[self.species.index(species)]
-        return (number_density*M/Na)/self.total_mass_density
-
+        return (number_density*M/AVOGADRO_CST)/self.total_mass_density
 
     def get_rate(self, reactions):
         ''' Get a given reaction rate
@@ -470,7 +476,6 @@ class FastDirData(DirectoryData):
         -------
 
         reactions: list'''
-
 
         def _index(s):
             try:
@@ -496,7 +501,6 @@ class FastDirData(DirectoryData):
 
         else:
             return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
-
 
     def get_cond(self, conditions):
         ''' Get a given set conditions
@@ -531,13 +535,13 @@ class FastDirData(DirectoryData):
         else:
             return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
 
-    def plot(self, species,figname=None):
+    def plot(self, species, figname=None):
         ''' Quickly plot a species directly from FastDirData. To be moved later
         in a separate batch interface module '''
 
         import matplotlib.pyplot as plt
         plt.figure(figname)
-        plt.plot(self.t, self.get(species),label=species)
+        plt.plot(self.t, self.get(species), label=species)
         plt.yscale('log')
 
     def get_QTindex(self, i):
@@ -555,9 +559,11 @@ class FastDirData(DirectoryData):
         elif i in self.species:
             print('{0} is Species #{1}'.format(i, self.species.index(i)+1))
         elif i in self.conditions:
-            print('{0} is Condition #{1}'.format(i, self.conditions.index(i)+1))
+            print('{0} is Condition #{1}'.format(
+                i, self.conditions.index(i)+1))
         else:
-            raise ValueError("Couldnt find {0} in reactions, species or conditions".format(i))
+            raise ValueError(
+                "Couldnt find {0} in reactions, species or conditions".format(i))
 
 
 # %%
