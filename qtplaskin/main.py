@@ -27,7 +27,7 @@ try:
     from PyQt5 import QtGui, QtWidgets
 except ImportError:
     try:  # conda install pyqt
-        import pyqt
+        from pyqt import QtGui, QtWidgets
     except ImportError:
         raise ImportError('Warning. Qtplaskin was upgraded to PyQt5. You need to' +
                           ' install PyQt5.')
