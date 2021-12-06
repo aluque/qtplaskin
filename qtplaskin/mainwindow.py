@@ -10,7 +10,10 @@
 # Note: manually updated to PyQt5 on 29/10/16. mainwindow.ui not updated yet
 
 from qtplaskin.mplwidget import RatePlotWidget, SourcePlotWidget, ConditionsPlotWidget, DensityPlotWidget
-from PyQt5 import QtCore, QtGui, QtWidgets
+try:
+    from PyQt5 import QtCore, QtGui, QtWidgets
+except ImportError:  # conda install pyqt
+    from pyqt import QtCore, QtGui, QtWidgets
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8

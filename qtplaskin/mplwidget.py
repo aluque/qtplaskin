@@ -5,7 +5,10 @@ import numpy as np
 
 
 # Python Qt5 bindings for GUI objects
-from PyQt5 import QtGui, QtWidgets
+try:
+    from PyQt5 import QtGui, QtWidgets
+except ImportError:  # conda install pyqt
+    from pyqt import QtGui, QtWidgets
 
 # import the Qt5Agg FigureCanvas object, that binds Figure to
 # Qt5Agg backend. It also inherits from QWidget
@@ -144,7 +147,6 @@ class MplWidget(QtWidgets.QWidget):
 #        ydata = line.get_ydata()
 #
 #        return sum((xdata>=xmin) & (xdata<=xmax) & (ydata>=ymin) & (ydata<=ymax))
-
 
     def reset_lims(self):
         #    ax = plt.gca()

@@ -31,7 +31,10 @@ import codecs
 try:
     import PyQt5
 except ImportError:
-    raise ImportError("Please install these librairies manually first (with Anaconda is "+\
+    try:
+        import pyqt
+    except ImportError:
+        raise ImportError("Please install these librairies manually first (with Anaconda is "+\
                         "strongly recommended) \n >>> conda install pyqt")
 
 long_description = 'A graphical tool to explore ZdPlaskin Results'
