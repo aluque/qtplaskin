@@ -513,6 +513,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             name = item[1]
             rate = array(self.data.rate(item[0]))
 
+            rate = array([float(rat) for rat in rate])
             flt = rate > RATE_THRESHOLD
             label = "[%d] %s" % (item[0], name)
 
