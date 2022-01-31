@@ -2,28 +2,47 @@ import sys
 import os
 import time
 from multiprocessing import Process, Pipe
+from abc import ABC, abstractmethod
+from warnings import warn
 
 import numpy as np
 import pandas as pd
 import h5py
+import matplotlib.pyplot as plt
 
 from qtplaskin.runner import run
 from qtplaskin.database import get_molar_mass, AVOGADRO_CST
 
-from warnings import warn
 
-
-class ModelData(object):
+class ModelData(ABC):
     """ This class abstracts the reading of model data and its output
     to an HDF5 file.  These are the common methods. """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         # Lookup of species and reaction indices
+        self.species = kwargs["species"]
+        self.reactions = kwargs["reactions"]
+        self.conditions = kwargs["conditions"]
+        self.source_matrix = kwargs["source_matrix"]
+        self.t = kwargs["t"]
+
         self.d_species = dict((k, i) for i, k in enumerate(self.species))
         self.d_reactions = dict((k, i) for i, k in enumerate(self.reactions))
         self.d_conditions = dict((k, i) for i, k in enumerate(self.conditions))
 
-    def flush(self):
+    @abstractmethod
+    def density(self, key):
+        pass
+
+    @abstractmethod
+    def rate(self, key):
+        pass
+
+    @abstractmethod
+    def sources(self, key):
+        pass
+
+    def flush(self, timeout=1):
         # This allows some kind of data sources where we have to flush.
         pass
 
@@ -44,15 +63,15 @@ class ModelData(object):
 
         cond = g.create_group('condition')
         for i, condition in enumerate(self.conditions):
-            ds = cond.create_dataset('%.4d' % (i + 1),
-                                     data=self.condition(i + 1), compression='gzip')
+            ds = cond.create_dataset(f'{i+1:.4d}',
+                                     data=self.conditions(i + 1), compression='gzip')
             ds.attrs['name'] = condition
 
         dens = g.create_group('density')
 
         for i, species in enumerate(self.species):
-            print("Writing density of species `%s'" % species)
-            ds = dens.create_dataset('%.4d' % (i + 1), data=self.density(i + 1),
+            print(f"Writing density of species `{species}'")
+            ds = dens.create_dataset(f'{i+1:.4d}', data=self.density(i + 1),
                                      compression='gzip')
             ds.attrs['name'] = species
 
@@ -60,13 +79,13 @@ class ModelData(object):
 
         for i, reaction in enumerate(self.reactions):
             try:
-                ds = dens.create_dataset('%.4d' % (i + 1),
+                ds = dens.create_dataset(f'{i+1:.4d}',
                                          data=self.rate(i + 1),
                                          compression='gzip')
                 ds.attrs['name'] = reaction
-                print("Writing reaction `%s'" % reaction)
+                print(f"Writing reaction `{reaction}'")
             except (RuntimeError, ValueError):
-                print("Error in reaction %d `%s'" % (i + 1, reaction))
+                print(f"Error in reaction {i+1} `{reaction}'")
 
         g.create_dataset('t', data=self.t)
         g.create_dataset('source_matrix', data=self.source_matrix,
@@ -91,12 +110,12 @@ class ModelData(object):
 
         cond = g.create_group('condition')
         for k in self.conditions:
-            cond.create_dataset(k, data=self.condition(k), compression='gzip')
+            cond.create_dataset(k, data=self.conditions(k), compression='gzip')
 
         dens = g.create_group('density')
 
         for species in self.species:
-            print("Writing density of species `%s'" % species)
+            print(f"Writing density of species `{species}'")
             dens.create_dataset(species, data=self.density(species),
                                 compression='gzip')
 
@@ -106,24 +125,24 @@ class ModelData(object):
             try:
                 dens.create_dataset(reaction, data=self.rate(reaction),
                                     compression='gzip')
-                print("Writing reaction `%s'" % reaction)
+                print(f"Writing reaction `{reaction}'")
             except (RuntimeError, ValueError):
-                print("Skipping repeated reaction `%s'" % reaction)
+                print(f"Skipping repeated reaction `{reaction}'")
 
         gsources = g.create_group('source')
 
         for species in self.species:
-            print("Writing sources for species `%s'" % species)
+            print(f"Writing sources for species `{species}'")
             s_group = gsources.create_group(species)
 
             react_dict = self.sources(species)
             for reaction, rate in react_dict.items():
-                print("   Writing reaction `%s'" % reaction)
+                print(f"   Writing reaction `{reaction}'")
                 try:
                     s_group.create_dataset(reaction.replace('.', '_'),
                                            data=rate, compression='gzip')
                 except Exception:
-                    warn("Ignoring repeated reaction '%s'" % reaction)
+                    warn(f"Ignoring repeated reaction '{reaction}'")
         f.close()
 
 
@@ -144,9 +163,16 @@ class HDF5Data(ModelData):
         self.t = np.array(self.h5['main']['t'])
         self.source_matrix = np.array(self.h5['main']['source_matrix'])
 
-        super(HDF5Data, self).__init__()
+        kwargs = {"species": self.species,
+                  "reactions": self.reactions,
+                  "conditions": self.conditions,
+                  "source_matrix": self.source_matrix,
+                  "t": self.t}
 
-    def _read_datasets(self, group):
+        super().__init__(**kwargs)
+
+    @staticmethod
+    def _read_datasets(group):
         sindices = list(group)
         sindices.sort()
 
@@ -156,7 +182,7 @@ class HDF5Data(ModelData):
 
     @staticmethod
     def _index_key(i):
-        return '%.4d' % i
+        return f'{i:.4d}'
 
     def density(self, key):
         return np.array(self.h5_density[self._index_key(key)])
@@ -193,7 +219,13 @@ class ResultsData(ModelData):
         self.raw_density = res.density
         self.raw_rates = res.rates
 
-        super(ResultsData, self).__init__()
+        kwargs = {"species": self.species,
+                  "reactions": self.reactions,
+                  "conditions": self.conditions,
+                  "source_matrix": self.source_matrix,
+                  "t": self.t}
+
+        super().__init__(**kwargs)
 
     def density(self, key):
         return self.raw_density[:, self.d_species[key]]
@@ -253,7 +285,13 @@ class DirectoryData(ModelData):
 
         self.update()
 
-        super(DirectoryData, self).__init__()
+        kwargs = {"species": self.species,
+                  "reactions": self.reactions,
+                  "conditions": self.conditions,
+                  "source_matrix": self.source_matrix,
+                  "t": self.t}
+
+        super().__init__(**kwargs)
 
     def check_species_name_format(self):
         """Search for two-letters atoms and correct the type case.
@@ -263,7 +301,7 @@ class DirectoryData(ModelData):
             self.species = [s.replace(at.upper(), at) for s in self.species]
 
     def _read_list(self, fname):
-        with open(self._path(fname)) as fp:
+        with open(self._path(fname), 'r', encoding='utf-8') as fp:
             r = [s.strip() for s in fp.read().strip().split('\n')]
 
         if self.NUMBERED_LISTS:
@@ -429,27 +467,25 @@ class FastDirData(DirectoryData):
         def _index(s):
             try:
                 i = self.species.index(s)
-            except ValueError:
+            except ValueError as err:
                 try:  # look if there is only one element, starting with the same name
                     l = [x for x in self.species if (
                         x.lower()).startswith(s.lower())]
                     if len(l) == 1:
                         i = self.species.index(l[0])
                     else:
-                        raise ValueError
-                except ValueError:
-                    raise ValueError("%s not in species list: %s" %
-                                     (s, self.species))
+                        raise ValueError from err
+                except ValueError as err:
+                    raise ValueError(
+                        f"{s} not in species list: {self.species}") from err
             return i
 
         latest_i = min(d.shape[0] for d in
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
-        if not type(species) == list:
+        if isinstance(species, list):
             return self.raw_density[:latest_i, _index(species)]
-
-        else:
-            return [self.raw_density[:latest_i, _index(s)] for s in species]
+        return [self.raw_density[:latest_i, _index(s)] for s in species]
 
     def get_mole_fraction(self, species):
         '''
@@ -480,66 +516,56 @@ class FastDirData(DirectoryData):
         def _index(s):
             try:
                 i = self.reactions.index(s)
-            except ValueError:
+            except ValueError as err:
                 try:  # try if there is only one element, starting with the same name
                     l = [x for x in self.species if (
                         x.lower()).startswith(s.lower())]
                     if len(l) == 1:
                         i = self.species.index(l[0])
                     else:
-                        raise ValueError
-                except ValueError:
-                    raise ValueError("%s not in reaction list: %s" %
-                                     (s, self.reactions))
+                        raise ValueError from err
+                except ValueError as err:
+                    raise ValueError(
+                        f"{s} not in reaction list: {self.reactions}") from err
             return i
 
         latest_i = min(d.shape[0] for d in
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
-        if not type(reactions) == list:
+        if isinstance(reactions, list):
             return self.raw_rates[:latest_i, _index(reactions)]
-
-        else:
-            return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
+        return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
 
     def get_cond(self, conditions):
-        ''' Get a given set conditions
-
-        Input:
-        -------
-
-        species: list'''
+        '''Get a given set conditions'''
 
         def _index(c):
             try:
                 i = self.conditions.index(c)
-            except ValueError:
+            except ValueError as err:
                 try:  # try if there is only one element, starting with the same name
                     l = [x for x in self.conditions if (
                         x.lower()).startswith(c.lower())]
                     if len(l) == 1:
                         i = self.conditions.index(l[0])
                     else:
-                        raise ValueError
-                except ValueError:
-                    raise ValueError("%s not in conditions: %s" %
-                                     (c, self.conditions))
+                        raise ValueError from err
+                except ValueError as err:
+                    raise ValueError(
+                        f"{c} not in conditions: {self.conditions}") from err
             return i
 
         latest_i = min(d.shape[0] for d in
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
-        if not type(conditions) == list:
-            return self.raw_conditions[:latest_i, _index(conditions)]
-
-        else:
+        if isinstance(conditions, list):
             return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
+        return self.raw_conditions[:latest_i, _index(conditions)]
 
     def plot(self, species, figname=None):
         ''' Quickly plot a species directly from FastDirData. To be moved later
         in a separate batch interface module '''
 
-        import matplotlib.pyplot as plt
         plt.figure(figname)
         plt.plot(self.t, self.get(species), label=species)
         plt.yscale('log')
@@ -555,18 +581,14 @@ class FastDirData(DirectoryData):
         '''
 
         if i in self.reactions:
-            print('{0} is Reaction #{1}'.format(i, self.reactions.index(i)+1))
+            print(f'{i} is Reaction #{self.reactions.index(i)+1}')
         elif i in self.species:
-            print('{0} is Species #{1}'.format(i, self.species.index(i)+1))
+            print(f'{i} is Species #{self.species.index(i)+1}')
         elif i in self.conditions:
-            print('{0} is Condition #{1}'.format(
-                i, self.conditions.index(i)+1))
+            print(f'{i} is Condition #{ self.conditions.index(i)+1}')
         else:
             raise ValueError(
-                "Couldnt find {0} in reactions, species or conditions".format(i))
-
-
-# %%
+                f"Couldnt find {i} in reactions, species or conditions")
 
 
 class OldDirectoryData(DirectoryData):
@@ -621,12 +643,20 @@ class RealtimeData(ModelData):
         # is the rate of creation of
         # electrons due to that reaction.  Only reactions with some effect
         # will appear as keys in the dictionary.
-        self.sources = [dict() for s in self.species]
+        self.sources = [{} for s in self.species]
 
         # This indicates how much data has been read
         self.i = 0
 
-        super(RealtimeData, self).__init__()
+        kwargs = {"species": self.species,
+                  "reactions": self.reactions,
+                  "conditions": self.conditions,
+                  "source_matrix": self.source_matrix,
+                  "t": self.t}
+
+        super().__init__(**kwargs)
+
+        super().__init__()
 
     @property
     def t(self):

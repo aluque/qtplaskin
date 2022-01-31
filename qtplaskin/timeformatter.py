@@ -49,5 +49,5 @@ class TimeFormatter(ScalarFormatter):
         elif time < 1:
             x_label = f"{time * 1e3:{precision}} ms"
         else:
-            x_label = f"{time:.2f} x_label"
+            x_label = f"{time:.2f} s"
         return x_label

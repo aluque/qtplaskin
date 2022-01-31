@@ -26,14 +26,23 @@ import traceback
 try:
     from PyQt5 import QtGui, QtWidgets
 except ImportError:
-    raise ImportError('Warning. Qtplaskin was upgraded to PyQt5. You need to' +
-                      ' install PyQt5.')
+    try:  # conda install pyqt
+        from pyqt import QtGui, QtWidgets
+    except ImportError:
+        raise ImportError('Warning. Qtplaskin was upgraded to PyQt5. You need to' +
+                          ' install PyQt5.')
 
 # Qt5 bindings for core Qt functionalities (non-GUI)
-from PyQt5 import QtCore
+try:
+    from PyQt5 import QtCore
+except:   # conda install pyqt
+    from pyqt import QtCore
 
 # Python Qt5 bindings for GUI objects
-from PyQt5.QtCore import Qt
+try:
+    from PyQt5.QtCore import Qt
+except:  # conda install pyqt
+    from pyqt import QtCore
 
 from numpy import (array, zeros, nanmax, nanmin, where, isfinite,
                    argsort, r_, isreal, logical_and, float64, diff)
@@ -156,7 +165,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 output = []
                 # output.append(u't: {0:0.3e} s'.format(x))
-                output.append(TimeFormatter().simple_function(x, 0, number_after_decimals=3))
+                output.append(TimeFormatter().simple_function(
+                    x, 0, number_after_decimals=3))
                 output.append(u'y: {0:0.3e} {1}'.format(y, unit))
 
                 for key, val in zip(['z', 's'], [z, s]):
@@ -286,7 +296,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:  # autoscale to full range
             self.condWidget.axes[0].autoscale(True, axis='x')
 
-        self.condWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
+        self.condWidget.axes[0].xaxis.set_major_formatter(
+            TimeFormatter().simple_function)
 
         # force an image redraw
         self.condWidget.draw()
@@ -348,7 +359,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:  # autoscale to full range
             self.densWidget.axes[0].autoscale(True, axis='x')
 
-        self.densWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
+        self.densWidget.axes[0].xaxis.set_major_formatter(
+            TimeFormatter().simple_function)
 
         # force an image redraw
         self.densWidget.draw()
@@ -501,6 +513,7 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             name = item[1]
             rate = array(self.data.rate(item[0]))
 
+            rate = array([float(rat) for rat in rate])
             flt = rate > RATE_THRESHOLD
             label = "[%d] %s" % (item[0], name)
 
@@ -526,7 +539,8 @@ class DesignerMainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if former_xrange is not None:
             self.reactWidget.axes[0].set_xlim(former_xrange)
 
-        self.reactWidget.axes[0].xaxis.set_major_formatter(TimeFormatter().simple_function)
+        self.reactWidget.axes[0].xaxis.set_major_formatter(
+            TimeFormatter().simple_function)
 
         # force an image redraw
         self.reactWidget.draw()
