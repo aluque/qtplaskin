@@ -559,8 +559,8 @@ class FastDirData(DirectoryData):
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if isinstance(conditions, str):
-            return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
-        return self.raw_conditions[:latest_i, _index(conditions)]
+            return self.raw_conditions[:latest_i, _index(conditions)]
+        return [self.raw_conditions[:latest_i, _index(c)] for c in conditions]
 
     def plot(self, species, figname=None):
         ''' Quickly plot a species directly from FastDirData. To be moved later
