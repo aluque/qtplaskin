@@ -484,8 +484,8 @@ class FastDirData(DirectoryData):
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if isinstance(species, list):
-            return self.raw_density[:latest_i, _index(species)]
-        return [self.raw_density[:latest_i, _index(s)] for s in species]
+            return [self.raw_density[:latest_i, _index(s)] for s in species]
+        return self.raw_density[:latest_i, _index(species)]
 
     def get_mole_fraction(self, species):
         '''
@@ -533,8 +533,8 @@ class FastDirData(DirectoryData):
                        (self.raw_density, self.raw_rates, self.raw_conditions))
 
         if isinstance(reactions, list):
-            return self.raw_rates[:latest_i, _index(reactions)]
-        return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
+            return [self.raw_rates[:latest_i, _index(r)] for r in reactions]
+        return self.raw_rates[:latest_i, _index(reactions)]
 
     def get_cond(self, conditions):
         '''Get a given set conditions'''
