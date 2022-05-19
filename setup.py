@@ -52,7 +52,7 @@ setup(name='qtplaskin',
           'future',  # for builtins
           'numpy',
           'scipy',
-          'matplotlib',
+          'matplotlib>=3.4.3',
           'h5py',
           'mpldatacursor',
           'pandas>=1.0',

@@ -18,6 +18,7 @@ from matplotlib.backends.backend_qt5agg \
     import NavigationToolbar2QT as NavigationToolbar
 
 # Matplotlib Figure object
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
@@ -71,7 +72,7 @@ class VMToolbar(NavigationToolbar):
         # dirty hack to use exclusively .png and thus avoid .svg usage
         # because .exe generation is problematic with .svg
         name = name.replace('.svg', '.png')
-        return QtGui.QIcon(os.path.join(self.basedir, name))
+        return QtGui.QIcon(os.path.join(mpl.get_data_path(), "images", name))
 
 
 class MplWidget(QtWidgets.QWidget):
